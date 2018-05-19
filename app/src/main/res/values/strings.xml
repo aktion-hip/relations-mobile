@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">Relations</string>
+    <string name="action_settings">Settings</string>
+    <string name="item_created">Created</string>
+    <string name="item_modified">Modified</string>
+    <string name="entry_show_details">show entry details</string>
+    <string name="title_activity_show_related">Relations</string>
+    <string name="action_search">Search</string>
+    <string name="person_from">from</string>
+    <string name="person_to">to</string>
+    <string name="tab_terms">Terms</string>
+    <string name="tab_texts">Texts</string>
+    <string name="tab_persons">Persons</string>
+    <string name="tab_search_result">Search Results</string>
+    <string name="tab_terms_empty">No terms found (empty database).</string>
+    <string name="tab_texts_empty">No texts found (empty database).</string>
+    <string name="tab_persons_empty">No persons found (empty database).</string>
+    <string name="tab_search_result_empty">No search results available.</string>
+    <string name="fts_dialog">Creating the full text search index</string>
+    <string name="fts_create_success">Successfully created the full text search index.</string>
+    <string name="fts_create_process">Creating the search index.</string>
+    <string name="menu_title_create_fts">Create Search Index</string>
+    <string name="menu_title_sync_db">Sychronize Database</string>
+    <string name="preference_cloud_title">Cloud Configuration</string>
+    <string name="preference_cloud_dropbox_title">Dropbox Configuration</string>
+    <string name="preference_cloud_google_title">Google Configuration</string>
+    <string name="preference_lbl_active">Active</string>
+    <string name="preference_dropbox_token_lbl">Dropbox Access Token</string>
+    <string name="preference_google_token_lbl">Google Access Toke</string>
+    <string name="prefenrece_search_index">Search Index Configuration</string>
+</resources>

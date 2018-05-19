@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="key_preference_cloud">preference_cloud</string>
+    <string name="key_preference_dropbox_token">preference_dropbox_token</string>
+    <string name="key_preference_google_token">preference_google_token</string>
+    <string name="key_preference_index_language">preference_index_language</string>
+</resources>

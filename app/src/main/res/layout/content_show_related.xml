@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="org.elbe.relations.mobile.ui.ShowRelatedActivity"
+    tools:showIn="@layout/activity_show_related">
+
+    <FrameLayout
+        android:id="@+id/item_relate_fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <fragment
+            android:id="@+id/fragmentItemRelated"
+            class="org.elbe.relations.mobile.ui.ItemRelatedFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout="@layout/fragment_item_related">
+        </fragment>
+    </FrameLayout>
+
+</android.support.constraint.ConstraintLayout>

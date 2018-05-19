@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">Relations</string>
+    <string name="action_settings">Settings</string>
+    <string name="item_created">Erzeugt</string>
+    <string name="item_modified">Verändert</string>
+    <string name="entry_show_details">Details anzeigen</string>
+    <string name="title_activity_show_related">Zugeordnet</string>
+    <string name="action_search">Suchen</string>
+    <string name="person_from">von</string>
+    <string name="person_to">bis</string>
+    <string name="tab_terms">Begriffe</string>
+    <string name="tab_texts">Texte</string>
+    <string name="tab_persons">Personen</string>
+    <string name="tab_search_result">Suchresultat</string>
+    <string name="tab_terms_empty">Keine Begriffe gefunden (leere Datenbank).</string>
+    <string name="tab_texts_empty">Keine Texte gefunden (leere Datenbank).</string>
+    <string name="tab_persons_empty">Keine Personen gefunden (leere Datenbank).</string>
+    <string name="tab_search_result_empty">Es ist kein Suchresultat vorhanden.</string>
+    <string name="fts_dialog">Der Volltext-Index wird erzeugt.</string>
+    <string name="fts_create_success">Der Index für die Volltextsuche wurde erfolgreich erzeugt.</string>
+    <string name="fts_create_process">Der Suchindex wird erzeugt.</string>
+    <string name="menu_title_create_fts">Suchindex erzeugen</string>
+    <string name="menu_title_sync_db">Datenbank synchronisieren</string>
+    <string name="preference_cloud_title">Cloud-Konfiguration</string>
+    <string name="preference_cloud_dropbox_title">Dropbox Konfiguration</string>
+    <string name="preference_cloud_google_title">Google Konfiguration</string>
+    <string name="preference_lbl_active">Aktiv</string>
+    <string name="preference_dropbox_token_lbl">Zugangs-Token Dropbox</string>
+    <string name="preference_google_token_lbl">Zugangs-Token Google</string>
+    <string name="prefenrece_search_index">Konfiguration Such-Index</string>
+</resources>

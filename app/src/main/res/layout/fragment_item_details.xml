@@ -1,0 +1,57 @@
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="org.elbe.relations.mobile.ui.ItemDetailsFragment">
+
+    <TextView
+        android:id="@+id/itemDetailTitle"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:background="@android:color/white"
+        android:padding="5dp"
+        android:textSize="20sp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:id="@+id/itemDetailTextScroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="43dp"
+        android:layout_marginBottom="28dp"
+        android:layout_below="@+id/itemDetailTitle"
+        android:background="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/itemDetailTitle" >
+
+        <TextView
+            android:id="@+id/itemDetailText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:textSize="18sp"
+            android:autoLink="all"
+            android:linksClickable="true"
+            />
+    </ScrollView>
+
+    <TextView
+        android:id="@+id/itemDetailDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:height="28dp"
+        android:gravity="bottom"
+        android:paddingBottom="3dp"
+        android:layout_below="@+id/itemDetailTextScroll"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/itemDetailTextScroll" />
+
+</android.support.constraint.ConstraintLayout>
