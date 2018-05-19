@@ -12,7 +12,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import org.elbe.relations.mobile.cloud.CloudSynchronize
 import org.elbe.relations.mobile.data.RelationsDataBase
 import org.elbe.relations.mobile.preferences.SettingsActivity
-import org.elbe.relations.mobile.search.SearchIndex
 import org.elbe.relations.mobile.search.SearchUI
 import org.elbe.relations.mobile.tabs.*
 import org.elbe.relations.mobile.util.RetrieveListHelper
