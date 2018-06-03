@@ -21,6 +21,7 @@
     <string name="fts_create_process">Der Suchindex wird erzeugt.</string>
     <string name="menu_title_create_fts">Suchindex erzeugen</string>
     <string name="menu_title_sync_db">Datenbank synchronisieren</string>
+    <string name="preference_data_synch_title">Daten-Synchronisierung</string>
     <string name="preference_cloud_title">Cloud-Konfiguration</string>
     <string name="preference_cloud_dropbox_title">Dropbox Konfiguration</string>
     <string name="preference_cloud_google_title">Google Konfiguration</string>

@@ -35,11 +35,12 @@ class ItemRelatedFragment : Fragment() {
                 var item = arguments.getSerializable(ARG_PARAM)
                 related = helper.getRelated(item as MinItem)
                 uiHandler.post({
-                    val recyclerView = activity.findViewById<RecyclerView>(R.id.itemsRelated)
-                    recyclerView.layoutManager = LinearLayoutManager(activity, LinearLayout.VERTICAL, false)
-                    var itemAdapter = ItemAdapter(activity, related)
-                    recyclerView.adapter = itemAdapter
-                    ItemTouchHelper(ItemSwipeHelper(recyclerView, activity)).attachToRecyclerView(recyclerView)
+                    activity.findViewById<RecyclerView>(R.id.itemsRelated)?.apply {
+                        layoutManager = LinearLayoutManager(activity, LinearLayout.VERTICAL, false)
+                        var itemAdapter = ItemAdapter(activity, related)
+                        adapter = itemAdapter
+                        ItemTouchHelper(ItemSwipeHelper(this, activity)).attachToRecyclerView(this)
+                    }
                 })
             })
         }

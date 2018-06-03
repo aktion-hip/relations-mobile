@@ -1,22 +1,21 @@
 package org.elbe.relations.mobile.preferences
 
 import android.os.Bundle
-import android.preference.Preference
-import android.preference.PreferenceFragment
-import android.preference.PreferenceScreen
+import android.support.v4.app.DialogFragment
+import android.support.v7.app.AppCompatActivity
+import android.support.v7.preference.Preference
+import android.support.v7.preference.PreferenceFragmentCompat
 import org.elbe.relations.mobile.R
 
 /**
  * The activity to display the settings, i.e. preferences page.
- *
- * see http://www.programmierenlernenhq.de/tutorial-android-settings-preferences-und-einstellungen/
  */
-class SettingsActivity: AppCompatPreferenceActivity() {
+class SettingsActivity: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupActionBar()
-        fragmentManager.beginTransaction().replace(android.R.id.content, SettingsFragment()).commit()
+        supportFragmentManager.beginTransaction().replace(android.R.id.content, SettingsFragment()).commit()
     }
 
     private fun setupActionBar() {
@@ -28,24 +27,22 @@ class SettingsActivity: AppCompatPreferenceActivity() {
     }
 
     //---
-    /**
-     * @see https://stackoverflow.com/questions/21440685/show-up-button-in-actionbar-in-subscreen-preferences
-     */
-    class SettingsFragment: PreferenceFragment() {
-        override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
+    class SettingsFragment: PreferenceFragmentCompat() {
+
+        override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             addPreferencesFromResource(R.xml.preferences)
+        }
 
-            val preferenceScreen = findPreference(getString(R.string.key_preference_cloud))
-            if (preferenceScreen is PreferenceScreen) {
-                preferenceScreen.setOnPreferenceClickListener {
-                    if (it is PreferenceScreen) {
-                        TODO("it.dialog.actionBar is NULL")
-//                        it.dialog.actionBar.setDisplayHomeAsUpEnabled(true)
-                    }
-
-                    true
-                }
+        override fun onDisplayPreferenceDialog(preference: Preference?) {
+            var dialogFragment: DialogFragment? = null
+            if (preference is CloudConfigPreference) {
+                dialogFragment = CloudConfigPreferenceDialogFragmentCompat.newInstance(preference.key)
+            }
+            if (dialogFragment != null) {
+                dialogFragment.setTargetFragment(this, 0)
+                dialogFragment.show(this.fragmentManager, "PreferenceFragment.DIALOG")
+            } else {
+                super.onDisplayPreferenceDialog(preference)
             }
         }
     }

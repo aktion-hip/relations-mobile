@@ -1,7 +1,7 @@
-package org.elbe.relations.mobile.ui
+package org.elbe.relations.mobile.preferences
 
 import android.content.Context
-import android.preference.ListPreference
+import android.support.v7.preference.ListPreference
 import android.util.AttributeSet
 import org.elbe.relations.mobile.search.Languages
 

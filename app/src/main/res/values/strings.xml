@@ -21,6 +21,7 @@
     <string name="fts_create_process">Creating the search index.</string>
     <string name="menu_title_create_fts">Create Search Index</string>
     <string name="menu_title_sync_db">Sychronize Database</string>
+    <string name="preference_data_synch_title">Data Synchronization</string>
     <string name="preference_cloud_title">Cloud Configuration</string>
     <string name="preference_cloud_dropbox_title">Dropbox Configuration</string>
     <string name="preference_cloud_google_title">Google Configuration</string>

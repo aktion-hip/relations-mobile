@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CloudProviders>
+    <CloudProvider
+        name="Dropbox"
+        id="dropbox"
+        class="org.elbe.relations.mobile.cloud.DropboxCloudProvider" />
+    <CloudProvider
+        name="Google Drive"
+        id="google_drive"
+        class="org.elbe.relations.mobile.cloud.GoogleCloudProvider" />
+    <CloudProvider
+        name="Microsoft Azure"
+        id="ms_azure"
+        class="org.elbe.relations.mobile.cloud.MSAzureCloudProvider" />
+</CloudProviders>

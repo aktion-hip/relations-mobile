@@ -1,53 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceScreen
+    <!-- "@string/key_preference_cloud" -->
+    <android.support.v7.preference.PreferenceCategory
         android:key="@string/key_preference_cloud"
-        android:title="@string/preference_cloud_title"
-        android:persistent="false" >
+        android:title="@string/preference_data_synch_title"
+        android:persistent="false">
 
-        <PreferenceCategory
-            android:title="@string/preference_cloud_dropbox_title"
-            android:key="preference_cloud_category_dropbox">
-            <EditTextPreference
-                android:key="@string/key_preference_dropbox_token"
-                android:selectAllOnFocus="true"
-                android:singleLine="true"
-                android:title="@string/preference_dropbox_token_lbl" />
+        <org.elbe.relations.mobile.preferences.CloudConfigPreference
+            android:key="@string/key_preference_cloud_config"
+            android:title="@string/preference_cloud_title"
+            android:summary="The cloud configuration to be used for data synchronization."
+            android:defaultValue="dropbox" />
 
-            <CheckBoxPreference
-                android:defaultValue="false"
-                android:key="preference_cloud_active_dropbox"
-                android:title="@string/preference_lbl_active" />
-        </PreferenceCategory>
+    </android.support.v7.preference.PreferenceCategory>
 
-        <PreferenceCategory
-            android:title="@string/preference_cloud_google_title"
-            android:key="preference_cloud_category_google">
-            <EditTextPreference
-                android:key="@string/key_preference_google_token"
-                android:selectAllOnFocus="true"
-                android:singleLine="true"
-                android:title="@string/preference_google_token_lbl" />
-
-            <CheckBoxPreference
-                android:defaultValue="false"
-                android:key="preference_cloud_active_google"
-                android:title="@string/preference_lbl_active" />
-        </PreferenceCategory>
-
-    </PreferenceScreen>
-
-    <PreferenceCategory
+    <android.support.v7.preference.PreferenceCategory
         android:key="preference_index"
         android:title="@string/prefenrece_search_index"
         android:persistent="false" >
 
-        <org.elbe.relations.mobile.ui.SearchIndexPreference
+        <org.elbe.relations.mobile.preferences.SearchIndexPreference
             android:key="@string/key_preference_index_language"
             android:title="Language"
             android:summary="The language to be used for the Search Index." />
 
-    </PreferenceCategory>
+    </android.support.v7.preference.PreferenceCategory>
 
 </PreferenceScreen>

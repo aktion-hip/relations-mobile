@@ -19,23 +19,20 @@ private const val DROP_BOX_CLIENT_ID = "relations-cloud/1.0"
 /**
  * Download files (all or increment) from Dropbox.
  */
-class DropboxCloudProvider(synchronize: Boolean, context: AppCompatActivity, r: Resources, factory: IndexWriterFactory): AsyncTask<Void, Int, DropboxCloudProvider.SyncResult>() {
-    private val mSynchronize = synchronize
-    private val mContext = context
-    private val mResources = r
+class DropboxCloudProvider(synchronize: Boolean, context: AppCompatActivity, r: Resources, factory: IndexWriterFactory):
+        AbstractCloudProvider<Void, Int, DropboxCloudProvider.SyncResult>(synchronize, context, r, factory) {
     private var mDialogProgress: ProgressDialog? = null
-    private val mIndexWriterFactory = factory
 
     override fun onPreExecute() {
         mDialogProgress = ProgressDialog.newInstance("Download data.")
         mDialogProgress?.let {
             it.isCancelable = false
-            it.show(mContext.supportFragmentManager, "fragment_download")
+            it.show(getContext().supportFragmentManager, "fragment_download")
         }
     }
 
     override fun doInBackground(vararg param: Void): SyncResult {
-        if (mSynchronize) {
+        if (getSynchronize()) {
             return synchronize()
         }
         return download()
@@ -62,8 +59,8 @@ class DropboxCloudProvider(synchronize: Boolean, context: AppCompatActivity, r: 
      * @return Boolean true in case of successful download and import.
      */
     private fun download(): SyncResult {
-        mIndexWriterFactory.setOpenMode(true)
-        val token = getToken(this.mContext, this.mResources)
+        getIndexWriterFactory().setOpenMode(true)
+        val token = getToken()
         if (token.isEmpty()) {
             return SyncResult(false, "Configuration Problem: No Dropbox access token configured!")
         }
@@ -74,7 +71,7 @@ class DropboxCloudProvider(synchronize: Boolean, context: AppCompatActivity, r: 
         downloadFile(client, DROP_BOX_PATH_ALL, zipAll)
 
         val importer = XMLImporter(zipAll, { current, max -> publishProgress(current, max)})
-        if (importer.import(mContext, mIndexWriterFactory)) {
+        if (importer.import(getContext(), getIndexWriterFactory())) {
             zipAll.delete()
         }
 
@@ -82,19 +79,14 @@ class DropboxCloudProvider(synchronize: Boolean, context: AppCompatActivity, r: 
     }
 
     private fun synchronize(): SyncResult {
-        mIndexWriterFactory.setOpenMode(false)
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        getIndexWriterFactory().setOpenMode(false)
+        TODO("Process incremental new data.")
     }
 
     private fun downloadFile(client: DbxClientV2, dropboxPath: String, local: File) {
         FileOutputStream(local).use {output ->
             client.files().downloadBuilder(dropboxPath).download(output)
         }
-    }
-
-    private fun getToken(context: AppCompatActivity, r: Resources): String {
-        val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
-        return sharedPrefs.getString(r.getString(R.string.key_preference_dropbox_token), "")
     }
 
 //    ---
