@@ -10,8 +10,8 @@ import android.view.MenuItem
 
 import kotlinx.android.synthetic.main.activity_main.*
 import org.elbe.relations.mobile.cloud.CloudSynchronize
+import org.elbe.relations.mobile.cloud.GoogleDriveService
 import org.elbe.relations.mobile.data.RelationsDataBase
-import org.elbe.relations.mobile.preferences.CloudProviders
 import org.elbe.relations.mobile.preferences.SettingsActivity
 import org.elbe.relations.mobile.search.SearchUI
 import org.elbe.relations.mobile.tabs.*
@@ -27,6 +27,9 @@ const val EXTRA_QUERY_FLAG = "org.elbe.relations.mobile.QUERY.FLAG"
 class MainActivity : AppCompatActivity() {
     private var mHelper: RetrieveListHelper? = null
     private val mTabsAdapter: TabsFragmentPagerAdapter = TabsFragmentPagerAdapter(supportFragmentManager, this)
+    private val mGoogleDriveService: GoogleDriveService by lazy {
+        GoogleDriveService(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,9 +71,13 @@ class MainActivity : AppCompatActivity() {
                 startActivity(Intent(this, SettingsActivity::class.java))
                 return true
             }
-            R.id.action_synchronize -> CloudSynchronize.synchronize(this, resources)
+            R.id.action_synchronize -> CloudSynchronize.synchronize(this, resources, mGoogleDriveService)
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        CloudSynchronize.synchronizeFromGoogleDrive(this, resources, mGoogleDriveService, requestCode, data)
     }
 
     override fun onDestroy() {

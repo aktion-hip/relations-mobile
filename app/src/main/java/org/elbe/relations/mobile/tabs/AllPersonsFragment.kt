@@ -22,8 +22,9 @@ import org.elbe.relations.mobile.util.RetrieveListHelper
  * Fragment to display all persons on the main activity.
  */
 class AllPersonsFragment : Fragment() {
-    private var helper: RetrieveListHelper? = null
-    private val uiHandler = Handler()
+    private var mHelper: RetrieveListHelper? = null
+    private val mUiHandler = Handler()
+    private var mAdapter: ItemAdapter? = null
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -33,16 +34,16 @@ class AllPersonsFragment : Fragment() {
     }
 
     private fun initView(view: View) {
-        helper?.run(Runnable {
-            var persons = helper?.getListOf(Type.PERSON)
+        mHelper?.run(Runnable {
+            var persons = mHelper?.getListOf(Type.PERSON)
             val emptyText = view.findViewById<TextView>(R.id.items_person_empty)
             if (persons?.size != 0) {
-                uiHandler.post({
+                mUiHandler.post({
                     emptyText.visibility = View.GONE
                     val recyclerView = view.findViewById<RecyclerView>(R.id.items_person)
                     recyclerView.layoutManager = LinearLayoutManager(activity, LinearLayout.VERTICAL, false)
-                    var itemAdapter = ItemAdapter(activity, persons)
-                    recyclerView.adapter = itemAdapter
+                    mAdapter = ItemAdapter(activity, persons)
+                    recyclerView.adapter = mAdapter
                     ItemTouchHelper(ItemSwipeHelper(recyclerView, activity)).attachToRecyclerView(recyclerView)
                 })
             }
@@ -50,14 +51,14 @@ class AllPersonsFragment : Fragment() {
     }
 
     override fun onAttach(context: Context?) {
-        helper = RetrieveListHelper(context!!, "allPersons")
+        mHelper = RetrieveListHelper(context!!, "allPersons")
         super.onAttach(context)
     }
 
     override fun onDetach() {
         super.onDetach()
-        helper?.quit()
-        helper = null
+        mHelper?.quit()
+        mHelper = null
     }
 
     companion object {

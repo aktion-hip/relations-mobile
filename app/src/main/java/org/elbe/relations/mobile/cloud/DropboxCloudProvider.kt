@@ -1,15 +1,11 @@
 package org.elbe.relations.mobile.cloud
 
 import android.content.res.Resources
-import android.os.AsyncTask
-import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
 import com.dropbox.core.DbxRequestConfig
 import com.dropbox.core.v2.DbxClientV2
-import org.elbe.relations.mobile.R
 import org.elbe.relations.mobile.dbimport.XMLImporter
 import org.elbe.relations.mobile.search.IndexWriterFactory
-import org.elbe.relations.mobile.util.ProgressDialog
 import java.io.File
 import java.io.FileOutputStream
 
@@ -20,39 +16,13 @@ private const val DROP_BOX_CLIENT_ID = "relations-cloud/1.0"
  * Download files (all or increment) from Dropbox.
  */
 class DropboxCloudProvider(synchronize: Boolean, context: AppCompatActivity, r: Resources, factory: IndexWriterFactory):
-        AbstractCloudProvider<Void, Int, DropboxCloudProvider.SyncResult>(synchronize, context, r, factory) {
-    private var mDialogProgress: ProgressDialog? = null
-
-    override fun onPreExecute() {
-        mDialogProgress = ProgressDialog.newInstance("Download data.")
-        mDialogProgress?.let {
-            it.isCancelable = false
-            it.show(getContext().supportFragmentManager, "fragment_download")
-        }
-    }
+        AbstractCloudProvider<Void, Int, AbstractCloudProvider.SyncResult>(synchronize, context, r, factory) {
 
     override fun doInBackground(vararg param: Void): SyncResult {
         if (getSynchronize()) {
             return synchronize()
         }
         return download()
-    }
-
-    override fun onProgressUpdate(vararg values: Int?) {
-        val max = values[1] ?: 0
-        if (max > 0) {
-            if (mDialogProgress?.isBar() ?: false) {
-                mDialogProgress?.increment()
-            } else {
-                mDialogProgress?.switchToBar(max)
-                mDialogProgress?.setTitle("Import data.")
-            }
-        }
-    }
-
-    override fun onPostExecute(result: SyncResult?) {
-        mDialogProgress?.finish(result?.message ?: "An error occurred during the import.")
-        mDialogProgress?.dismiss()
     }
 
     /**
@@ -86,14 +56,6 @@ class DropboxCloudProvider(synchronize: Boolean, context: AppCompatActivity, r: 
     private fun downloadFile(client: DbxClientV2, dropboxPath: String, local: File) {
         FileOutputStream(local).use {output ->
             client.files().downloadBuilder(dropboxPath).download(output)
-        }
-    }
-
-//    ---
-
-    class SyncResult(val value: Boolean, val message: String) {
-        fun getResult(): Boolean {
-            return value
         }
     }
 

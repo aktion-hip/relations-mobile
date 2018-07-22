@@ -9,7 +9,7 @@
     tools:showIn="@layout/activity_main"
     android:orientation="vertical">
 
-    <include android:id="@+id/progress_fts_main" layout="@layout/progress_fts" />
+    <include layout="@layout/progress_bar" />
 
     <android.support.design.widget.TabLayout
         android:id="@+id/relation_tabs"

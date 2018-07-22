@@ -13,11 +13,11 @@ import java.util.*
 /**
  * The SAX handler class to import the data into the database.
  */
-class DBImport(context: Context, factory: IndexWriterFactory, prog: (Int, Int)-> Unit): DefaultHandler() {
+class DBImport(context: Context, factory: IndexWriterFactory, progress: (Int, Int) -> Unit): DefaultHandler() {
     private val ROOT = "RelationsExport"
 
     private val indexWriter: IndexWriter by lazy { factory.createIndexWriter() }
-    private val mProg = prog
+    private val mProgress = progress
     private var canImport = false
     private var relDB = RelationsDataBase.getInstance(context)!!
     private var inserterFactory: InserterFactory? = null
@@ -25,6 +25,7 @@ class DBImport(context: Context, factory: IndexWriterFactory, prog: (Int, Int)->
     private var numberToImport = 0
 
     override fun startDocument() {
+        // TODO: remove?
         relDB.termDAO().clear()
         relDB.textDAO().clear()
         relDB.personDAO().clear()
@@ -32,6 +33,7 @@ class DBImport(context: Context, factory: IndexWriterFactory, prog: (Int, Int)->
     }
 
     override fun endDocument() {
+        indexWriter.commit()
         indexWriter.close()
     }
 
@@ -39,7 +41,7 @@ class DBImport(context: Context, factory: IndexWriterFactory, prog: (Int, Int)->
         if (ROOT.equals(qName)) {
             canImport = true
             numberToImport = attributes?.getValue("countAll")?.toInt() ?: 0
-            mProg(1, numberToImport)
+            mProgress(1, numberToImport)
             return
         }
         if (canImport) {
@@ -79,7 +81,7 @@ class DBImport(context: Context, factory: IndexWriterFactory, prog: (Int, Int)->
                 }
                 if (factory.checkNode(qName)) {
                     inserter?.let {
-                        mProg(1, numberToImport)
+                        mProgress(1, numberToImport)
                         it.insert(relDB, indexWriter)
                     }
                     inserter = null
@@ -88,6 +90,7 @@ class DBImport(context: Context, factory: IndexWriterFactory, prog: (Int, Int)->
             }
             InserterFactory.values().forEach { factory ->
                 if (factory.checkType(qName)) {
+                    indexWriter.commit()
                     inserterFactory = null
                 }
             }

@@ -22,8 +22,9 @@ import org.elbe.relations.mobile.util.RetrieveListHelper
  * Fragment to display all texts on the main activity.
  */
 class AllTextsFragment : Fragment() {
-    private var helper: RetrieveListHelper? = null
-    private val uiHandler = Handler()
+    private var mHelper: RetrieveListHelper? = null
+    private val mUiHandler = Handler()
+    private var mAdapter: ItemAdapter? = null
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -33,16 +34,16 @@ class AllTextsFragment : Fragment() {
     }
 
     private fun initView(view: View) {
-        helper?.run(Runnable {
-            var texts = helper?.getListOf(Type.TEXT)
+        mHelper?.run(Runnable {
+            var texts = mHelper?.getListOf(Type.TEXT)
             val emptyText = view.findViewById<TextView>(R.id.items_text_empty)
             if (texts?.size != 0) {
-                uiHandler.post({
+                mUiHandler.post({
                     emptyText.visibility = View.GONE
                     val recyclerView = view.findViewById<RecyclerView>(R.id.items_text)
                     recyclerView.layoutManager = LinearLayoutManager(activity, LinearLayout.VERTICAL, false)
-                    var itemAdapter = ItemAdapter(activity, texts)
-                    recyclerView.adapter = itemAdapter
+                    mAdapter = ItemAdapter(activity, texts)
+                    recyclerView.adapter = mAdapter
                     ItemTouchHelper(ItemSwipeHelper(recyclerView, activity)).attachToRecyclerView(recyclerView)
                 })
             }
@@ -51,14 +52,14 @@ class AllTextsFragment : Fragment() {
 
 
     override fun onAttach(context: Context?) {
-        helper = RetrieveListHelper(context!!, "allTexts")
+        mHelper = RetrieveListHelper(context!!, "allTexts")
         super.onAttach(context)
     }
 
     override fun onDetach() {
         super.onDetach()
-        helper?.quit()
-        helper = null
+        mHelper?.quit()
+        mHelper = null
     }
 
     companion object {

@@ -37,6 +37,8 @@ class SettingsActivity: AppCompatActivity() {
             var dialogFragment: DialogFragment? = null
             if (preference is CloudConfigPreference) {
                 dialogFragment = CloudConfigPreferenceDialogFragmentCompat.newInstance(preference.key)
+            } else if (preference is AppInfo) {
+                dialogFragment = AppInfoFragment.newInstance()
             }
             if (dialogFragment != null) {
                 dialogFragment.setTargetFragment(this, 0)

@@ -28,5 +28,12 @@
     <string name="preference_lbl_active">Aktiv</string>
     <string name="preference_dropbox_token_lbl">Zugangs-Token Dropbox</string>
     <string name="preference_google_token_lbl">Zugangs-Token Google</string>
-    <string name="prefenrece_search_index">Konfiguration Such-Index</string>
+    <string name="preference_search_index">Konfiguration Such-Index</string>
+    <string name="preference_about_title">Über Relations</string>
+    <string name="preference_nr_total">Total Anzahl Einträge:</string>
+    <string name="preference_nr_terms">Anzahl Begriffe:</string>
+    <string name="preference_nr_texts">Anzahl Texte:</string>
+    <string name="preference_nr_persons">Anzahl Personen:</string>
+    <string name="preference_nr_relations">Anzahl Relationen:</string>
+    <string name="preference_nr_search_index">Anzahl Dokumente in Suchindex:</string>
 </resources>

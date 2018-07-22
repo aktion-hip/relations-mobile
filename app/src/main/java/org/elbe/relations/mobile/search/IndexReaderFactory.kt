@@ -1,5 +1,6 @@
 package org.elbe.relations.mobile.search
 
+import android.content.Context
 import android.content.res.Resources
 import android.support.v7.app.AppCompatActivity
 import org.apache.lucene.analysis.Analyzer
@@ -28,4 +29,21 @@ class IndexReaderFactory(context: AppCompatActivity, r: Resources): IndexFactory
     fun getAnalyzer(): Analyzer {
         return super.getAnalyzer(mContext, mResources)
     }
+
+    companion object {
+
+        /**
+         * @return the number of documents in the index
+         */
+        fun getNumberOfIndexed(context: Context): Int {
+            val path = File(context.getExternalFilesDir(null), LUCENE_PATH)
+            if (path.exists()) {
+                DirectoryReader.open(FSDirectory.open(path)).use {reader ->
+                    return reader.numDocs()
+                }
+            }
+            return 0
+        }
+    }
+
 }

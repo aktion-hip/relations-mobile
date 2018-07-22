@@ -117,8 +117,13 @@ class CloudConfigPreferenceDialogFragmentCompat(): PreferenceDialogFragmentCompa
         override fun onBindViewHolder(holder: ProviderAdapter.ViewHolder?, position: Int) {
             holder?.let {holder ->
                 holder.providerName.text = mProviders[position].name
+                val hint = mProviders[position].hint
+                holder.providerToken.hint = hint
+                if (hint.isEmpty()) {
+                    holder.providerToken.visibility = View.GONE
+                }
                 val id = mProviders[position].id
-                val radio = holder.setId(id)
+                val radio = holder.setId(id, hint.isEmpty())
                 mMapping.put(id, radio)
                 if (id.equals(mProviderId)) {
                     radio.isChecked = true
@@ -163,10 +168,12 @@ class CloudConfigPreferenceDialogFragmentCompat(): PreferenceDialogFragmentCompa
                 activRadio.setOnClickListener { handleClick() }
             }
 
-            fun setId(id: String): RadioButton {
+            fun setId(id: String, alwaysEnabled: Boolean): RadioButton {
                 mId = id
                 providerToken.setText(mSharedPrefs.getString(mId, ""))
-                if (providerToken.text.isEmpty()) {
+                if (alwaysEnabled) {
+                    activRadio.isEnabled = true
+                } else if (providerToken.text.isEmpty()) {
                     activRadio.isEnabled = false
                 }
                 return activRadio

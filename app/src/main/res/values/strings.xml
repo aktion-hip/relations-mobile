@@ -28,5 +28,12 @@
     <string name="preference_lbl_active">Active</string>
     <string name="preference_dropbox_token_lbl">Dropbox Access Token</string>
     <string name="preference_google_token_lbl">Google Access Toke</string>
-    <string name="prefenrece_search_index">Search Index Configuration</string>
+    <string name="preference_search_index">Search Index Configuration</string>
+    <string name="preference_about_title">About Relations</string>
+    <string name="preference_nr_total">Total number of entries:</string>
+    <string name="preference_nr_terms">Number of Terms:</string>
+    <string name="preference_nr_texts">Number of Texts:</string>
+    <string name="preference_nr_persons">Number of Persons:</string>
+    <string name="preference_nr_relations">Number of Relations:</string>
+    <string name="preference_nr_search_index">Number of Documents in Searchindex:</string>
 </resources>

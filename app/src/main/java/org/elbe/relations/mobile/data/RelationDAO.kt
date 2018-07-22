@@ -17,4 +17,7 @@ interface RelationDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(relation: Relation)
+
+    @Query("SELECT Count(RelationID) FROM tblRelation")
+    fun getCount(): Int
 }

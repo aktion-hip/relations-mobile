@@ -13,16 +13,16 @@ import javax.xml.parsers.SAXParserFactory
 /**
  * The SAX parser class responsible for importing the data in the zipped XML file to the database.
  */
-class XMLImporter(file: File, prog: (Int, Int)-> Unit) {
+class XMLImporter(file: File, progress: (Int, Int) -> Unit) {
     private val zipFile = ZipFile(file)
-    private val mProg = prog
+    private val mProgress = progress
 
     /**
      * Executes the import by parsing the specified zip file content.
      */
     fun import(context: Context, factory: IndexWriterFactory): Boolean {
         val parser = SAXParserFactory.newInstance().newSAXParser().xmlReader
-        parser.contentHandler = DBImport(context, factory, mProg)
+        parser.contentHandler = DBImport(context, factory, mProgress)
         getReader().use {r ->
             parser.parse(InputSource(r))
         }

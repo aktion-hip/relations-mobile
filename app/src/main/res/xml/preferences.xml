@@ -17,13 +17,25 @@
 
     <android.support.v7.preference.PreferenceCategory
         android:key="preference_index"
-        android:title="@string/prefenrece_search_index"
+        android:title="@string/preference_search_index"
         android:persistent="false" >
 
         <org.elbe.relations.mobile.preferences.SearchIndexPreference
             android:key="@string/key_preference_index_language"
             android:title="Language"
             android:summary="The language to be used for the Search Index." />
+
+    </android.support.v7.preference.PreferenceCategory>
+
+    <android.support.v7.preference.PreferenceCategory
+        android:key="preference_about"
+        android:title="@string/preference_about_title"
+        android:persistent="false" >
+
+        <org.elbe.relations.mobile.preferences.AppInfo
+            android:key="preference_about_view"
+            android:title="Applicaton Information"
+            android:summary="Information about the installed Relations Application."/>
 
     </android.support.v7.preference.PreferenceCategory>
 
