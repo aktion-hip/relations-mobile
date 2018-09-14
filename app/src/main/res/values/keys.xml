@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="key_preference_cloud">preference_cloud</string>
-    <string name="key_preference_cloud_config">preference_cloud_config</string>
-    <string name="key_preference_dropbox_token">preference_dropbox_token</string>
-    <string name="key_preference_google_token">preference_google_token</string>
-    <string name="key_preference_index_language">preference_index_language</string>
+    <string name="key_preference_cloud" translatable="false">preference_cloud</string>
+    <string name="key_preference_cloud_config" translatable="false">preference_cloud_config</string>
+    <string name="key_preference_dropbox_token" translatable="false">preference_dropbox_token</string>
+    <string name="key_preference_google_token" translatable="false">preference_google_token</string>
+    <string name="key_preference_index_language" translatable="false">preference_index_language</string>
 </resources>

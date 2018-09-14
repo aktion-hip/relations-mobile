@@ -27,4 +27,9 @@
         <item name="textAllCaps">false</item>
     </style>
 
+    <style name="SwitchTheme">
+        <item name="thumbTint">@color/switch_color</item>
+        <item name="trackTint">@color/switch_color</item>
+    </style>
+
 </resources>

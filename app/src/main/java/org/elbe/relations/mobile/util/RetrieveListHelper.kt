@@ -29,6 +29,7 @@ class RetrieveListHelper {
             Type.TERM -> return relDB.termDAO()?.getAll()
             Type.TEXT -> return relDB.textDAO()?.getAll()
             Type.PERSON -> return relDB.personDAO()?.getAll()
+            Type.RELATION -> return emptyList()
         }
     }
 
@@ -68,6 +69,7 @@ class RetrieveListHelper {
             Type.TERM -> return relDB.termDAO()?.findById(item.getId())
             Type.TEXT -> return relDB.textDAO()?.findById(item.getId())
             Type.PERSON -> return relDB.personDAO()?.findById(item.getId())
+            Type.RELATION -> throw IllegalArgumentException("Type Relation is not allowed!")
         }
     }
 

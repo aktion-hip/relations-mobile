@@ -26,8 +26,7 @@ class AllPersonsFragment : Fragment() {
     private val mUiHandler = Handler()
     private var mAdapter: ItemAdapter? = null
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater!!.inflate(R.layout.fragment_all_persons, container, false)
         initView(view)
         return view

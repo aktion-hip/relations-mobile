@@ -1,9 +1,6 @@
 package org.elbe.relations.mobile.data
 
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.OnConflictStrategy
-import android.arch.persistence.room.Query
+import android.arch.persistence.room.*
 import org.elbe.relations.mobile.model.Text
 
 /**
@@ -25,4 +22,14 @@ interface TextDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(text: Text)
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    fun update(text: Text)
+
+    @Delete
+    fun delete(text: Text)
+
+    @Query("DELETE FROM tblText WHERE TextId=:id")
+    fun delete(id: Long)
+
 }

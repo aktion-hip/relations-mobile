@@ -25,12 +25,12 @@ class ItemDetailsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (arguments != null) {
-            item = arguments.getSerializable(ARG_PARAM)
+        arguments?.let {
+            item = it.getSerializable(ARG_PARAM)
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var view = inflater!!.inflate(R.layout.fragment_item_details, container, false)
         if (item != null) {
             showItem(item, view)
@@ -63,17 +63,17 @@ class ItemDetailsFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val relatedFrame = activity.findViewById<FrameLayout>(R.id.item_related)
+        val relatedFrame = activity?.findViewById<FrameLayout>(R.id.item_related)
         isDualPane = relatedFrame != null && relatedFrame.visibility == View.VISIBLE
 
         if (savedInstanceState != null) {
         }
         if (isDualPane) {
-            var related = fragmentManager.findFragmentById(R.id.fragmentItemRelated)
+            var related = fragmentManager?.findFragmentById(R.id.fragmentItemRelated)
             if (related == null) {
                 related = ItemRelatedFragment.newInstance(item)
-                fragmentManager.beginTransaction().replace(R.id.item_relate_fragment_container, related).
-                        setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit()
+                fragmentManager?.beginTransaction()?.replace(R.id.item_relate_fragment_container, related)?.
+                        setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)?.commit()
             }
         }
     }

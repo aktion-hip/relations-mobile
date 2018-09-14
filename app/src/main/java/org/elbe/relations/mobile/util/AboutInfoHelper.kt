@@ -18,10 +18,12 @@ class AboutInfoHelper {
     private var mCounts = Counts(0,0,0,0)
     private var numberOfIndexed = 0
 
-    constructor(context: Context) {
+    constructor(context: Context?) {
         dbThread.start()
         mRelationsDB = RelationsDataBase.getInstance(context)!!
-        numberOfIndexed = IndexReaderFactory.getNumberOfIndexed(context)
+        context?.let {context ->
+            numberOfIndexed = IndexReaderFactory.getNumberOfIndexed(context)
+        }
     }
 
     fun initialize() {

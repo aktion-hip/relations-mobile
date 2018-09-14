@@ -1,6 +1,5 @@
 package org.elbe.relations.mobile.model
 
-import android.content.Context
 import android.content.res.Resources
 import org.apache.lucene.index.IndexWriter
 import org.elbe.relations.mobile.R

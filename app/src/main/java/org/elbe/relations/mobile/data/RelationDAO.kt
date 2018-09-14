@@ -1,9 +1,6 @@
 package org.elbe.relations.mobile.data
 
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.OnConflictStrategy
-import android.arch.persistence.room.Query
+import android.arch.persistence.room.*
 import org.elbe.relations.mobile.model.Relation
 
 /**
@@ -18,6 +15,16 @@ interface RelationDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(relation: Relation)
 
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    fun update(relation: Relation)
+
     @Query("SELECT Count(RelationID) FROM tblRelation")
     fun getCount(): Int
+
+    @Query("DELETE FROM tblRelation WHERE RelationID=:id")
+    fun delete(id: Long)
+
+    @Query("SELECT * FROM tblRelation WHERE RelationID=:id LIMIT 1")
+    fun findById(id: Long): Relation
+
 }

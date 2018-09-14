@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RelationsExport date="Aug 7, 2018 10:33:35 PM" countAll="12">
+<TermEntries>
+
+<TermEntry>
+        <Modified field="DTMUTATION" type="Timestamp">2018-07-14 12:08:25.0
+        </Modified>
+        <Title field="STITLE" type="String">AAA
+        </Title>
+        <Text field="STEXT" type="String">aaa
+        </Text>
+        <ID field="TERMID" type="Long">1
+        </ID>
+        <Created field="DTCREATION" type="Timestamp">2018-07-14 12:08:25.0
+        </Created>
+</TermEntry>
+<TermEntry>
+        <Modified field="DTMUTATION" type="Timestamp">2018-08-07 17:20:03.0
+        </Modified>
+        <Title field="STITLE" type="String">BBB
+        </Title>
+        <Text field="STEXT" type="String">Test von Inhalt.
+        </Text>
+        <ID field="TERMID" type="Long">2
+        </ID>
+        <Created field="DTCREATION" type="Timestamp">2018-07-14 12:08:33.0
+        </Created>
+</TermEntry>
+<TermEntry>
+        <Modified field="DTMUTATION" type="Timestamp">2018-08-07 17:21:20.0
+        </Modified>
+        <Title field="STITLE" type="String">DDD (new)
+        </Title>
+        <Text field="STEXT" type="String">Neuer <b>Begriff</b>.
+        </Text>
+        <ID field="TERMID" type="Long">4
+        </ID>
+        <Created field="DTCREATION" type="Timestamp">2018-08-07 17:21:20.0
+        </Created>
+</TermEntry>
+<TermEntry>
+        <Modified field="DTMUTATION" type="Timestamp">2018-08-07 22:32:50.0
+        </Modified>
+        <Title field="STITLE" type="String">CCC
+        </Title>
+        <Text field="STEXT" type="String">ccc <u>ccc</u> ccc
+        </Text>
+        <ID field="TERMID" type="Long">5
+        </ID>
+        <Created field="DTCREATION" type="Timestamp">2018-08-07 19:51:00.0
+        </Created>
+</TermEntry>
+<TermEntry>
+        <Modified field="DTMUTATION" type="Timestamp">2018-08-07 22:16:58.0
+        </Modified>
+        <Title field="STITLE" type="String">NNN
+        </Title>
+        <Text field="STEXT" type="String">neuer Text mit <i>Stil</i>.
+        </Text>
+        <ID field="TERMID" type="Long">6
+        </ID>
+        <Created field="DTCREATION" type="Timestamp">2018-08-07 21:43:49.0
+        </Created>
+</TermEntry>
+</TermEntries>
+<TextEntries>
+
+</TextEntries>
+<PersonEntries>
+
+<PersonEntry>
+        <Firstname field="SFIRSTNAME" type="String">Adam
+        </Firstname>
+        <Modified field="DTMUTATION" type="Timestamp">2018-07-14 12:08:59.0
+        </Modified>
+        <Text field="STEXT" type="String">
+        </Text>
+        <ID field="PERSONID" type="Long">1
+        </ID>
+        <From field="SFROM" type="String">
+        </From>
+        <To field="STO" type="String">
+        </To>
+        <Name field="SNAME" type="String">Riese
+        </Name>
+        <Created field="DTCREATION" type="Timestamp">2018-07-14 12:08:59.0
+        </Created>
+</PersonEntry>
+</PersonEntries>
+<RelationEntries>
+
+<RelationEntry>
+        <Type2 field="NTYPE2" type="Number">1
+        </Type2>
+        <Item1 field="NITEM1" type="Long">2
+        </Item1>
+        <Item2 field="NITEM2" type="Long">1
+        </Item2>
+        <ID field="RELATIONID" type="Long">1
+        </ID>
+        <Type1 field="NTYPE1" type="Number">1
+        </Type1>
+</RelationEntry>
+<RelationEntry>
+        <Type2 field="NTYPE2" type="Number">1
+        </Type2>
+        <Item1 field="NITEM1" type="Long">1
+        </Item1>
+        <Item2 field="NITEM2" type="Long">1
+        </Item2>
+        <ID field="RELATIONID" type="Long">3
+        </ID>
+        <Type1 field="NTYPE1" type="Number">3
+        </Type1>
+</RelationEntry>
+<RelationEntry>
+        <Type2 field="NTYPE2" type="Number">1
+        </Type2>
+        <Item1 field="NITEM1" type="Long">5
+        </Item1>
+        <Item2 field="NITEM2" type="Long">4
+        </Item2>
+        <ID field="RELATIONID" type="Long">16
+        </ID>
+        <Type1 field="NTYPE1" type="Number">1
+        </Type1>
+</RelationEntry>
+<RelationEntry>
+        <Type2 field="NTYPE2" type="Number">1
+        </Type2>
+        <Item1 field="NITEM1" type="Long">5
+        </Item1>
+        <Item2 field="NITEM2" type="Long">1
+        </Item2>
+        <ID field="RELATIONID" type="Long">17
+        </ID>
+        <Type1 field="NTYPE1" type="Number">1
+        </Type1>
+</RelationEntry>
+<RelationEntry>
+        <Type2 field="NTYPE2" type="Number">1
+        </Type2>
+        <Item1 field="NITEM1" type="Long">1
+        </Item1>
+        <Item2 field="NITEM2" type="Long">4
+        </Item2>
+        <ID field="RELATIONID" type="Long">18
+        </ID>
+        <Type1 field="NTYPE1" type="Number">1
+        </Type1>
+</RelationEntry>
+<RelationEntry>
+        <Type2 field="NTYPE2" type="Number">1
+        </Type2>
+        <Item1 field="NITEM1" type="Long">5
+        </Item1>
+        <Item2 field="NITEM2" type="Long">2
+        </Item2>
+        <ID field="RELATIONID" type="Long">13
+        </ID>
+        <Type1 field="NTYPE1" type="Number">1
+        </Type1>
+</RelationEntry>
+</RelationEntries>
+</RelationsExport>

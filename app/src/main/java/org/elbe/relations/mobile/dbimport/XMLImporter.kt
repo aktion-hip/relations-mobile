@@ -1,7 +1,5 @@
 package org.elbe.relations.mobile.dbimport
 
-import android.content.Context
-import org.elbe.relations.mobile.search.IndexWriterFactory
 import org.xml.sax.InputSource
 import java.io.BufferedReader
 import java.io.File
@@ -13,16 +11,15 @@ import javax.xml.parsers.SAXParserFactory
 /**
  * The SAX parser class responsible for importing the data in the zipped XML file to the database.
  */
-class XMLImporter(file: File, progress: (Int, Int) -> Unit) {
+class XMLImporter(file: File) {
     private val zipFile = ZipFile(file)
-    private val mProgress = progress
 
     /**
      * Executes the import by parsing the specified zip file content.
      */
-    fun import(context: Context, factory: IndexWriterFactory): Boolean {
+    fun import(handler: AbstractDBImport): Boolean {
         val parser = SAXParserFactory.newInstance().newSAXParser().xmlReader
-        parser.contentHandler = DBImport(context, factory, mProgress)
+        parser.contentHandler = handler
         getReader().use {r ->
             parser.parse(InputSource(r))
         }

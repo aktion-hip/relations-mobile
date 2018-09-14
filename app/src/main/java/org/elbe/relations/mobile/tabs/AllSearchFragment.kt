@@ -2,17 +2,13 @@ package org.elbe.relations.mobile.tabs
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.TextView
 import org.elbe.relations.mobile.R
-import org.elbe.relations.mobile.model.MinItem
 import org.elbe.relations.mobile.ui.ItemAdapter
 import org.elbe.relations.mobile.util.ItemSwipeHelper
 import kotlinx.android.synthetic.main.fragment_all_search.*
@@ -22,14 +18,12 @@ import org.elbe.relations.mobile.search.SearchCache
  * Fragment to show the search results.
  */
 class AllSearchFragment : Fragment() {
-//    private var itemTouchHelper: ItemTouchHelper? = null
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater!!.inflate(R.layout.fragment_all_search, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (SearchCache.isEmpty()) {
             search_empty?.let {

@@ -22,7 +22,7 @@ import org.elbe.relations.mobile.R
 class CloudConfigPreferenceDialogFragmentCompat(): PreferenceDialogFragmentCompat() {
     private lateinit var mCloudProviderView: RCWrapper
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater!!.inflate(R.layout.pref_dialog_cloud_config, container, false)
     }
 
@@ -114,8 +114,8 @@ class CloudConfigPreferenceDialogFragmentCompat(): PreferenceDialogFragmentCompa
             return ""
         }
 
-        override fun onBindViewHolder(holder: ProviderAdapter.ViewHolder?, position: Int) {
-            holder?.let {holder ->
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            holder.let {holder ->
                 holder.providerName.text = mProviders[position].name
                 val hint = mProviders[position].hint
                 holder.providerToken.hint = hint

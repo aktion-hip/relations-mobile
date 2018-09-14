@@ -36,4 +36,14 @@
     <string name="preference_nr_persons">Anzahl Personen:</string>
     <string name="preference_nr_relations">Anzahl Relationen:</string>
     <string name="preference_nr_search_index">Anzahl Dokumente in Suchindex:</string>
+    <string name="abstract_cloud_provider_no_incremental">Keine inkrementellen Daten gefunden. Bitte versuchen Sie die volle Datensynchronisation.</string>
+    <string name="abstract_cloud_provider_dialog_title1">Daten herunterladen</string>
+    <string name="abstract_cloud_provider_dialog_title2">Daten importieren.</string>
+    <string name="abstract_cloud_provider_dft_error">Während der Datensynchronisierung ist ein Fehler aufgetreten.</string>
+    <string name="cloud_provider_dft_success">Die Datenbank wurde erfolgreich synchronisiert.</string>
+    <string name="cloud_provider_dropbox_no_config">Konfigurations-Problem: Es ist kein Dropbox Zugriffs-Token konfiguriert!</string>
+    <string name="cloud_provider_drive_error">Beim Import ist ein Fehler aufgetreten.</string>
+    <string name="cloud_provider_azure_no_config">Konfigurataions-Problem: Es ist kein MS Azure Zugriffsschlüssel konfiguriert worden!</string>
+    <string name="cloud_provider_azure_no_export1">Kein Relations-Export gefunden auf &lt;MS Azure>:/%s!</string>
+    <string name="cloud_provider_azure_no_export2">Kein Relations-Export auf &lt;MS Azure>:/%s/%s gefunden!</string>
 </resources>

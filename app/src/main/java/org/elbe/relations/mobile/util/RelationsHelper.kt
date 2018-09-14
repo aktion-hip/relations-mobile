@@ -14,7 +14,7 @@ class RelationsHelper {
     private var relDB: RelationsDataBase
     private var dbThread: HandlerThread = HandlerThread("relatedDbThread")
 
-    constructor(context: Context) {
+    constructor(context: Context?) {
         dbThread.start()
         relDB = RelationsDataBase.getInstance(context)!!
     }

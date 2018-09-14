@@ -1,6 +1,5 @@
 package org.elbe.relations.mobile.data
 
-import android.arch.persistence.db.SupportSQLiteDatabase
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
@@ -30,22 +29,15 @@ abstract class RelationsDataBase : RoomDatabase() {
     abstract fun relationPerson2DAO(): RelationPerson2DAO
 
     companion object {
-        const val FTS_TABLE_NAME: String = "fts"
-        const val COL_ID: String = "item_id"
-        const val COL_TYPE: String = "item_type"
-        const val COL_CONTENT: String = "content"
-        const val FTS_TABLE_CREATE: String = "CREATE VIRTUAL TABLE $FTS_TABLE_NAME USING fts3 ($COL_ID, $COL_TYPE, $COL_CONTENT)"
-//        const val FTS_TABLE_CREATE: String = "CREATE VIRTUAL TABLE $FTS_TABLE_NAME USING fts3 ($COL_ID, $COL_TYPE, $COL_CONTENT, tokenize=icu de_DE)"
-        const val FTS_TABLE_DROP: String = "DROP TABLE IF EXISTS $FTS_TABLE_NAME"
-
         private var INSTANCE: RelationsDataBase? = null
 
-        fun getInstance(context: Context): RelationsDataBase? {
-            if (INSTANCE == null) {
-                synchronized(RelationsDataBase::class) {
-                    INSTANCE = Room.databaseBuilder(context.applicationContext,
-                            RelationsDataBase::class.java, "Relations.db")
-                            .addCallback(CALLBACK).build()
+        fun getInstance(context: Context?): RelationsDataBase? {
+            context?.let {context ->
+                if (INSTANCE == null) {
+                    synchronized(RelationsDataBase::class) {
+                        INSTANCE = Room.databaseBuilder(context.applicationContext,
+                                RelationsDataBase::class.java, "Relations.db").build()
+                    }
                 }
             }
             return INSTANCE
@@ -54,27 +46,6 @@ abstract class RelationsDataBase : RoomDatabase() {
         fun destroyInstance() {
             INSTANCE = null
         }
-
-        private val CALLBACK = object : RoomDatabase.Callback() {
-            override fun onCreate(db: SupportSQLiteDatabase) {
-                super.onCreate(db)
-                db.execSQL(FTS_TABLE_DROP)
-                db.execSQL(FTS_TABLE_CREATE)
-            }
-        }
     }
 
-    /**
-     * @return SupportSQLiteDatabase?
-     */
-    fun getWritable(context: Context): SupportSQLiteDatabase? {
-        return getInstance(context)?.openHelper?.writableDatabase
-    }
-
-    /**
-     * @return SupportSQLiteDatabase?
-     */
-    fun getReadable(context: Context): SupportSQLiteDatabase? {
-        return getInstance(context)?.openHelper?.readableDatabase
-    }
 }

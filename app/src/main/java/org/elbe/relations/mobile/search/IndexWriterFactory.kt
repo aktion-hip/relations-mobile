@@ -1,13 +1,10 @@
 package org.elbe.relations.mobile.search
 
+import android.content.Context
 import android.content.res.Resources
-import android.preference.PreferenceManager
-import android.support.v7.app.AppCompatActivity
 import org.apache.lucene.index.IndexWriter
 import org.apache.lucene.index.IndexWriterConfig
 import org.apache.lucene.store.FSDirectory
-import org.apache.lucene.util.Version
-import org.elbe.relations.mobile.R
 import java.io.File
 
 /**
@@ -16,10 +13,10 @@ import java.io.File
  * @param context: AppCompatActivity
  * @param r: Resources
  */
-class IndexWriterFactory(context: AppCompatActivity, r: Resources): IndexFactory() {
-    val mContext = context
-    val mResources = r
-    val mPath = File(context.getExternalFilesDir(null), LUCENE_PATH)
+class IndexWriterFactory(context: Context, r: Resources): IndexFactory() {
+    private val mContext = context
+    private val mResources = r
+    private val mPath = File(context.getExternalFilesDir(null), LUCENE_PATH)
     var mOpenMode = IndexWriterConfig.OpenMode.CREATE_OR_APPEND
 
     /**
@@ -40,10 +37,10 @@ class IndexWriterFactory(context: AppCompatActivity, r: Resources): IndexFactory
         mOpenMode = if (indexNew) IndexWriterConfig.OpenMode.CREATE else IndexWriterConfig.OpenMode.CREATE_OR_APPEND
     }
 
-    private fun createConfiguration(context: AppCompatActivity, r: Resources) : IndexWriterConfig {
+    private fun createConfiguration(context: Context, r: Resources) : IndexWriterConfig {
         val analyzer = getAnalyzer(context, r)
         val config = IndexWriterConfig(LUCENE_VERSION, analyzer)
-        config.setOpenMode(mOpenMode)
+        config.openMode = mOpenMode
         return  config
     }
 

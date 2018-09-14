@@ -17,12 +17,12 @@ import org.elbe.relations.mobile.model.MinItem
  *
  * Created by lbenno on 02.03.2018.
  */
-class ItemAdapter(context: Context, items : List<MinItem>?) : RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
+class ItemAdapter(context: Context?, items : List<MinItem>?) : RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
     private val mContext = context
     private val mItems: List<MinItem>? = items
 
-    override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
-        holder?.let {holder ->
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.let {holder ->
             mItems?.let {list ->
                 holder.itemTitle.text = list[position].getTitle()
                 holder.itemImage.setImageResource(list[position].getType().icon)
@@ -34,8 +34,8 @@ class ItemAdapter(context: Context, items : List<MinItem>?) : RecyclerView.Adapt
         return if (mItems == null) 0 else mItems!!.size
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
-        val v = LayoutInflater.from(parent?.context).inflate(R.layout.item, parent, false)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val v = LayoutInflater.from(parent.context).inflate(R.layout.item, parent, false)
         return ViewHolder(v)
     }
 

@@ -17,7 +17,7 @@ import org.elbe.relations.mobile.ui.ItemAdapter
 /**
  * Helper class to initialize the swipe gesture on a recycler view displaying the list of items.
  */
-class ItemSwipeHelper(recyclerView: RecyclerView, context: Activity): ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT ) {
+class ItemSwipeHelper(recyclerView: RecyclerView, context: Activity?): ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT ) {
     private val background : Drawable = ColorDrawable()
     private val mRecyclerView = recyclerView
     private val mContext = context
@@ -37,7 +37,9 @@ class ItemSwipeHelper(recyclerView: RecyclerView, context: Activity): ItemTouchH
         val itemView = viewHolder?.itemView
 
         if (background is ColorDrawable) {
-            background.color = ContextCompat.getColor(recyclerView?.context, R.color.colorPrimary)
+            mContext?.applicationContext?.let {context ->
+                background.color = ContextCompat.getColor(context, R.color.colorPrimary)
+            }
         }
         background.setBounds(itemView!!.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)
         background.draw(c)

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RelationsExport date="Aug 7, 2018 10:33:21 PM"
+	countAll="4">
+	<EventStoreEntries>
+
+		<EventStoreEntry>
+			<UniqueID field="SUNIQUEID" type="String">1:5
+			</UniqueID>
+			<Type field="NTYPE" type="Number">2
+			</Type>
+			<Event field="SEVENT" type="String">
+				<TermEntry>
+					<Modified field="DTMUTATION" type="Timestamp">2018-08-07 22:32:50.193
+					</Modified>
+					<Title field="STITLE" type="String">CCC
+					</Title>
+					<Text field="STEXT" type="String">ccc  <u>ccc</u> ccc</Text>
+					<ID field="TERMID" type="Long">5
+					</ID>
+					<Created field="DTCREATION" type="Timestamp">2018-08-07 19:51:00.0
+					</Created>
+				</TermEntry>
+			</Event>
+			<ID field="EVENTSTOREID" type="Long">34
+			</ID>
+			<Created field="DTCREATION" type="Timestamp">2018-08-07 22:32:50.0
+			</Created>
+		</EventStoreEntry>
+		<EventStoreEntry>
+			<UniqueID field="SUNIQUEID" type="String">0:14
+			</UniqueID>
+			<Type field="NTYPE" type="Number">3
+			</Type>
+			<Event field="SEVENT" type="String">Delete(0:14)
+			</Event>
+			<ID field="EVENTSTOREID" type="Long">35
+			</ID>
+			<Created field="DTCREATION" type="Timestamp">2018-08-07 22:32:53.0
+			</Created>
+		</EventStoreEntry>
+		<EventStoreEntry>
+			<UniqueID field="SUNIQUEID" type="String">0:17
+			</UniqueID>
+			<Type field="NTYPE" type="Number">1
+			</Type>
+			<Event field="SEVENT" type="String">
+				<RelationEntry>
+					<Type2 field="NTYPE2" type="Number">1
+					</Type2>
+					<Item1 field="NITEM1" type="Long">5
+					</Item1>
+					<Item2 field="NITEM2" type="Long">1
+					</Item2>
+					<ID field="RELATIONID" type="Long">17
+					</ID>
+					<Type1 field="NTYPE1" type="Number">1
+					</Type1>
+				</RelationEntry>
+			</Event>
+			<ID field="EVENTSTOREID" type="Long">36
+			</ID>
+			<Created field="DTCREATION" type="Timestamp">2018-08-07 22:33:00.0
+			</Created>
+		</EventStoreEntry>
+		<EventStoreEntry>
+			<UniqueID field="SUNIQUEID" type="String">0:18
+			</UniqueID>
+			<Type field="NTYPE" type="Number">1
+			</Type>
+			<Event field="SEVENT" type="String">
+				<RelationEntry>
+					<Type2 field="NTYPE2" type="Number">1
+					</Type2>
+					<Item1 field="NITEM1" type="Long">1
+					</Item1>
+					<Item2 field="NITEM2" type="Long">4
+					</Item2>
+					<ID field="RELATIONID" type="Long">18
+					</ID>
+					<Type1 field="NTYPE1" type="Number">1
+					</Type1>
+				</RelationEntry>
+			</Event>
+			<ID field="EVENTSTOREID" type="Long">37
+			</ID>
+			<Created field="DTCREATION" type="Timestamp">2018-08-07 22:33:07.0
+			</Created>
+		</EventStoreEntry>
+	</EventStoreEntries>
+</RelationsExport>

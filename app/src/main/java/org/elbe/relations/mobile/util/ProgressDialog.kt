@@ -18,23 +18,25 @@ class ProgressDialog(): DialogFragment() {
     private var count: Int = 0
     private var maxValue: Int = 0
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mView = inflater?.inflate(R.layout.fragment_progress, container)
         return mView
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        maxValue = arguments.getInt("maxValue")
-        if (maxValue == 0) {
-            getBar()?.visibility = View.GONE
-            getSpinner()?.visibility = View.VISIBLE
-        } else {
-            getBar()?.max = maxValue
-        }
-        val title = arguments.getString("title")
-        if (!title.isEmpty()) {
-            setTitle(title)
+        arguments?.let {arguments ->
+            maxValue = arguments.getInt("maxValue")
+            if (maxValue == 0) {
+                getBar()?.visibility = View.GONE
+                getSpinner()?.visibility = View.VISIBLE
+            } else {
+                getBar()?.max = maxValue
+            }
+            val title = arguments.getString("title")
+            if (!title.isEmpty()) {
+                setTitle(title)
+            }
         }
     }
 

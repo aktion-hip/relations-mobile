@@ -29,13 +29,13 @@ class ItemRelatedFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        helper = RelationsHelper(activity)
+        helper = RelationsHelper(context)
         if (arguments != null) {
             helper.run(Runnable {
-                var item = arguments.getSerializable(ARG_PARAM)
+                var item = arguments?.getSerializable(ARG_PARAM)
                 related = helper.getRelated(item as MinItem)
                 uiHandler.post({
-                    activity.findViewById<RecyclerView>(R.id.itemsRelated)?.apply {
+                    activity?.findViewById<RecyclerView>(R.id.itemsRelated)?.apply {
                         layoutManager = LinearLayoutManager(activity, LinearLayout.VERTICAL, false)
                         var itemAdapter = ItemAdapter(activity, related)
                         adapter = itemAdapter
@@ -46,8 +46,7 @@ class ItemRelatedFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater!!.inflate(R.layout.fragment_item_related, container, false)
     }
 

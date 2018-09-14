@@ -1,8 +1,8 @@
 package org.elbe.relations.mobile.search
 
+import android.content.Context
 import android.content.res.Resources
 import android.preference.PreferenceManager
-import android.support.v7.app.AppCompatActivity
 import org.apache.lucene.analysis.Analyzer
 import org.apache.lucene.util.Version
 import org.elbe.relations.mobile.R
@@ -19,7 +19,7 @@ val INDX_UNIQUE_ID = "uniqueID"
  */
 abstract class IndexFactory {
 
-    fun getAnalyzer(context: AppCompatActivity, r: Resources): Analyzer {
+    fun getAnalyzer(context: Context, r: Resources): Analyzer {
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
         return Languages.getAnalyzer(preferences.getString(r.getString(R.string.key_preference_index_language), "en"))
     }
