@@ -38,7 +38,7 @@ class ItemSwipeHelper(recyclerView: RecyclerView, context: Activity?): ItemTouch
 
         if (background is ColorDrawable) {
             mContext?.applicationContext?.let {context ->
-                background.color = ContextCompat.getColor(context, R.color.colorPrimary)
+                background.color = ContextCompat.getColor(context, R.color.swipeItem)
             }
         }
         background.setBounds(itemView!!.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)

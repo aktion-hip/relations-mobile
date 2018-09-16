@@ -46,4 +46,12 @@
     <string name="cloud_provider_azure_no_config">Configuration Problem: No MS Azure connection string is configured!</string>
     <string name="cloud_provider_azure_no_export1">No Relations export found on &lt;MS Azure>:/%s!</string>
     <string name="cloud_provider_azure_no_export2">No Relations export &lt;MS Azure>:/%s/%s found!</string>
+    <string name="preference_cloud_hint">The cloud configuration to be used for data synchronization.</string>
+    <string name="preference_index_title">Language</string>
+    <string name="preference_index_hint">The language to be used for the Search Index.</string>
+    <string name="preference_about_app_title">Application Information</string>
+    <string name="preference_about_app_hint">Information about the installed Relations Application.</string>
+    <string name="sync_text">synchronize</string>
+    <string name="sync_switch_off">full</string>
+    <string name="sync_switch_on">incremental</string>
 </resources>

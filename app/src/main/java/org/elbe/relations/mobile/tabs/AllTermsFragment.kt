@@ -37,14 +37,14 @@ class AllTermsFragment : Fragment() {
             var terms = mHelper?.getListOf(Type.TERM)
             val emptyText = view.findViewById<TextView>(R.id.items_term_empty)
             if (terms?.size != 0) {
-                mUiHandler.post({
+                mUiHandler.post {
                     emptyText.visibility = View.GONE
                     val recyclerView = view.findViewById<RecyclerView>(R.id.items_term)
                     recyclerView.layoutManager = LinearLayoutManager(activity, LinearLayout.VERTICAL, false)
                     mAdapter = ItemAdapter(activity, terms)
                     recyclerView.adapter = mAdapter
                     ItemTouchHelper(ItemSwipeHelper(recyclerView, activity)).attachToRecyclerView(recyclerView)
-                })
+                }
             }
         })
     }

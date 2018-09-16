@@ -32,4 +32,8 @@
         <item name="trackTint">@color/switch_color</item>
     </style>
 
+    <style name="SwitchTextAppearance" parent="@android:style/TextAppearance.Holo.Small">
+        <item name="android:textColor">@color/switchThumbText</item>
+    </style>
+
 </resources>

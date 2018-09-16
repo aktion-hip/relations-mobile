@@ -11,12 +11,13 @@
         android:paddingTop="20dp"
         android:paddingBottom="10dp"
         android:layout_gravity="center"
-        android:text="synchronize"
+        android:text="@string/sync_text"
         android:switchPadding="8dp"
         android:thumbTextPadding="5dp"
+        android:switchTextAppearance="@style/SwitchTextAppearance"
         android:showText="true"
-        android:textOff="full"
-        android:textOn="incremental"
+        android:textOff="@string/sync_switch_off"
+        android:textOn="@string/sync_switch_on"
         android:track="@drawable/switch_track"
         android:thumb="@drawable/switch_thumb" />
     <!--

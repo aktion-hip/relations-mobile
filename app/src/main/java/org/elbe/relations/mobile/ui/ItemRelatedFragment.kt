@@ -34,14 +34,14 @@ class ItemRelatedFragment : Fragment() {
             helper.run(Runnable {
                 var item = arguments?.getSerializable(ARG_PARAM)
                 related = helper.getRelated(item as MinItem)
-                uiHandler.post({
+                uiHandler.post {
                     activity?.findViewById<RecyclerView>(R.id.itemsRelated)?.apply {
                         layoutManager = LinearLayoutManager(activity, LinearLayout.VERTICAL, false)
                         var itemAdapter = ItemAdapter(activity, related)
                         adapter = itemAdapter
                         ItemTouchHelper(ItemSwipeHelper(this, activity)).attachToRecyclerView(this)
                     }
-                })
+                }
             })
         }
     }

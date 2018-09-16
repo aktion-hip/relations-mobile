@@ -37,14 +37,14 @@ class AllPersonsFragment : Fragment() {
             var persons = mHelper?.getListOf(Type.PERSON)
             val emptyText = view.findViewById<TextView>(R.id.items_person_empty)
             if (persons?.size != 0) {
-                mUiHandler.post({
+                mUiHandler.post {
                     emptyText.visibility = View.GONE
                     val recyclerView = view.findViewById<RecyclerView>(R.id.items_person)
                     recyclerView.layoutManager = LinearLayoutManager(activity, LinearLayout.VERTICAL, false)
                     mAdapter = ItemAdapter(activity, persons)
                     recyclerView.adapter = mAdapter
                     ItemTouchHelper(ItemSwipeHelper(recyclerView, activity)).attachToRecyclerView(recyclerView)
-                })
+                }
             }
         })
     }

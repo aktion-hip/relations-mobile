@@ -1,5 +1,6 @@
 package org.elbe.relations.mobile.ui
 
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -8,6 +9,9 @@ import android.view.MenuItem
 import org.elbe.relations.mobile.R
 
 import kotlinx.android.synthetic.main.activity_show_related.*
+import org.elbe.relations.mobile.cloud.CloudSynchronize
+import org.elbe.relations.mobile.cloud.GoogleDriveService
+import org.elbe.relations.mobile.preferences.SettingsActivity
 import org.elbe.relations.mobile.search.SearchUI
 import org.elbe.relations.mobile.util.RetrieveListHelper
 
@@ -15,7 +19,10 @@ import org.elbe.relations.mobile.util.RetrieveListHelper
  * Activity to display an item's relations.
  */
 class ShowRelatedActivity : AppCompatActivity() {
-    private var helper: RetrieveListHelper? = null
+    private var mHelper: RetrieveListHelper? = null
+    private val mGoogleDriveService: GoogleDriveService by lazy {
+        GoogleDriveService(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,7 +30,7 @@ class ShowRelatedActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        helper = RetrieveListHelper(this, "showRelated")
+        mHelper = RetrieveListHelper(this, "showRelated")
 
         if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             finish()
@@ -47,14 +54,18 @@ class ShowRelatedActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when (item?.itemId) {
-            R.id.action_settings -> true
+            R.id.action_settings -> {
+                startActivity(Intent(this, SettingsActivity::class.java))
+                return true
+            }
+            R.id.action_synchronize -> CloudSynchronize.synchronize(this, resources, mGoogleDriveService)
             else -> super.onOptionsItemSelected(item)
         }
     }
 
     override fun onDestroy() {
-        helper?.quit()
-        helper = null
+        mHelper?.quit()
+        mHelper = null
         super.onDestroy()
     }
 

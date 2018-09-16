@@ -10,5 +10,7 @@
     <color name="switchTrackNormal">#90caf9</color>
     <color name="switchThumbBgActive">#1b5e20</color>
     <color name="switchThumbActive">#ad1457</color>
-    <color name="switchThumbkNormal">#64b5f6</color>
+    <color name="switchThumbNormal">#64b5f6</color>
+    <color name="swipeItem">#29BB42</color>
+    <color name="switchThumbText">#FFFFFF</color>
 </resources>

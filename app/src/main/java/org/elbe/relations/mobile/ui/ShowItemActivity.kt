@@ -1,5 +1,6 @@
 package org.elbe.relations.mobile.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
@@ -12,8 +13,11 @@ import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_show_item.*
 import org.elbe.relations.mobile.EXTRA_ITEM
 import org.elbe.relations.mobile.R
+import org.elbe.relations.mobile.cloud.CloudSynchronize
+import org.elbe.relations.mobile.cloud.GoogleDriveService
 import org.elbe.relations.mobile.model.Item
 import org.elbe.relations.mobile.model.MinItem
+import org.elbe.relations.mobile.preferences.SettingsActivity
 import org.elbe.relations.mobile.search.SearchUI
 import org.elbe.relations.mobile.util.RetrieveListHelper
 
@@ -22,13 +26,16 @@ import org.elbe.relations.mobile.util.RetrieveListHelper
  * This activity manages both the ItemDetailsFragment and the ItemRelatedFragment.
  */
 class ShowItemActivity : AppCompatActivity(), ItemDetailsFragment.OnFragmentInteractionListener {
-    private var helper: RetrieveListHelper? = null
-    lateinit var pager: ViewPager
+    private var mHelper: RetrieveListHelper? = null
+    lateinit var mPager: ViewPager
+    private val mGoogleDriveService: GoogleDriveService by lazy {
+        GoogleDriveService(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        helper = RetrieveListHelper(this, "showItem")
+        mHelper = RetrieveListHelper(this, "showItem")
 
         setContentView(R.layout.activity_show_item)
         setSupportActionBar(toolbar)
@@ -37,14 +44,14 @@ class ShowItemActivity : AppCompatActivity(), ItemDetailsFragment.OnFragmentInte
         if (savedInstanceState == null) {
             var item = intent.getSerializableExtra(EXTRA_ITEM)
             if (item is MinItem) {
-                helper?.let {db ->
+                mHelper?.let { db ->
                     db.run(Runnable {
                         val full = db.getItem(item)
                         val detailsFragment = ItemDetailsFragment.newInstance(full)
                         supportFragmentManager.beginTransaction().add(R.id.fragmentItemDetails, detailsFragment).commit()
 
-                        pager = findViewById(R.id.itemDetailPager)
-                        pager.adapter = ScreenSlidePagerAdapter(supportFragmentManager, full)
+                        mPager = findViewById(R.id.itemDetailPager)
+                        mPager.adapter = ScreenSlidePagerAdapter(supportFragmentManager, full)
                     })
                 }
             }
@@ -79,14 +86,18 @@ class ShowItemActivity : AppCompatActivity(), ItemDetailsFragment.OnFragmentInte
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when (item?.itemId) {
-            R.id.action_settings -> true
+            R.id.action_settings -> {
+                startActivity(Intent(this, SettingsActivity::class.java))
+                return true
+            }
+            R.id.action_synchronize -> CloudSynchronize.synchronize(this, resources, mGoogleDriveService)
             else -> super.onOptionsItemSelected(item)
         }
     }
 
     override fun onDestroy() {
-        helper?.quit()
-        helper = null
+        mHelper?.quit()
+        mHelper = null
         super.onDestroy()
     }
 

@@ -9,7 +9,7 @@
                 android:bottom="2dp">
                 <shape>
                     <corners android:radius="16dp" />
-                    <solid android:color="#75AF96" />
+                    <solid android:color="@color/switchThumbBgActive" />
                 </shape>
             </item>
         </layer-list>
@@ -23,7 +23,7 @@
                 android:bottom="2dp">
                 <shape>
                     <corners android:radius="16dp" />
-                    <solid android:color="#D4886A" />
+                    <solid android:color="@color/switchThumbActive" />
                 </shape>
             </item>
         </layer-list>
