@@ -12,7 +12,6 @@
         android:id="@+id/item_relate_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
         <fragment
             android:id="@+id/fragmentItemRelated"
             class="org.elbe.relations.mobile.ui.ItemRelatedFragment"

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="org.elbe.relations.mobile.ui.ShowItemActivity">
+
+    <include layout="@layout/content_toolbar" />
+
+    <LinearLayout
+        android:id="@+id/activity_details_root_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_below="@id/relationsTab"
+        android:background="#f8f8f8"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:context="org.elbe.relations.mobile.ui.ShowItemActivity"
+        tools:showIn="@layout/activity_show_item">
+
+        <FrameLayout
+            android:id="@+id/activity_details_show_container"
+            android:layout_weight="1"
+            android:layout_width="0px"
+            android:layout_height="match_parent" />
+
+        <FrameLayout
+            android:id="@+id/activity_details_related_container"
+            android:layout_weight="1"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:background="#FFFFFF"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

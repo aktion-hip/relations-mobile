@@ -8,7 +8,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_toolbar.*
 import org.elbe.relations.mobile.cloud.CloudSynchronize
 import org.elbe.relations.mobile.cloud.GoogleDriveService
 import org.elbe.relations.mobile.data.RelationsDataBase

@@ -7,10 +7,12 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.ViewGroup
 
-import kotlinx.android.synthetic.main.activity_show_item.*
+import kotlinx.android.synthetic.main.content_toolbar.*
 import org.elbe.relations.mobile.EXTRA_ITEM
 import org.elbe.relations.mobile.R
 import org.elbe.relations.mobile.cloud.CloudSynchronize
@@ -20,6 +22,8 @@ import org.elbe.relations.mobile.model.MinItem
 import org.elbe.relations.mobile.preferences.SettingsActivity
 import org.elbe.relations.mobile.search.SearchUI
 import org.elbe.relations.mobile.util.RetrieveListHelper
+
+private const val TAG = "ShowItemActivity"
 
 /**
  * Activity to display a selected term item.
@@ -44,15 +48,30 @@ class ShowItemActivity : AppCompatActivity(), ItemDetailsFragment.OnFragmentInte
         if (savedInstanceState == null) {
             var item = intent.getSerializableExtra(EXTRA_ITEM)
             if (item is MinItem) {
-                mHelper?.let { db ->
-                    db.run(Runnable {
-                        val full = db.getItem(item)
-                        val detailsFragment = ItemDetailsFragment.newInstance(full)
-                        supportFragmentManager.beginTransaction().add(R.id.fragmentItemDetails, detailsFragment).commit()
 
-                        mPager = findViewById(R.id.itemDetailPager)
-                        mPager.adapter = ScreenSlidePagerAdapter(supportFragmentManager, full)
-                    })
+                // check placeholder for related fragment
+                var relatedLayout = findViewById<ViewGroup>(R.id.activity_details_related_container)
+                if (relatedLayout == null) {
+                    // portrait case: we need pager to slide from details to related
+                    mHelper?.let { db ->
+                        db.run(Runnable {
+                            val fullItem = db.getItem(item)
+                            mPager = findViewById(R.id.itemDetailPager)
+                            mPager.adapter = ScreenSlidePagerAdapter(supportFragmentManager, fullItem)
+                        })
+                    }
+                } else {
+                    // landscape case with two views side by side
+                    var detailsLayout = findViewById<ViewGroup>(R.id.activity_details_show_container)
+                    detailsLayout?.let {detailsLayout ->
+                        Log.v(TAG, "onCreate: adding ItemDetailsFragment.")
+                        var detailsFragment = ItemDetailsFragment.newInstance(item)
+                        supportFragmentManager.beginTransaction().replace(detailsLayout.id, detailsFragment).commit()
+                    }
+
+                    Log.v(TAG, "onCreate: adding ItemRelatedFragment.")
+                    var relatedFragment = ItemRelatedFragment.newInstance(item)
+                    supportFragmentManager.beginTransaction().replace(relatedLayout.id, relatedFragment).commit()
                 }
             }
         }
@@ -62,16 +81,16 @@ class ShowItemActivity : AppCompatActivity(), ItemDetailsFragment.OnFragmentInte
      * Method to interact with ItemDetailsFragment.
      */
     override fun onShowFragment(item: Item) {
-        val fragment = supportFragmentManager.findFragmentById(R.id.fragmentItemDetails)
-        if (fragment is ItemDetailsFragment) {
-            fragment.showItem(item, fragment.view!!)
-        } else {
-            val newFragment = ItemDetailsFragment.newInstance(item)
-            val transaction = supportFragmentManager.beginTransaction()
-            transaction.replace(R.id.item_details_fragment_container, newFragment)
-            transaction.addToBackStack(null);
-            transaction.commit()
-        }
+//        val fragment = supportFragmentManager.findFragmentById(R.id.fragmentItemDetails)
+//        if (fragment is ItemDetailsFragment) {
+//            fragment.showItem(item, fragment.view!!)
+//        } else {
+//            val newFragment = ItemDetailsFragment.newInstance(item)
+//            val transaction = supportFragmentManager.beginTransaction()
+//            transaction.replace(R.id.item_details_fragment_container, newFragment)
+//            transaction.addToBackStack(null);
+//            transaction.commit()
+//        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -103,11 +122,15 @@ class ShowItemActivity : AppCompatActivity(), ItemDetailsFragment.OnFragmentInte
 
 //    ---- inner classes
 
+    /**
+     * https://developer.android.com/training/animation/screen-slide
+     */
     class ScreenSlidePagerAdapter constructor(fm: FragmentManager, item : MinItem) : FragmentStatePagerAdapter(fm) {
-        private val item: MinItem = item
+        private val mItem: MinItem = item
 
         override fun getItem(position: Int): Fragment {
-            return if (position == 0) ItemDetailsFragment.newInstance(item) else ItemRelatedFragment.newInstance(item)
+            Log.v(TAG, "ScreenSlidePagerAdapter.getItem: position is $position.")
+            return if (position == 0) ItemDetailsFragment.newInstance(mItem) else ItemRelatedFragment.newInstance(mItem)
         }
 
         override fun getCount(): Int {

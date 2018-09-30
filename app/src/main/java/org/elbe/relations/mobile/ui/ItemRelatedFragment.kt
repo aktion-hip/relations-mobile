@@ -1,17 +1,18 @@
 package org.elbe.relations.mobile.ui
 
-import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.TextView
 import org.elbe.relations.mobile.R
 import org.elbe.relations.mobile.model.Item
 import org.elbe.relations.mobile.model.MinItem
@@ -30,6 +31,7 @@ class ItemRelatedFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         helper = RelationsHelper(context)
+
         if (arguments != null) {
             helper.run(Runnable {
                 var item = arguments?.getSerializable(ARG_PARAM)

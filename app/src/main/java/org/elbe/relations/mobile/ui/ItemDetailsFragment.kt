@@ -1,10 +1,8 @@
 package org.elbe.relations.mobile.ui
 
-import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentTransaction
 import android.text.Html
 import android.text.Html.FROM_HTML_SEPARATOR_LINE_BREAK_PARAGRAPH
 import android.text.Spanned
@@ -32,24 +30,7 @@ class ItemDetailsFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var view = inflater!!.inflate(R.layout.fragment_item_details, container, false)
-        if (item != null) {
-            showItem(item, view)
-        }
         return view
-    }
-
-    fun showItem(item: Serializable?, view: View) {
-        if (item is Item) {
-            view.findViewById<TextView>(R.id.itemDetailTitle).apply {
-                text = item.getTitle()
-            }
-            view.findViewById<TextView>(R.id.itemDetailDate).apply {
-                text = item.getCreated(resources)
-            }
-            view.findViewById<TextView>(R.id.itemDetailText).apply {
-                text = fromHtml(item)
-            }
-        }
     }
 
     @SuppressWarnings("deprecation")
@@ -60,20 +41,37 @@ class ItemDetailsFragment : Fragment() {
         return Html.fromHtml(item.getDetailText(resources))
     }
 
+    fun showItem(item: Serializable?, view: View?) {
+        if (item is Item) {
+            view?.findViewById<TextView>(R.id.itemDetailTitle)?.apply {
+                text = item.getTitle()
+            }
+            view?.findViewById<TextView>(R.id.itemDetailDate)?.apply {
+                text = item.getCreated(resources)
+            }
+            view?.findViewById<TextView>(R.id.itemDetailText)?.apply {
+                text = fromHtml(item)
+            }
+        }
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val relatedFrame = activity?.findViewById<FrameLayout>(R.id.item_related)
-        isDualPane = relatedFrame != null && relatedFrame.visibility == View.VISIBLE
+        item?.let { item ->
+            showItem(item, view)
+        }
+
+        val relatedFragment = activity?.findViewById<FrameLayout>(R.id.activity_details_related_container)
+        isDualPane = relatedFragment?.visibility == View.VISIBLE
 
         if (savedInstanceState != null) {
         }
-        if (isDualPane) {
+        if (isDualPane && item != null) {
             var related = fragmentManager?.findFragmentById(R.id.fragmentItemRelated)
             if (related == null) {
                 related = ItemRelatedFragment.newInstance(item)
-                fragmentManager?.beginTransaction()?.replace(R.id.item_relate_fragment_container, related)?.
-                        setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)?.commit()
+                fragmentManager?.beginTransaction()?.replace(relatedFragment!!.id, related)?.commit()
             }
         }
     }

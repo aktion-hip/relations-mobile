@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import org.elbe.relations.mobile.R
@@ -26,6 +27,17 @@ class ShowRelatedActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        Log.v("ShowRelatedActivity", ">>> onCreate: 1")
+        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // If the screen is now in landscape mode, we can show the
+            // dialog in-line with the list so we don't need this activity.
+            Log.v("ShowRelatedActivity", ">>> onCreate: landscape -> finishing")
+            finish()
+            return
+        }
+
+        Log.v("ShowRelatedActivity", ">>> onCreate: portrait -> 2")
         setContentView(R.layout.activity_show_related)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
