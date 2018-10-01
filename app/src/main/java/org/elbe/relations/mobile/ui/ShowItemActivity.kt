@@ -1,6 +1,7 @@
 package org.elbe.relations.mobile.ui
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
@@ -48,19 +49,7 @@ class ShowItemActivity : AppCompatActivity(), ItemDetailsFragment.OnFragmentInte
         if (savedInstanceState == null) {
             var item = intent.getSerializableExtra(EXTRA_ITEM)
             if (item is MinItem) {
-
-                // check placeholder for related fragment
-                var relatedLayout = findViewById<ViewGroup>(R.id.activity_details_related_container)
-                if (relatedLayout == null) {
-                    // portrait case: we need pager to slide from details to related
-                    mHelper?.let { db ->
-                        db.run(Runnable {
-                            val fullItem = db.getItem(item)
-                            mPager = findViewById(R.id.itemDetailPager)
-                            mPager.adapter = ScreenSlidePagerAdapter(supportFragmentManager, fullItem)
-                        })
-                    }
-                } else {
+                if (isLandscape()) {
                     // landscape case with two views side by side
                     var detailsLayout = findViewById<ViewGroup>(R.id.activity_details_show_container)
                     detailsLayout?.let {detailsLayout ->
@@ -69,12 +58,28 @@ class ShowItemActivity : AppCompatActivity(), ItemDetailsFragment.OnFragmentInte
                         supportFragmentManager.beginTransaction().replace(detailsLayout.id, detailsFragment).commit()
                     }
 
-                    Log.v(TAG, "onCreate: adding ItemRelatedFragment.")
-                    var relatedFragment = ItemRelatedFragment.newInstance(item)
-                    supportFragmentManager.beginTransaction().replace(relatedLayout.id, relatedFragment).commit()
+                    var relatedLayout = findViewById<ViewGroup>(R.id.activity_details_related_container)
+                    relatedLayout?.let { relatedLayout ->
+                        Log.v(TAG, "onCreate: adding ItemRelatedFragment.")
+                        var relatedFragment = ItemRelatedFragment.newInstance(item)
+                        supportFragmentManager.beginTransaction().replace(relatedLayout.id, relatedFragment).commit()
+                    }
+                } else {
+                    // portrait case: we need pager to slide from details to related
+                    mHelper?.let { db ->
+                        db.run(Runnable {
+                            val fullItem = db.getItem(item)
+                            mPager = findViewById(R.id.itemDetailPager)
+                            mPager.adapter = ScreenSlidePagerAdapter(supportFragmentManager, fullItem)
+                        })
+                    }
                 }
             }
         }
+    }
+
+    private fun isLandscape(): Boolean {
+        return resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     }
 
     /**

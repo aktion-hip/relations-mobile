@@ -1,5 +1,6 @@
 package org.elbe.relations.mobile.ui
 
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -13,6 +14,10 @@ import org.elbe.relations.mobile.R
 import org.elbe.relations.mobile.model.Item
 import org.elbe.relations.mobile.model.MinItem
 import java.io.Serializable
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+
+val DATE_FORMAT : DateFormat = SimpleDateFormat("dd.MM.yy")
 
 /**
  * Fragment class to display the item's details.
@@ -41,13 +46,13 @@ class ItemDetailsFragment : Fragment() {
         return Html.fromHtml(item.getDetailText(resources))
     }
 
-    fun showItem(item: Serializable?, view: View?) {
+    private fun showItem(item: Serializable?, view: View?) {
         if (item is Item) {
             view?.findViewById<TextView>(R.id.itemDetailTitle)?.apply {
                 text = item.getTitle()
             }
             view?.findViewById<TextView>(R.id.itemDetailDate)?.apply {
-                text = item.getCreated(resources)
+                text = if (isLandscape()) shortDate(item) else item.getCreated(resources)
             }
             view?.findViewById<TextView>(R.id.itemDetailText)?.apply {
                 text = fromHtml(item)
@@ -55,23 +60,28 @@ class ItemDetailsFragment : Fragment() {
         }
     }
 
+    private fun shortDate(item: Item): String {
+        return "${resources.getString(R.string.item_created)}: ${DATE_FORMAT.format(item.getCreationDate())};  " +
+                "${resources.getString(R.string.item_modified)}: ${DATE_FORMAT.format(item.getMutationDate())}"
+    }
+
+    private fun isLandscape(): Boolean {
+        return resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
         item?.let { item ->
             showItem(item, view)
-        }
 
-        val relatedFragment = activity?.findViewById<FrameLayout>(R.id.activity_details_related_container)
-        isDualPane = relatedFragment?.visibility == View.VISIBLE
-
-        if (savedInstanceState != null) {
-        }
-        if (isDualPane && item != null) {
-            var related = fragmentManager?.findFragmentById(R.id.fragmentItemRelated)
-            if (related == null) {
-                related = ItemRelatedFragment.newInstance(item)
-                fragmentManager?.beginTransaction()?.replace(relatedFragment!!.id, related)?.commit()
+            if (isLandscape()) {
+                var related = fragmentManager?.findFragmentById(R.id.fragmentItemRelated)
+                if (related == null) {
+                    related = ItemRelatedFragment.newInstance(item)
+                    val relatedFragment = activity?.findViewById<FrameLayout>(R.id.activity_details_related_container)
+                    fragmentManager?.beginTransaction()?.replace(relatedFragment!!.id, related)?.commit()
+                }
             }
         }
     }
