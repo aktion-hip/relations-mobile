@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment
 import android.text.Html
 import android.text.Html.FROM_HTML_SEPARATOR_LINE_BREAK_PARAGRAPH
 import android.text.Spanned
+import android.util.Log
 import android.view.*
 import android.widget.FrameLayout
 import android.widget.TextView
@@ -17,25 +18,26 @@ import java.io.Serializable
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 
-val DATE_FORMAT : DateFormat = SimpleDateFormat("dd.MM.yy")
+private val DATE_FORMAT : DateFormat = SimpleDateFormat("dd.MM.yy")
+private const val ARG_PARAM = "item"
+private const val TAG = "ItemDetailsFragment"
 
 /**
  * Fragment class to display the item's details.
  */
 class ItemDetailsFragment : Fragment() {
     private var item: Serializable? = null
-    private var isDualPane: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             item = it.getSerializable(ARG_PARAM)
         }
+        Log.v(TAG, "Fragment created.")
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        var view = inflater!!.inflate(R.layout.fragment_item_details, container, false)
-        return view
+        return inflater!!.inflate(R.layout.fragment_item_details, container, false)
     }
 
     @SuppressWarnings("deprecation")
@@ -80,26 +82,30 @@ class ItemDetailsFragment : Fragment() {
                 if (related == null) {
                     related = ItemRelatedFragment.newInstance(item)
                     val relatedFragment = activity?.findViewById<FrameLayout>(R.id.activity_details_related_container)
-                    fragmentManager?.beginTransaction()?.replace(relatedFragment!!.id, related)?.commit()
+                    relatedFragment?.let {fragment ->
+                        fragmentManager?.beginTransaction()?.replace(fragment.id, related)?.commit()
+                    }
                 }
             }
         }
     }
 
-// --- fragment interaction
-
-    interface OnFragmentInteractionListener {
-        fun onShowFragment(item: Item)
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        item?.let { item ->
+            outState.putSerializable(ARG_PARAM, item)
+            if (item is MinItem) {
+                Log.v(TAG, "Fragment saved with item '${item.getTitle()}' (id: ${item.getId()}).")
+            }
+        }
     }
 
     companion object {
-        private const val ARG_PARAM = "item"
 
         /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
+         * Factory method to create a new instance to display the specified item.
          *
-         * @param param1 Serializable
+         * @param item MinItem?
          * @return A new instance of fragment ItemDetailsFragment.
          */
         fun newInstance(item: MinItem?): ItemDetailsFragment {

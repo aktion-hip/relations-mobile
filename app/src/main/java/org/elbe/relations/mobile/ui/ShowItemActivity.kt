@@ -3,6 +3,7 @@ package org.elbe.relations.mobile.ui
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
@@ -18,7 +19,6 @@ import org.elbe.relations.mobile.EXTRA_ITEM
 import org.elbe.relations.mobile.R
 import org.elbe.relations.mobile.cloud.CloudSynchronize
 import org.elbe.relations.mobile.cloud.GoogleDriveService
-import org.elbe.relations.mobile.model.Item
 import org.elbe.relations.mobile.model.MinItem
 import org.elbe.relations.mobile.preferences.SettingsActivity
 import org.elbe.relations.mobile.search.SearchUI
@@ -30,9 +30,10 @@ private const val TAG = "ShowItemActivity"
  * Activity to display a selected term item.
  * This activity manages both the ItemDetailsFragment and the ItemRelatedFragment.
  */
-class ShowItemActivity : AppCompatActivity(), ItemDetailsFragment.OnFragmentInteractionListener {
+class ShowItemActivity : AppCompatActivity() {
     private var mHelper: RetrieveListHelper? = null
     lateinit var mPager: ViewPager
+    lateinit var mItem: MinItem
     private val mGoogleDriveService: GoogleDriveService by lazy {
         GoogleDriveService(this)
     }
@@ -49,53 +50,61 @@ class ShowItemActivity : AppCompatActivity(), ItemDetailsFragment.OnFragmentInte
         if (savedInstanceState == null) {
             var item = intent.getSerializableExtra(EXTRA_ITEM)
             if (item is MinItem) {
+                mItem = item
+                Log.v(TAG, "Creating activity with item '${item.getTitle()}' (id: ${item.getId()}).")
                 if (isLandscape()) {
-                    // landscape case with two views side by side
-                    var detailsLayout = findViewById<ViewGroup>(R.id.activity_details_show_container)
-                    detailsLayout?.let {detailsLayout ->
-                        Log.v(TAG, "onCreate: adding ItemDetailsFragment.")
-                        var detailsFragment = ItemDetailsFragment.newInstance(item)
-                        supportFragmentManager.beginTransaction().replace(detailsLayout.id, detailsFragment).commit()
-                    }
-
-                    var relatedLayout = findViewById<ViewGroup>(R.id.activity_details_related_container)
-                    relatedLayout?.let { relatedLayout ->
-                        Log.v(TAG, "onCreate: adding ItemRelatedFragment.")
-                        var relatedFragment = ItemRelatedFragment.newInstance(item)
-                        supportFragmentManager.beginTransaction().replace(relatedLayout.id, relatedFragment).commit()
-                    }
+                    initDetailsView(mItem)
+                    initRelatedView(mItem)
                 } else {
-                    // portrait case: we need pager to slide from details to related
-                    mHelper?.let { db ->
-                        db.run(Runnable {
-                            val fullItem = db.getItem(item)
-                            mPager = findViewById(R.id.itemDetailPager)
-                            mPager.adapter = ScreenSlidePagerAdapter(supportFragmentManager, fullItem)
-                        })
-                    }
+                    createPager(mItem)
+                }
+            }
+        } else {
+            var item = savedInstanceState?.getSerializable(EXTRA_ITEM)
+            if (item is MinItem) {
+                mItem = item
+                Log.v(TAG, "Restoring activity with item '${item.getTitle()}' (id: ${item.getId()}).")
+                if (isLandscape()) {
+                    initDetailsView(mItem)
+                    // related fragement is reused by default
+                } else {
+                    createPager(mItem)
                 }
             }
         }
     }
 
-    private fun isLandscape(): Boolean {
-        return resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    private fun initDetailsView(item: MinItem) {
+        var detailsLayout = findViewById<ViewGroup>(R.id.activity_details_show_container)
+        detailsLayout?.let {detailsLayout ->
+            Log.v(TAG, "Adding ItemDetailsFragment.")
+            var detailsFragment = ItemDetailsFragment.newInstance(item)
+            supportFragmentManager.beginTransaction().replace(detailsLayout.id, detailsFragment).commit()
+        }
     }
 
-    /**
-     * Method to interact with ItemDetailsFragment.
-     */
-    override fun onShowFragment(item: Item) {
-//        val fragment = supportFragmentManager.findFragmentById(R.id.fragmentItemDetails)
-//        if (fragment is ItemDetailsFragment) {
-//            fragment.showItem(item, fragment.view!!)
-//        } else {
-//            val newFragment = ItemDetailsFragment.newInstance(item)
-//            val transaction = supportFragmentManager.beginTransaction()
-//            transaction.replace(R.id.item_details_fragment_container, newFragment)
-//            transaction.addToBackStack(null);
-//            transaction.commit()
-//        }
+    private fun initRelatedView(item: MinItem) {
+        var relatedLayout = findViewById<ViewGroup>(R.id.activity_details_related_container)
+        relatedLayout?.let { relatedLayout ->
+            Log.v(TAG, "Adding ItemRelatedFragment.")
+            var relatedFragment = ItemRelatedFragment.newInstance(item)
+            supportFragmentManager.beginTransaction().replace(relatedLayout.id, relatedFragment).commit()
+        }
+    }
+
+    private fun createPager(item: MinItem) {
+        Log.v(TAG, "Creating activity with fragments in pager.")
+        mHelper?.let { db ->
+            db.run(Runnable {
+                val fullItem = db.getItem(item)
+                mPager = findViewById(R.id.itemDetailPager)
+                mPager.adapter = ScreenSlidePagerAdapter(supportFragmentManager, fullItem)
+            })
+        }
+    }
+
+    private fun isLandscape(): Boolean {
+        return resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -116,6 +125,14 @@ class ShowItemActivity : AppCompatActivity(), ItemDetailsFragment.OnFragmentInte
             }
             R.id.action_synchronize -> CloudSynchronize.synchronize(this, resources, mGoogleDriveService)
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        mItem?.let {item ->
+            Log.v(TAG, "onSaveInstanceState: saving item '${item.getTitle()}' (id: ${item.getId()}).")
+            outState?.putSerializable(EXTRA_ITEM, item)
         }
     }
 
