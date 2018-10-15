@@ -9,6 +9,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.Scope
 import com.google.android.gms.drive.Drive
 import com.google.android.gms.drive.DriveClient
@@ -30,9 +31,7 @@ class GoogleDriveService(private val context: AppCompatActivity) {
         private const val DRIVE_PATH = "relations"
         private const val MIME_TYPE_FOLDER = "application/vnd.google-apps.folder"
         private const val MIME_TYPE_FILE = "application/zip"
-        val documentMimeTypes = arrayListOf(MIME_TYPE_FOLDER, MIME_TYPE_FILE)
 
-        const val REQUEST_CODE_OPEN_ITEM = 100
         const val REQUEST_CODE_SIGN_IN = 101
         const val TAG = "GoogleDriveService"
     }
@@ -73,7 +72,6 @@ class GoogleDriveService(private val context: AppCompatActivity) {
     private fun initializeDriveClient(signInAccount: GoogleSignInAccount) {
         driveClient = Drive.getDriveClient(context.applicationContext, signInAccount)
         driveResourceClient = Drive.getDriveResourceClient(context.applicationContext, signInAccount)
-        //serviceListener?.loggedIn()
     }
 
     /**
@@ -83,28 +81,27 @@ class GoogleDriveService(private val context: AppCompatActivity) {
         context.startActivityForResult(googleSignInClient.signInIntent, REQUEST_CODE_SIGN_IN)
     }
 
-    fun setActivityResult(requestCode: Int, data: Intent?) {
-        if (requestCode == REQUEST_CODE_SIGN_IN) {
-            if (data != null) {
-                handleSignIn(data)
-            }
-        }
-    }
-
-    fun logout() {
-        googleSignInClient.signOut()
-    }
-
     /**
-     * Handle the activity result when signing in
+     * Handle the activity result when signing in.
      */
-    private fun handleSignIn(data: Intent) {
-        val getAccountTask = GoogleSignIn.getSignedInAccountFromIntent(data)
-        if (getAccountTask.isSuccessful) {
-            initializeDriveClient(getAccountTask.result)
-        } else {
-            Log.d(TAG, getAccountTask.exception?.message)
+    fun setActivityResult(data: Intent?): Boolean {
+        Log.v(TAG, "setActivityResult")
+        data?.let {data ->
+            val accountTask = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                initializeDriveClient(accountTask.getResult(ApiException::class.java))
+                return true
+            } catch (exc: ApiException) {
+                Log.w(TAG, "signInResult: failed with code=${exc.statusCode}!")
+            }
+//            if (accountTask.isSuccessful) {
+//                Log.v(TAG, "Successfully signed into Google Drive.")
+//                initializeDriveClient(accountTask.result)
+//            } else {
+//                Log.d(TAG, "Google Drive sign in returned with exception ${accountTask.exception?.message}!")
+//            }
         }
+        return false
     }
 
     // ---
@@ -112,6 +109,7 @@ class GoogleDriveService(private val context: AppCompatActivity) {
     // https://developers.google.com/drive/android/folders
     // https://developers.google.com/drive/android/files
     fun retrieveFile(process: (File) -> Unit) {
+        Log.v(TAG, "retrieveFile: start download of '$DRIVE_NAME'.")
         driveResourceClient?.let {drive ->
             val rootFolderTask = drive.rootFolder
             rootFolderTask.continueWithTask {task ->

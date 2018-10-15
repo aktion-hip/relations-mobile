@@ -15,7 +15,7 @@ interface GoogleDrive {
     /**
      * Passes the result of the startActivityForResult() for the Google Drive sign in.
      */
-    fun setActivityResult(requestCode: Int, data: Intent?)
+    fun setActivityResult(data: Intent?): Boolean
 
     fun prepare(): Boolean
 

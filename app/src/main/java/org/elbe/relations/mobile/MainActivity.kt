@@ -1,10 +1,12 @@
 package org.elbe.relations.mobile
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 
@@ -20,6 +22,7 @@ import org.elbe.relations.mobile.util.RetrieveListHelper
 const val EXTRA_ITEM = "org.elbe.relations.mobile.ITEM"
 const val EXTRA_QUERY = "org.elbe.relations.mobile.QUERY"
 const val EXTRA_QUERY_FLAG = "org.elbe.relations.mobile.QUERY.FLAG"
+private const val TAG = "MainActivity"
 
 /**
  * Initial view of the Relations Mobile app.
@@ -77,7 +80,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        CloudSynchronize.synchronizeFromGoogleDrive(this, resources, mGoogleDriveService, requestCode, data)
+        Log.v(TAG, "onActivityResult: requestCode=$requestCode, resultCode=$resultCode")
+        if (requestCode == GoogleDriveService.REQUEST_CODE_SIGN_IN) {
+            CloudSynchronize.synchronizeFromGoogleDrive(this, resources, mGoogleDriveService, data)
+        }
     }
 
     override fun onDestroy() {

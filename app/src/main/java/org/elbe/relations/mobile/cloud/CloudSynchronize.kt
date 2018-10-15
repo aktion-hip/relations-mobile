@@ -1,11 +1,11 @@
 package org.elbe.relations.mobile.cloud
 
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.Resources
 import android.preference.PreferenceManager
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.View
 import android.widget.Switch
 import org.elbe.relations.mobile.R
@@ -13,12 +13,12 @@ import org.elbe.relations.mobile.preferences.CloudProviders
 import org.elbe.relations.mobile.search.IndexWriterFactory
 
 const val SYNC_SWITCH_VALUE_INCR = "syncSwitchValueIncremental"
+private const val TAG = "CloudSynchronize"
 
 /**
  * This class is responsible for downloading the XML data from the cloud and replace the content in the DB.
  */
 class CloudSynchronize {
-
 
     companion object {
         /**
@@ -31,8 +31,8 @@ class CloudSynchronize {
             setSwitch(view)
             dialog.setView(view)
                     .setTitle(r.getString(R.string.menu_title_sync_db))
-                    .setPositiveButton("Ok") { dlg, id -> doSync(dlg, id, context, r, googleDriveService, view)}
-                    .setNegativeButton("Cancel") {dlg, id -> }
+                    .setPositiveButton("Ok") { _, _ -> doSync(context, r, googleDriveService, view)}
+                    .setNegativeButton("Cancel") { _, _ -> }
             dialog.show()
 
             return false
@@ -45,8 +45,9 @@ class CloudSynchronize {
             switch.isChecked = isIncremental
         }
 
-        private fun doSync(dialog: DialogInterface, id: Int, context: AppCompatActivity, r: Resources, googleDriveService: GoogleDriveService, view: View) {
+        private fun doSync(context: AppCompatActivity, r: Resources, googleDriveService: GoogleDriveService, view: View) {
             val providerConfig = getProviderConfig(context, r)
+            Log.v(TAG, "doSync: start data synchronization using ${providerConfig.id}.")
             val providerClass = getProviderClass(providerConfig.id, r)
             val provider = createInstance(providerClass, isIncremental(view), context, r, IndexWriterFactory(context, r))
             if (provider is AbstractCloudProvider<*,*,*>) {
@@ -73,16 +74,17 @@ class CloudSynchronize {
         /**
          * Special synchronize() called from the MainActivity's onActivityResult() method.
          */
-        fun synchronizeFromGoogleDrive(context: AppCompatActivity, r: Resources, googleDriveService: GoogleDriveService, requestCode: Int, data: Intent?) {
+        fun synchronizeFromGoogleDrive(context: AppCompatActivity, r: Resources, googleDriveService: GoogleDriveService, data: Intent?) {
+            Log.v(TAG, "returning from Google Drive sign in [GoogleDriveService.startActivityForResult()].")
             val providerConfig = getProviderConfig(context, r)
             val providerClass = getProviderClass(providerConfig.id, r)
             val provider = createInstance(providerClass, checkIncremental(context), context, r, IndexWriterFactory(context, r))
-            if (provider is AbstractCloudProvider<*,*,*>) {
-                if (provider is GoogleDrive) {
-                    provider.setGoogleDriveService(googleDriveService).setActivityResult(requestCode, data)
+            if (provider is GoogleDrive) {
+                Log.v(TAG, "about to execute with GoogleDrive.")
+                if (provider.setGoogleDriveService(googleDriveService).setActivityResult(data)) {
+                    // execute() starts the AsyncTask, no prepare needed here
+                    provider.execute()
                 }
-                // execute() starts the AsyncTask
-                provider.execute()
             }
         }
 

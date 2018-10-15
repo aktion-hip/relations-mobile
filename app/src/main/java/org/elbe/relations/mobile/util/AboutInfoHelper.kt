@@ -16,13 +16,16 @@ class AboutInfoHelper {
     private var mRelationsDB: RelationsDataBase
     private var dbThread: HandlerThread = HandlerThread("aboutInfoHelper")
     private var mCounts = Counts(0,0,0,0)
-    private var numberOfIndexed = 0
+    private var mNumberOfIndexed = 0
+    private var mVersion = ""
 
     constructor(context: Context?) {
         dbThread.start()
         mRelationsDB = RelationsDataBase.getInstance(context)!!
         context?.let {context ->
-            numberOfIndexed = IndexReaderFactory.getNumberOfIndexed(context)
+            mNumberOfIndexed = IndexReaderFactory.getNumberOfIndexed(context)
+            val pkgInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+            mVersion = pkgInfo.versionName
         }
     }
 
@@ -56,7 +59,11 @@ class AboutInfoHelper {
     }
 
     fun getNumberOfIndexed(): String {
-        return mNumberFormat.format(numberOfIndexed)
+        return mNumberFormat.format(mNumberOfIndexed)
+    }
+
+    fun getVersion(): String {
+        return mVersion
     }
 
     /**

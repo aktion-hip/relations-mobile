@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.res.Resources
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import org.elbe.relations.mobile.MainActivity
 import org.elbe.relations.mobile.R
 import org.elbe.relations.mobile.dbimport.AbstractDBImport
@@ -15,6 +16,8 @@ import org.elbe.relations.mobile.util.ProgressDialog
 import java.io.File
 import java.lang.Void
 
+private const val TAG = "GoogleDriveProvider"
+
 /**
  * Download files (all or increment) from Google Drive.
  *
@@ -23,7 +26,7 @@ import java.lang.Void
  * @see https://www.raywenderlich.com/192706/integrating-google-drive-in-android
  */
 class GoogleDriveProvider(incremental: Boolean, context: AppCompatActivity, r: Resources, factory: IndexWriterFactory): GoogleDrive {
-    private var googleDriveService: GoogleDriveService? = null
+    private var mGoogleDriveService: GoogleDriveService? = null
     private var mDialogProgress: ProgressDialog? = null
     private val mIncremental = incremental
     private val mContext = context
@@ -31,10 +34,12 @@ class GoogleDriveProvider(incremental: Boolean, context: AppCompatActivity, r: R
     private val mFactory = factory
 
     override fun prepare(): Boolean {
-        googleDriveService?.let {driveService ->
+        mGoogleDriveService?.let { driveService ->
             if (driveService.checkLoginStatus()) {
+                Log.v(TAG, "prepare: user is logged in Google Drive.")
                 return true
             } else {
+                Log.v(TAG, "prepare: user has to log into Google Drive -> about to sign in!")
                 driveService.startActivityForResult()
             }
         }
@@ -44,6 +49,7 @@ class GoogleDriveProvider(incremental: Boolean, context: AppCompatActivity, r: R
     private fun preExecute() {
         mDialogProgress = ProgressDialog.newInstance(mResources.getString(R.string.abstract_cloud_provider_dialog_title1))
         mDialogProgress?.let {
+            Log.v(TAG, "preExecute: about to show download dialog.")
             it.isCancelable = false
             it.show(mContext.supportFragmentManager, "fragment_download")
         }
@@ -52,31 +58,27 @@ class GoogleDriveProvider(incremental: Boolean, context: AppCompatActivity, r: R
     override fun execute() {
         preExecute()
         if (mIncremental) {
-            // !hasIncremental
-            if (false) {
-                AbstractCloudProvider.switchIncrementalVal(mContext)
-                mDialogProgress?.finish(mResources.getString(R.string.abstract_cloud_provider_no_incremental))
-                return
-            }
             return incrementalSync()
         }
         return fullSync()
     }
 
     override fun setGoogleDriveService(driveService: GoogleDriveService): GoogleDrive {
-        googleDriveService = driveService
+        mGoogleDriveService = driveService
         return this
     }
 
-    override fun setActivityResult(requestCode: Int, data: Intent?) {
-        googleDriveService?.let {driveService ->
-            driveService.setActivityResult(requestCode, data)
+    override fun setActivityResult(data: Intent?): Boolean {
+        mGoogleDriveService?.let { driveService ->
+            return driveService.setActivityResult(data)
         }
+        return false
     }
 
     private fun incrementalSync() {
+        Log.v(TAG, "Starting incremental sync.")
         mFactory.setOpenMode(false)
-        googleDriveService?.let {driveService ->
+        mGoogleDriveService?.let { driveService ->
             driveService.retrieveIncrements(mDialogProgress, mResources) {downloaded ->
                 val importer = AsyncImport<Void, Void, Void>(downloaded, mDialogProgress, mContext, DBImportIncremental(mContext, mFactory), mResources)
                 importer.execute()
@@ -85,8 +87,9 @@ class GoogleDriveProvider(incremental: Boolean, context: AppCompatActivity, r: R
     }
 
     private fun fullSync() {
+        Log.v(TAG, "Starting full sync.")
         mFactory.setOpenMode(true)
-        googleDriveService?.let {driveService ->
+        mGoogleDriveService?.let { driveService ->
             driveService.retrieveFile {downloaded ->
                 val importer = AsyncImport<Void, Void, Void>(downloaded, mDialogProgress, mContext, DBImportFull(mContext, mFactory), mResources)
                 importer.execute()

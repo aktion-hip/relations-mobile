@@ -26,7 +26,9 @@ class AppInfoFragment(): PreferenceDialogFragmentCompat() {
 
         mHelper.run(Runnable {
             mHelper.initialize()
-            mUIHandler.post({
+            mUIHandler.post() {
+                val version = view?.findViewById<TextView>(R.id.relationsVersionVal)
+                version?.text = mHelper.getVersion()
                 val total = view?.findViewById<TextView>(R.id.countDbTotalVal)
                 total?.text = mHelper.getCountTotal()
                 val terms = view?.findViewById<TextView>(R.id.countDbTermsVal)
@@ -39,7 +41,7 @@ class AppInfoFragment(): PreferenceDialogFragmentCompat() {
                 relations?.text = mHelper.getCountRelations()
                 val indexed = view?.findViewById<TextView>(R.id.countSearchIndexVal)
                 indexed?.text = mHelper.getNumberOfIndexed()
-            })
+            }
         })
 
     }
