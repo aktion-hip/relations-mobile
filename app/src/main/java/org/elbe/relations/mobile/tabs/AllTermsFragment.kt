@@ -15,6 +15,7 @@ import android.widget.TextView
 import org.elbe.relations.mobile.R
 import org.elbe.relations.mobile.model.Type
 import org.elbe.relations.mobile.ui.ItemAdapter
+import org.elbe.relations.mobile.ui.RecyclerTouchListener
 import org.elbe.relations.mobile.util.ItemSwipeHelper
 import org.elbe.relations.mobile.util.RetrieveListHelper
 
@@ -44,6 +45,10 @@ class AllTermsFragment : Fragment() {
                     mAdapter = ItemAdapter(activity, terms)
                     recyclerView.adapter = mAdapter
                     ItemTouchHelper(ItemSwipeHelper(recyclerView, activity)).attachToRecyclerView(recyclerView)
+
+                    if (context != null && terms != null) {
+                        RecyclerTouchListener.addOnItemTouchListener(requireContext(), recyclerView, terms)
+                    }
                 }
             }
         })

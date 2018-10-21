@@ -42,6 +42,8 @@ class ItemRelatedFragment : Fragment() {
                         var itemAdapter = ItemAdapter(activity, related)
                         adapter = itemAdapter
                         ItemTouchHelper(ItemSwipeHelper(this, activity)).attachToRecyclerView(this)
+
+                        RecyclerTouchListener.addOnItemTouchListener(requireContext(), this, related)
                     }
                 }
             })

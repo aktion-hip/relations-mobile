@@ -13,6 +13,7 @@ import org.elbe.relations.mobile.ui.ItemAdapter
 import org.elbe.relations.mobile.util.ItemSwipeHelper
 import kotlinx.android.synthetic.main.fragment_all_search.*
 import org.elbe.relations.mobile.search.SearchCache
+import org.elbe.relations.mobile.ui.RecyclerTouchListener
 
 /**
  * Fragment to show the search results.
@@ -44,6 +45,10 @@ class AllSearchFragment : Fragment() {
 
                 val itemTouchHelper = ItemTouchHelper(ItemSwipeHelper(list, activity))
                 itemTouchHelper?.attachToRecyclerView(list)
+
+                SearchCache.getResult()?.let {items ->
+                    RecyclerTouchListener.addOnItemTouchListener(requireContext(), list, items)
+                }
             }
         }
     }
