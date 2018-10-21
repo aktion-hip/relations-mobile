@@ -54,4 +54,6 @@
     <string name="sync_switch_off">voll</string>
     <string name="sync_switch_on">inkrementell</string>
     <string name="sync_text">synchronisieren</string>
+    <string name="err_msg_google_drive_download">Das Relations-File konnte auf Google Drive nicht gefunden werden!</string>
+    <string name="err_msg_google_drive_process">Das File von Google Drive konnte nicht ausgewertet werden!</string>
 </resources>

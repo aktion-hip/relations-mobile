@@ -54,4 +54,8 @@
     <string name="sync_text">synchronize</string>
     <string name="sync_switch_off">full</string>
     <string name="sync_switch_on">incremental</string>
+    <!-- GoogleDriveService: folder or file not found -->
+    <string name="err_msg_google_drive_download">Could not find file to download from Google Drive!</string>
+    <!-- GoogleDriveService: problem with content of downloaded file -->
+    <string name="err_msg_google_drive_process">Could not process downloaded file from Google Drive!</string>
 </resources>

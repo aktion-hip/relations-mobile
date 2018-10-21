@@ -90,7 +90,7 @@ class GoogleDriveProvider(incremental: Boolean, context: AppCompatActivity, r: R
         Log.v(TAG, "Starting full sync.")
         mFactory.setOpenMode(true)
         mGoogleDriveService?.let { driveService ->
-            driveService.retrieveFile {downloaded ->
+            driveService.retrieveFile(mDialogProgress, mResources) {downloaded ->
                 val importer = AsyncImport<Void, Void, Void>(downloaded, mDialogProgress, mContext, DBImportFull(mContext, mFactory), mResources)
                 importer.execute()
             }
