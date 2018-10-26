@@ -58,8 +58,4 @@ class ItemSwipeHelper(recyclerView: RecyclerView, context: Activity?): ItemTouch
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
     }
 
-    override fun clearView(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?) {
-        super.clearView(recyclerView, viewHolder)
-    }
-
 }

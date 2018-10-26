@@ -6,13 +6,10 @@ import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.LinearLayout
-import android.widget.TextView
 import org.elbe.relations.mobile.R
 import org.elbe.relations.mobile.model.Item
 import org.elbe.relations.mobile.model.MinItem
@@ -42,8 +39,6 @@ class ItemRelatedFragment : Fragment() {
                         var itemAdapter = ItemAdapter(activity, related)
                         adapter = itemAdapter
                         ItemTouchHelper(ItemSwipeHelper(this, activity)).attachToRecyclerView(this)
-
-                        RecyclerTouchListener.addOnItemTouchListener(requireContext(), this, related)
                     }
                 }
             })

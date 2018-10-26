@@ -58,4 +58,10 @@
     <string name="err_msg_google_drive_download">Could not find file to download from Google Drive!</string>
     <!-- GoogleDriveService: problem with content of downloaded file -->
     <string name="err_msg_google_drive_process">Could not process downloaded file from Google Drive!</string>
+    <!-- Preferences: Category Settings -->
+    <string name="preference_settings">Settings</string>
+    <!-- Preferences: Category Settings: long press title -->
+    <string name="preference_settings_long_press_title">Enable long press</string>
+    <!-- Preferences: Category Settings: long press description -->
+    <string name="preference_settings_long_press_desc">Enable long press to display the item\'s details</string>
 </resources>

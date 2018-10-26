@@ -28,6 +28,19 @@
     </android.support.v7.preference.PreferenceCategory>
 
     <android.support.v7.preference.PreferenceCategory
+        android:key="preference_settings_category"
+        android:title="@string/preference_settings"
+        android:persistent="false" >
+
+        <CheckBoxPreference
+            android:key="preference_settings_long_press"
+            android:title="@string/preference_settings_long_press_title"
+            android:summary="@string/preference_settings_long_press_desc"
+            android:defaultValue="true" />
+
+    </android.support.v7.preference.PreferenceCategory>
+
+    <android.support.v7.preference.PreferenceCategory
         android:key="preference_about"
         android:title="@string/preference_about_title"
         android:persistent="false" >

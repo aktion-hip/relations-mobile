@@ -56,4 +56,7 @@
     <string name="sync_text">synchronisieren</string>
     <string name="err_msg_google_drive_download">Das Relations-File konnte auf Google Drive nicht gefunden werden!</string>
     <string name="err_msg_google_drive_process">Das File von Google Drive konnte nicht ausgewertet werden!</string>
+    <string name="preference_settings">Einstellungen</string>
+    <string name="preference_settings_long_press_title">Langer Tastendruck</string>
+    <string name="preference_settings_long_press_desc">Langer Tastendruck für die Anzeige der Item-Details.</string>
 </resources>
