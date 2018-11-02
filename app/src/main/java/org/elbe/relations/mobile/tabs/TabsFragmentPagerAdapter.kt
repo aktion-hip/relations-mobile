@@ -11,31 +11,31 @@ import android.text.SpannableString
 import android.text.style.ImageSpan
 
 /**
- * Adapter for the fragments used for the tabs on the main page.
+ * Adapter for the fragments used for the mTabs on the main page.
  */
 class TabsFragmentPagerAdapter constructor(fm: FragmentManager, context: Context): FragmentPagerAdapter(fm) {
-    val tabs: Array<Tabs> = arrayOf(Tabs.TERMS, Tabs.TEXTS, Tabs.PERSONS, Tabs.SEARCH)
-    val context: Context = context
+    private val mTabs: Array<Tabs> = arrayOf(Tabs.TERMS, Tabs.TEXTS, Tabs.PERSONS, Tabs.SEARCH)
+    private val mContext: Context = context
 
     override fun getCount(): Int {
-        return tabs.size
+        return mTabs.size
     }
 
     override fun getItem(position: Int): Fragment {
-        return tabs[position].factory.invoke()
+        return mTabs[position].factory.invoke()
     }
 
     override fun getPageTitle(position: Int): CharSequence {
-        val iconId = tabs[position].icon
+        val iconId = mTabs[position].icon
         // no icon, display text only
         if (iconId == 0) {
-            return context.resources.getString(tabs[position].title)
+            return mContext.resources.getString(mTabs[position].title)
         }
         // with icon
         val image = getImage(iconId)
         image.setBounds(0, 0, 32, 32);
         // Replace blank spaces with image icon
-        val spannable = SpannableString("   " + context.resources.getString(tabs[position].title))
+        val spannable = SpannableString("   " + mContext.resources.getString(mTabs[position].title))
         val imageSpan = ImageSpan(image, ImageSpan.ALIGN_BASELINE)
         spannable.setSpan(imageSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         return spannable
@@ -44,16 +44,9 @@ class TabsFragmentPagerAdapter constructor(fm: FragmentManager, context: Context
     @Suppress("DEPRECATION")
     private fun getImage(iconId: Int): Drawable {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            return context.resources.getDrawable(iconId, context.theme)
+            return mContext.resources.getDrawable(iconId, mContext.theme)
         }
-        return context.resources.getDrawable(iconId)
-    }
-
-    /**
-     * Returns the fragment showing the search result.
-     */
-    fun getSearchFragment(): Fragment {
-        return tabs[3].factory.invoke()
+        return mContext.resources.getDrawable(iconId)
     }
 
 }
