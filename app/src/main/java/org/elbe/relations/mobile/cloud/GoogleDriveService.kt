@@ -1,3 +1,4 @@
+@file:Suppress("NAME_SHADOWING")
 package org.elbe.relations.mobile.cloud
 
 import android.content.Intent
@@ -89,7 +90,10 @@ class GoogleDriveService(private val context: AppCompatActivity) {
         data?.let {data ->
             val accountTask = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
-                initializeDriveClient(accountTask.getResult(ApiException::class.java))
+                val account = accountTask.getResult(ApiException::class.java)
+                account?.let {
+                    initializeDriveClient(it)
+                }
                 return true
             } catch (exc: ApiException) {
                 Log.w(TAG, "signInResult: failed with code=${exc.statusCode}!")
@@ -114,7 +118,9 @@ class GoogleDriveService(private val context: AppCompatActivity) {
                                 Filters.eq(SearchableField.MIME_TYPE, MIME_TYPE_FOLDER),
                                 Filters.eq(SearchableField.TRASHED, false)
                         )).build()
-                return@continueWithTask drive.queryChildren(parent, query)
+                parent?.let {
+                    return@continueWithTask drive.queryChildren(parent, query)
+                }
             }.addOnSuccessListener {meta ->
                 if (meta.count == 0) {
                     Log.d(TAG, "No folder '$DRIVE_PATH' found!")
@@ -124,13 +130,15 @@ class GoogleDriveService(private val context: AppCompatActivity) {
                 }
             }.continueWithTask {task ->
                 val meta = task.result
-                val parent = meta.get(0).driveId.asDriveFolder()
-                val query = Query.Builder().addFilter(Filters.and(
-                        Filters.eq(SearchableField.TITLE, DRIVE_NAME),  // equals relations_all.zip
-                        Filters.eq(SearchableField.MIME_TYPE, MIME_TYPE_FILE),
-                        Filters.eq(SearchableField.TRASHED, false)
-                )).build()
-                return@continueWithTask drive.queryChildren(parent, query)
+                meta?.let { meta ->
+                    val parent = meta.get(0).driveId.asDriveFolder()
+                    val query = Query.Builder().addFilter(Filters.and(
+                            Filters.eq(SearchableField.TITLE, DRIVE_NAME),  // equals relations_all.zip
+                            Filters.eq(SearchableField.MIME_TYPE, MIME_TYPE_FILE),
+                            Filters.eq(SearchableField.TRASHED, false)
+                    )).build()
+                    return@continueWithTask drive.queryChildren(parent, query)
+                }
             }.addOnSuccessListener {meta ->
                 if (meta.count == 0) {
                     Log.d(TAG, "No file '$DRIVE_NAME' found!")
@@ -140,24 +148,26 @@ class GoogleDriveService(private val context: AppCompatActivity) {
                 }
             }.continueWith {task ->
                 val meta = task.result
-                meta.forEach { metadata ->
+                meta?.forEach { metadata ->
                     // download cloud file and process it
                     task.continueWithTask {
                         drive.openFile(metadata.driveId.asDriveFile(), DriveFile.MODE_READ_ONLY)
                     }.continueWithTask { task ->
                         val cloudFile = task.result
-                        cloudFile.inputStream.use { zipCloud ->
-                            val zipLocal = createTempFile("relationsDownload", ".zip")
-                            if (zipLocal.exists()) {
-                                zipLocal.delete()
+                        cloudFile?.let {cloudFile ->
+                            cloudFile.inputStream.use { zipCloud ->
+                                val zipLocal = createTempFile("relationsDownload", ".zip")
+                                if (zipLocal.exists()) {
+                                    zipLocal.delete()
+                                }
+                                zipLocal.outputStream().use { zipOut ->
+                                    zipCloud.copyTo(zipOut)
+                                }
+                                process(zipLocal)
                             }
-                            zipLocal.outputStream().use { zipOut ->
-                                zipCloud.copyTo(zipOut)
-                            }
-                            process(zipLocal)
+                            return@continueWithTask drive.discardContents(cloudFile)
                         }
-                        return@continueWithTask drive.discardContents(cloudFile)
-                    }?.addOnFailureListener {e ->
+                    }.addOnFailureListener {e ->
                         Log.e(TAG, "Unable to read the contents of the downloaded file!", e)
                         endWithFailureMsg(progress, r.getString(R.string.err_msg_google_drive_process))
                     }
@@ -173,13 +183,15 @@ class GoogleDriveService(private val context: AppCompatActivity) {
             val rootFolderTask = drive.rootFolder
             rootFolderTask.continueWithTask {task ->
                 val parent = task.result
-                val query = Query.Builder()
-                        .addFilter(Filters.and(
-                                Filters.eq(SearchableField.TITLE, DRIVE_PATH),
-                                Filters.eq(SearchableField.MIME_TYPE, MIME_TYPE_FOLDER),
-                                Filters.eq(SearchableField.TRASHED, false)
-                        )).build()
-                return@continueWithTask drive.queryChildren(parent, query)
+                parent?.let {parent ->
+                    val query = Query.Builder()
+                            .addFilter(Filters.and(
+                                    Filters.eq(SearchableField.TITLE, DRIVE_PATH),
+                                    Filters.eq(SearchableField.MIME_TYPE, MIME_TYPE_FOLDER),
+                                    Filters.eq(SearchableField.TRASHED, false)
+                            )).build()
+                    return@continueWithTask drive.queryChildren(parent, query)
+                }
             }.addOnSuccessListener {meta ->
                 if (meta.count == 0) {
                     Log.d(TAG, "No folder '$DRIVE_PATH' found!")
@@ -189,15 +201,17 @@ class GoogleDriveService(private val context: AppCompatActivity) {
                 }
             }.continueWithTask {task ->
                 val meta = task.result
-                val parent = meta.get(0).driveId.asDriveFolder()
-                val sortOrder = SortOrder.Builder().addSortAscending(SortableField.CREATED_DATE).build()
-                val query = Query.Builder().addFilter(Filters.and(
-                        Filters.contains(SearchableField.TITLE, DRIVE_NAME_INCR), // starts with relations_delta_
-                        Filters.eq(SearchableField.MIME_TYPE, MIME_TYPE_FILE),
-                        Filters.eq(SearchableField.TRASHED, false)
-                )).setSortOrder(sortOrder)
-                .build()
-                return@continueWithTask drive.queryChildren(parent, query)
+                meta?.let { meta ->
+                    val parent = meta.get(0).driveId.asDriveFolder()
+                    val sortOrder = SortOrder.Builder().addSortAscending(SortableField.CREATED_DATE).build()
+                    val query = Query.Builder().addFilter(Filters.and(
+                            Filters.contains(SearchableField.TITLE, DRIVE_NAME_INCR), // starts with relations_delta_
+                            Filters.eq(SearchableField.MIME_TYPE, MIME_TYPE_FILE),
+                            Filters.eq(SearchableField.TRASHED, false)
+                    )).setSortOrder(sortOrder)
+                    .build()
+                    return@continueWithTask drive.queryChildren(parent, query)
+                }
             }.addOnSuccessListener {meta ->
                 if (meta.count == 0) {
                     // finish progress dialog with message 'no incremental'
@@ -211,11 +225,11 @@ class GoogleDriveService(private val context: AppCompatActivity) {
                 }
             }.continueWith {task ->
                 val meta = task.result
-                meta.forEach {metadata ->
+                meta?.forEach {metadata ->
                     downloadIncrement(metadata.driveId.asDriveFile(), drive, process)
                 }
                 return@continueWith
-            }?.addOnFailureListener {e ->
+            }.addOnFailureListener {e ->
                 Log.e(TAG, "Unable to read the contents of the downloaded file!", e)
                 endWithFailureMsg(progress, r.getString(R.string.err_msg_google_drive_process))
             }
@@ -225,24 +239,24 @@ class GoogleDriveService(private val context: AppCompatActivity) {
     private fun downloadIncrement(file: DriveFile, drive: DriveResourceClient, process: (File) -> Unit) {
         drive.openFile(file, DriveFile.MODE_READ_ONLY).continueWithTask {task ->
             val cloudFile = task.result
-            cloudFile.inputStream.use { zipCloud ->
-                val zipLocal = createTempFile("relationsDownload", ".zip")
-                if (zipLocal.exists()) {
-                    zipLocal.delete()
+            cloudFile?.let {cloudFile ->
+                cloudFile.inputStream.use { zipCloud ->
+                    val zipLocal = createTempFile("relationsDownload", ".zip")
+                    if (zipLocal.exists()) {
+                        zipLocal.delete()
+                    }
+                    zipLocal.outputStream().use { zipLocal ->
+                        zipCloud.copyTo(zipLocal)
+                    }
+                    process(zipLocal)
                 }
-                zipLocal.outputStream().use { zipLocal ->
-                    zipCloud.copyTo(zipLocal)
-                }
-                process(zipLocal)
+                return@continueWithTask drive.discardContents(cloudFile)
             }
-            return@continueWithTask drive.discardContents(cloudFile)
         }
     }
 
     private fun endWithFailureMsg(progress: ProgressDialog?, errMsg: String) {
-        progress?.let {progress ->
-            progress.finish(errMsg)
-        }
+        progress?.finish(errMsg)
     }
 
 }

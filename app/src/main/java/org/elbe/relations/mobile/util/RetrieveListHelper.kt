@@ -11,14 +11,13 @@ import org.elbe.relations.mobile.model.Type
 /**
  * Helper class to retrieve the list of all items of a type (Term, Text, Person)
  */
-class RetrieveListHelper {
-    private var relDB: RelationsDataBase
-    private var dbThread: HandlerThread
+class RetrieveListHelper(context: Context, threadId: String) {
+    private var mRelDB: RelationsDataBase
+    private var mDbThread= HandlerThread("relationsDb_$threadId")
 
-    constructor(context: Context, threadId: String) {
-        dbThread = HandlerThread("relationsDb_$threadId")
-        dbThread.start()
-        relDB = RelationsDataBase.getInstance(context)!!
+    init {
+        mDbThread.start()
+        mRelDB = RelationsDataBase.getInstance(context)!!
     }
 
     /**
@@ -26,9 +25,9 @@ class RetrieveListHelper {
      */
     fun getListOf(type: Type) : List<Item> {
         when(type) {
-            Type.TERM -> return relDB.termDAO()?.getAll()
-            Type.TEXT -> return relDB.textDAO()?.getAll()
-            Type.PERSON -> return relDB.personDAO()?.getAll()
+            Type.TERM -> return mRelDB.termDAO().getAll()
+            Type.TEXT -> return mRelDB.textDAO().getAll()
+            Type.PERSON -> return mRelDB.personDAO().getAll()
             Type.RELATION -> return emptyList()
         }
     }
@@ -37,14 +36,14 @@ class RetrieveListHelper {
      * Number of items in the database.
      */
     fun getCountOfAllItems(): Int {
-        return relDB.termDAO().getCount() + relDB.textDAO().getCount() + relDB.personDAO().getCount()
+        return mRelDB.termDAO().getCount() + mRelDB.textDAO().getCount() + mRelDB.personDAO().getCount()
     }
 
     /**
      * Runs the specified task (i.e. access to the database) in the background thread.
      */
     fun run(task: Runnable) {
-        val handler = Handler(dbThread.looper)
+        val handler = Handler(mDbThread.looper)
         handler.post(task)
     }
 
@@ -52,7 +51,7 @@ class RetrieveListHelper {
      * Runs the specified task (i.e. access to the database) in the background thread.
      */
     fun quit(): Boolean {
-        return dbThread?.quitSafely()
+        return mDbThread.quitSafely()
     }
 
     /**
@@ -66,9 +65,9 @@ class RetrieveListHelper {
             return item
         }
         when (item.getType()) {
-            Type.TERM -> return relDB.termDAO()?.findById(item.getId())
-            Type.TEXT -> return relDB.textDAO()?.findById(item.getId())
-            Type.PERSON -> return relDB.personDAO()?.findById(item.getId())
+            Type.TERM -> return mRelDB.termDAO().findById(item.getId())
+            Type.TEXT -> return mRelDB.textDAO().findById(item.getId())
+            Type.PERSON -> return mRelDB.personDAO().findById(item.getId())
             Type.RELATION -> throw IllegalArgumentException("Type Relation is not allowed!")
         }
     }

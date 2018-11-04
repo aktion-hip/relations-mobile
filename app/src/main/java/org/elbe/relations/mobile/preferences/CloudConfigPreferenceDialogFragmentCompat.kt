@@ -1,3 +1,4 @@
+@file:Suppress("NAME_SHADOWING")
 package org.elbe.relations.mobile.preferences
 
 import android.content.res.Resources
@@ -23,7 +24,7 @@ class CloudConfigPreferenceDialogFragmentCompat(): PreferenceDialogFragmentCompa
     private lateinit var mCloudProviderView: RCWrapper
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.pref_dialog_cloud_config, container, false)
+        return inflater.inflate(R.layout.pref_dialog_cloud_config, container, false)
     }
 
     override fun onBindDialogView(view: View?) {
@@ -132,7 +133,7 @@ class CloudConfigPreferenceDialogFragmentCompat(): PreferenceDialogFragmentCompa
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProviderAdapter.ViewHolder {
-            val v = LayoutInflater.from(parent?.context).inflate(R.layout.cloud_provider, parent, false)
+            val v = LayoutInflater.from(parent.context).inflate(R.layout.cloud_provider, parent, false)
             return ViewHolder(v, mRadioGroup)
         }
 
@@ -200,7 +201,7 @@ class CloudConfigPreferenceDialogFragmentCompat(): PreferenceDialogFragmentCompa
             private fun storeTokenValue(token: String) {
                 with (mSharedPrefs.edit()) {
                     putString(mId, token)
-                    commit()
+                    apply()
                 }
             }
 

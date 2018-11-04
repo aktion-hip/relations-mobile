@@ -27,7 +27,7 @@ class ItemSwipeHelper(recyclerView: RecyclerView, context: Activity?): ItemTouch
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        val adapter = mRecyclerView?.adapter
+        val adapter = mRecyclerView.adapter
         if (adapter is ItemAdapter) {
             adapter.handleItem(viewHolder.adapterPosition)
         }

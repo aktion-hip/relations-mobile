@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.menu_main, menu)
 
         val searchUI = SearchUI( this, resources).setViewFromMenu(menu)
-        searchUI.getSearchView()?.setOnQueryTextListener(searchUI.createQueryListener(menu?.findItem(R.id.action_search)))
+        searchUI.getSearchView()?.setOnQueryTextListener(searchUI.createQueryListener(menu.findItem(R.id.action_search)))
 
         return super.onCreateOptionsMenu(menu)
     }

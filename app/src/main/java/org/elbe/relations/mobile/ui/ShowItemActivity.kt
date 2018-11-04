@@ -1,3 +1,4 @@
+@file:Suppress("NAME_SHADOWING")
 package org.elbe.relations.mobile.ui
 
 import android.content.Intent
@@ -48,7 +49,7 @@ class ShowItemActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         if (savedInstanceState == null) {
-            var item = intent.getSerializableExtra(EXTRA_ITEM)
+            val item = intent.getSerializableExtra(EXTRA_ITEM)
             if (item is MinItem) {
                 mItem = item
                 Log.v(TAG, "Creating activity with item '${item.getTitle()}' (id: ${item.getId()}).")
@@ -60,7 +61,7 @@ class ShowItemActivity : AppCompatActivity() {
                 }
             }
         } else {
-            var item = savedInstanceState?.getSerializable(EXTRA_ITEM)
+            val item = savedInstanceState.getSerializable(EXTRA_ITEM)
             if (item is MinItem) {
                 mItem = item
                 Log.v(TAG, "Restoring activity with item '${item.getTitle()}' (id: ${item.getId()}).")
@@ -75,19 +76,19 @@ class ShowItemActivity : AppCompatActivity() {
     }
 
     private fun initDetailsView(item: MinItem) {
-        var detailsLayout = findViewById<ViewGroup>(R.id.activity_details_show_container)
+        val detailsLayout = findViewById<ViewGroup>(R.id.activity_details_show_container)
         detailsLayout?.let {detailsLayout ->
             Log.v(TAG, "Adding ItemDetailsFragment.")
-            var detailsFragment = ItemDetailsFragment.newInstance(item)
+            val detailsFragment = ItemDetailsFragment.newInstance(item)
             supportFragmentManager.beginTransaction().replace(detailsLayout.id, detailsFragment).commit()
         }
     }
 
     private fun initRelatedView(item: MinItem) {
-        var relatedLayout = findViewById<ViewGroup>(R.id.activity_details_related_container)
+        val relatedLayout = findViewById<ViewGroup>(R.id.activity_details_related_container)
         relatedLayout?.let { relatedLayout ->
             Log.v(TAG, "Adding ItemRelatedFragment.")
-            var relatedFragment = ItemRelatedFragment.newInstance(item)
+            val relatedFragment = ItemRelatedFragment.newInstance(item)
             supportFragmentManager.beginTransaction().replace(relatedLayout.id, relatedFragment).commit()
         }
     }
@@ -130,7 +131,7 @@ class ShowItemActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
-        mItem?.let {item ->
+        mItem.let {item ->
             Log.v(TAG, "onSaveInstanceState: saving item '${item.getTitle()}' (id: ${item.getId()}).")
             outState?.putSerializable(EXTRA_ITEM, item)
         }

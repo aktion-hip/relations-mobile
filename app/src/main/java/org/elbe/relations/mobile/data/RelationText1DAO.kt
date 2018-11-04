@@ -10,7 +10,7 @@ import org.elbe.relations.mobile.model.Text
 @Dao
 interface RelationText1DAO {
 
-    @Query("SELECT * " +
+    @Query("SELECT TextID, sTitle, sText, sAuthor, sCoAuthors, sSubtitle, sYear, sPublication, sPages, nVolume, nNumber, sPublisher, sPlace, nType, dtCreation, dtMutation " +
             "FROM tblRelation INNER JOIN tblText ON tblRelation.nItem2 = tblText.TextID " +
             "WHERE tblRelation.nType2 = 2 AND tblRelation.nType1 = :type AND tblRelation.nItem1 = :id")
     fun getTextsOf(id: Long, type: Int): List<Text>

@@ -27,14 +27,14 @@ class AllPersonsFragment : Fragment() {
     private var mAdapter: ItemAdapter? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater!!.inflate(R.layout.fragment_all_persons, container, false)
+        val view = inflater.inflate(R.layout.fragment_all_persons, container, false)
         initView(view)
         return view
     }
 
     private fun initView(view: View) {
         mHelper?.run(Runnable {
-            var persons = mHelper?.getListOf(Type.PERSON)
+            val persons = mHelper?.getListOf(Type.PERSON)
             val emptyText = view.findViewById<TextView>(R.id.items_person_empty)
             if (persons?.size != 0) {
                 mUiHandler.post {

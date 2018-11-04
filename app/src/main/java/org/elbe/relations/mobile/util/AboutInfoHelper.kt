@@ -1,3 +1,4 @@
+@file:Suppress("NAME_SHADOWING")
 package org.elbe.relations.mobile.util
 
 import android.content.Context
@@ -11,16 +12,16 @@ import java.util.*
 /**
  * Helper class to retrieve the entry counts for the about info view.
  */
-class AboutInfoHelper {
+class AboutInfoHelper(context: Context?) {
     private val mNumberFormat = NumberFormat.getNumberInstance(Locale.getDefault())
     private var mRelationsDB: RelationsDataBase
-    private var dbThread: HandlerThread = HandlerThread("aboutInfoHelper")
+    private var mDbThread: HandlerThread = HandlerThread("aboutInfoHelper")
     private var mCounts = Counts(0,0,0,0)
     private var mNumberOfIndexed = 0
     private var mVersion = ""
 
-    constructor(context: Context?) {
-        dbThread.start()
+    init {
+        mDbThread.start()
         mRelationsDB = RelationsDataBase.getInstance(context)!!
         context?.let {context ->
             mNumberOfIndexed = IndexReaderFactory.getNumberOfIndexed(context)
@@ -70,7 +71,7 @@ class AboutInfoHelper {
      * Runs the specified task (i.e. access to the database) in the background thread.
      */
     fun run(task: Runnable) {
-        val handler = Handler(dbThread.looper)
+        val handler = Handler(mDbThread.looper)
         handler.post(task)
     }
 
@@ -78,7 +79,7 @@ class AboutInfoHelper {
      * Quit the database thread. Should be called before releasing the instance.
      */
     fun quit(): Boolean {
-        return dbThread?.quitSafely()
+        return mDbThread.quitSafely()
     }
 
 //    ---

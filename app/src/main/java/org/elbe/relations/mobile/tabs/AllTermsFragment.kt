@@ -27,14 +27,14 @@ class AllTermsFragment : Fragment() {
     private var mAdapter: ItemAdapter? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater!!.inflate(R.layout.fragment_all_terms, container, false)
+        val view = inflater.inflate(R.layout.fragment_all_terms, container, false)
         initView(view)
         return view
     }
 
     private fun initView(view: View) {
         mHelper?.run(Runnable {
-            var terms = mHelper?.getListOf(Type.TERM)
+            val terms = mHelper?.getListOf(Type.TERM)
             val emptyText = view.findViewById<TextView>(R.id.items_term_empty)
             if (terms?.size != 0) {
                 mUiHandler.post {

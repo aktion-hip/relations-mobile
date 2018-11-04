@@ -20,7 +20,7 @@ import org.elbe.relations.mobile.search.SearchCache
 class AllSearchFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_all_search, container, false)
+        return inflater.inflate(R.layout.fragment_all_search, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -43,7 +43,7 @@ class AllSearchFragment : Fragment() {
                 list.adapter = itemAdapter
 
                 val itemTouchHelper = ItemTouchHelper(ItemSwipeHelper(list, activity))
-                itemTouchHelper?.attachToRecyclerView(list)
+                itemTouchHelper.attachToRecyclerView(list)
             }
         }
     }

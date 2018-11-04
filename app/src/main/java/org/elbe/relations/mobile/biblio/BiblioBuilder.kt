@@ -12,9 +12,9 @@ class BiblioBuilder {
         }
     }
 
-    fun author(author: String, coAuthor: String, concat: String): BiblioBuilder {
-        return this
-    }
+//    fun author(author: String, coAuthor: String, concat: String): BiblioBuilder {
+//        return this
+//    }
 
     fun add(value: String, separator: String, template: String): BiblioBuilder {
         builder.addPart(value, separator, template)
@@ -28,9 +28,9 @@ class BiblioBuilder {
 
     fun up(): BiblioBuilder {
         val part = builder.render(null)
-        val prefix = builder.prefix
-        if (this.builder.parent != null) {
-            this.builder = this.builder.parent!!
+        val prefix = builder.mPrefix
+        if (this.builder.mParent != null) {
+            this.builder = this.builder.mParent!!
             this.builder.addPart(part, prefix, "")
         }
         return this
@@ -42,25 +42,21 @@ class BiblioBuilder {
 
 //    ---
 
-    private class InternalBuilder {
-        var parent: InternalBuilder? = null
-        var prefix: String = ""
-        var template: String = ""
-        private var rendered: String = ""
-
-        constructor(parent: InternalBuilder?) {
-            this.parent = parent
-        }
+    private class InternalBuilder(parent: InternalBuilder?) {
+        var mParent= parent
+        var mPrefix: String = ""
+        var mTemplate: String = ""
+        private var mRendered: String = ""
 
         fun addPart(value: String, separator: String, template: String) : InternalBuilder {
             if (value.isNotBlank()) {
-                if (rendered.isNotBlank()) {
-                    rendered += separator
+                if (mRendered.isNotBlank()) {
+                    mRendered += separator
                 }
                 if (template.isEmpty()) {
-                    rendered += value
+                    mRendered += value
                 } else {
-                    rendered += String.format(template, value)
+                    mRendered += String.format(template, value)
                 }
             }
             return this
@@ -68,18 +64,18 @@ class BiblioBuilder {
 
         fun render(end: String?): String {
             if (!end.isNullOrBlank()) {
-                rendered += end
+                mRendered += end
             }
-            return if (template.isEmpty()) rendered else String.format(template, rendered)
+            return if (mTemplate.isEmpty()) mRendered else String.format(mTemplate, mRendered)
         }
 
         fun addPrefix(prefix: String): InternalBuilder {
-            this.prefix = prefix
+            this.mPrefix = prefix
             return this
         }
 
         fun addTemplate(template: String): InternalBuilder {
-            this.template = template
+            this.mTemplate = template
             return this
         }
 

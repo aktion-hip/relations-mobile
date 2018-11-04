@@ -10,7 +10,7 @@ import org.elbe.relations.mobile.model.Term
 @Dao
 interface RelationTerm1DAO {
 
-    @Query("SELECT * " +
+    @Query("SELECT TermId, sTitle, sText, dtCreation, dtMutation " +
             "FROM tblRelation INNER JOIN tblTerm ON tblRelation.nItem2 = tblTerm.TermId " +
             "WHERE tblRelation.nType2 = 1 AND tblRelation.nType1 = :type AND tblRelation.nItem1 = :id")
     fun getTermsOf(id: Long, type: Int): MutableList<Term>

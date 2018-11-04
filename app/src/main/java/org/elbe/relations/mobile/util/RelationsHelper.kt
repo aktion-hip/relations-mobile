@@ -10,13 +10,13 @@ import org.elbe.relations.mobile.model.MinItem
 /**
  * Helper class to handle an item's related items.
  */
-class RelationsHelper {
-    private var relDB: RelationsDataBase
-    private var dbThread: HandlerThread = HandlerThread("relatedDbThread")
+class RelationsHelper(context: Context?)     {
+    private var mRelDB: RelationsDataBase
+    private var mDbThread: HandlerThread = HandlerThread("relatedDbThread")
 
-    constructor(context: Context?) {
-        dbThread.start()
-        relDB = RelationsDataBase.getInstance(context)!!
+    init {
+        mDbThread.start()
+        mRelDB = RelationsDataBase.getInstance(context)!!
     }
 
     /**
@@ -27,13 +27,13 @@ class RelationsHelper {
      * @return List<Item>
      */
     fun getRelated(item: MinItem) : List<Item> {
-        var items: MutableList<Item> = mutableListOf<Item>()
-        items.addAll(relDB.relationTerm1DAO().getTermsOf(item.getId(), item.getType().value))
-        items.addAll(relDB.relationTerm2DAO().getTermsOf(item.getId(), item.getType().value))
-        items.addAll(relDB.relationText1DAO().getTextsOf(item.getId(), item.getType().value))
-        items.addAll(relDB.relationText2DAO().getTextsOf(item.getId(), item.getType().value))
-        items.addAll(relDB.relationPerson1DAO().getPersonsOf(item.getId(), item.getType().value))
-        items.addAll(relDB.relationPerson2DAO().getPersonsOf(item.getId(), item.getType().value))
+        val items: MutableList<Item> = mutableListOf<Item>()
+        items.addAll(mRelDB.relationTerm1DAO().getTermsOf(item.getId(), item.getType().value))
+        items.addAll(mRelDB.relationTerm2DAO().getTermsOf(item.getId(), item.getType().value))
+        items.addAll(mRelDB.relationText1DAO().getTextsOf(item.getId(), item.getType().value))
+        items.addAll(mRelDB.relationText2DAO().getTextsOf(item.getId(), item.getType().value))
+        items.addAll(mRelDB.relationPerson1DAO().getPersonsOf(item.getId(), item.getType().value))
+        items.addAll(mRelDB.relationPerson2DAO().getPersonsOf(item.getId(), item.getType().value))
         return items.sorted()
     }
 
@@ -41,14 +41,14 @@ class RelationsHelper {
      * Quit the database thread. Should be called before releasing the instance.
      */
     fun quit(): Boolean {
-        return dbThread?.quitSafely()
+        return mDbThread.quitSafely()
     }
 
     /**
      * Runs the specified task (i.e. access to the database) in the background thread.
      */
     fun run(task: Runnable) {
-        val handler = Handler(dbThread.looper)
+        val handler = Handler(mDbThread.looper)
         handler.post(task)
     }
 

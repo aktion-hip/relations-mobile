@@ -10,7 +10,7 @@ import org.elbe.relations.mobile.model.Person
 @Dao
 interface RelationPerson1DAO {
 
-    @Query("SELECT * " +
+    @Query("SELECT PersonID, sName, sFirstname, sText, sFrom, sTo, dtCreation, dtMutation " +
             "FROM tblRelation INNER JOIN tblPerson ON tblRelation.nItem2 = tblPerson.PersonID " +
             "WHERE tblRelation.nType2 = 3 AND tblRelation.nType1 = :type AND tblRelation.nItem1 = :id")
     fun getPersonsOf(id: Long, type: Int): List<Person>

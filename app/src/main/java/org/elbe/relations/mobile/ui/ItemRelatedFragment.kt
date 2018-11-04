@@ -31,12 +31,12 @@ class ItemRelatedFragment : Fragment() {
 
         if (arguments != null) {
             helper.run(Runnable {
-                var item = arguments?.getSerializable(ARG_PARAM)
+                val item = arguments?.getSerializable(ARG_PARAM)
                 related = helper.getRelated(item as MinItem)
                 uiHandler.post {
                     activity?.findViewById<RecyclerView>(R.id.itemsRelated)?.apply {
                         layoutManager = LinearLayoutManager(activity, LinearLayout.VERTICAL, false)
-                        var itemAdapter = ItemAdapter(activity, related)
+                        val itemAdapter = ItemAdapter(activity, related)
                         adapter = itemAdapter
                         ItemTouchHelper(ItemSwipeHelper(this, activity)).attachToRecyclerView(this)
                     }
@@ -46,7 +46,7 @@ class ItemRelatedFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_item_related, container, false)
+        return inflater.inflate(R.layout.fragment_item_related, container, false)
     }
 
     override fun onDestroy() {

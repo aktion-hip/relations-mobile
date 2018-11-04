@@ -17,8 +17,9 @@ import org.elbe.relations.mobile.model.MinItem
 import java.io.Serializable
 import java.text.DateFormat
 import java.text.SimpleDateFormat
+import java.util.*
 
-private val DATE_FORMAT : DateFormat = SimpleDateFormat("dd.MM.yy")
+private val DATE_FORMAT : DateFormat = SimpleDateFormat("dd.MM.yy", Locale.US)
 private const val ARG_PARAM = "item"
 private const val TAG = "ItemDetailsFragment"
 
@@ -37,10 +38,10 @@ class ItemDetailsFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater!!.inflate(R.layout.fragment_item_details, container, false)
+        return inflater.inflate(R.layout.fragment_item_details, container, false)
     }
 
-    @SuppressWarnings("deprecation")
+    @Suppress("DEPRECATION")
     private fun fromHtml(item: Item): Spanned? {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             return Html.fromHtml(item.getDetailText(resources), FROM_HTML_SEPARATOR_LINE_BREAK_PARAGRAPH)

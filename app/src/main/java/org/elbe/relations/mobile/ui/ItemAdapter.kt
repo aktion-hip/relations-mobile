@@ -1,3 +1,4 @@
+@file:Suppress("NAME_SHADOWING")
 package org.elbe.relations.mobile.ui
 
 import android.content.Context
@@ -43,7 +44,7 @@ class ItemAdapter(context: Context?, items : List<MinItem>?) : RecyclerView.Adap
     }
 
     override fun getItemCount(): Int {
-        return if (mItems == null) 0 else mItems!!.size
+        return if (mItems == null) 0 else mItems.size
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -82,6 +83,7 @@ class ItemAdapter(context: Context?, items : List<MinItem>?) : RecyclerView.Adap
             return true
         }
 
+        @Suppress("DEPRECATION")
         private fun vibrate(vibrator: Any?) {
             if (vibrator is Vibrator) {
                 if (Build.VERSION.SDK_INT >= 26) {

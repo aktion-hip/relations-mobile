@@ -19,7 +19,7 @@ class ProgressDialog(): DialogFragment() {
     private var maxValue: Int = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        mView = inflater?.inflate(R.layout.fragment_progress, container)
+        mView = inflater.inflate(R.layout.fragment_progress, container)
         return mView
     }
 
@@ -51,7 +51,7 @@ class ProgressDialog(): DialogFragment() {
     /**
      * @param title String the progress dialog's new text to display
      */
-    public fun setTitle(title: String) {
+    fun setTitle(title: String) {
         mView?.findViewById<TextView>(R.id.progress_count)?.text = title
     }
 

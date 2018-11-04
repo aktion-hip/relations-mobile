@@ -18,7 +18,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 27
         versionCode 1
-        versionName "1.0.0-rc02"
+        versionName "1.0.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
@@ -32,7 +32,8 @@ android {
 
 ext {
     supportLibVersion = '27.+'
-    playServiceVersion = '15.0.1'
+    playServiceVersion = '16.0.0'
+    playServiceAuthVersion = '16.0.1'
     roomVersion = '1.1.1'
 }
 
@@ -53,7 +54,7 @@ dependencies {
     implementation 'com.microsoft.azure.android:azure-storage-android:2.0.0'
     implementation "com.google.android.gms:play-services-drive:$playServiceVersion"
     implementation "com.google.android.gms:play-services-identity:$playServiceVersion"
-    implementation "com.google.android.gms:play-services-auth:$playServiceVersion"
+    implementation "com.google.android.gms:play-services-auth:$playServiceAuthVersion"
     // Lucene
     implementation 'org.apache.lucene:lucene-core:4.1.0'
     implementation 'org.apache.lucene:lucene-analyzers-common:4.1.0'

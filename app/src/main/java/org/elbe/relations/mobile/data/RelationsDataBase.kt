@@ -1,3 +1,4 @@
+@file:Suppress("NAME_SHADOWING")
 package org.elbe.relations.mobile.data
 
 import android.arch.persistence.room.Database
@@ -13,7 +14,7 @@ import org.elbe.relations.mobile.model.Text
 /**
  * The application's database.
  */
-@Database(entities = [Term::class, Text::class, Person::class, Relation::class], version = 1)
+@Database(entities = [Term::class, Text::class, Person::class, Relation::class], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class RelationsDataBase : RoomDatabase() {
     abstract fun termDAO(): TermDAO
