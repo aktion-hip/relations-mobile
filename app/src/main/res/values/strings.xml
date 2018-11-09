@@ -27,7 +27,7 @@
     <string name="preference_cloud_google_title">Google Configuration</string>
     <string name="preference_lbl_active">Active</string>
     <string name="preference_dropbox_token_lbl">Dropbox Access Token</string>
-    <string name="preference_google_token_lbl">Google Access Toke</string>
+    <string name="preference_google_token_lbl">Google Access Token</string>
     <string name="preference_search_index">Search Index Configuration</string>
     <string name="preference_about_title">About Relations</string>
     <string name="preference_nr_total">Total number of entries:</string>
@@ -64,4 +64,18 @@
     <string name="preference_settings_long_press_title">Enable long press</string>
     <!-- Preferences: Category Settings: long press description -->
     <string name="preference_settings_long_press_desc">Enable long press to display the item\'s details</string>
+    <!-- Intro -->
+    <string name="intro_btn_skip">Skip</string>
+    <string name="intro_btn_finish">Finish</string>
+    <string name="intro_btn_indicator">Indicator</string>
+    <string name="intro_btn_next">Next</string>
+    <!-- Intro texts -->
+    <string name="intro_title_1">Import Data</string>
+    <string name="intro_desc_1">This app uses the data created with the standalone application Relations RCP (https://sourceforge.net/projects/relations-rcp/).\nFirst you have to synchronize (i.e. download) the data. To do that, configure the Cloud Configuration (in Settings) and start a full synchronize (in Synchronize Database).</string>
+    <string name="intro_title_2">Display Details</string>
+    <string name="intro_desc_2">After data synchronization, the items are displayed in a list. To display an item’s details, swipe the item to the left.</string>
+    <string name="intro_title_3">Display Related</string>
+    <string name="intro_desc_3">To display the items related to the actual entry, swipe the details page to the left.</string>
+    <string name="intro_title_4">Search Items</string>
+    <string name="intro_desc_4">To search for an item, enter the search term in the search field.\nNote: the fulltext search index must be created in the language of your items (see Settings -> Language).</string>
 </resources>

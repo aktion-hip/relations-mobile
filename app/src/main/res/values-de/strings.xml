@@ -59,4 +59,18 @@
     <string name="preference_settings">Einstellungen</string>
     <string name="preference_settings_long_press_title">Langer Tastendruck</string>
     <string name="preference_settings_long_press_desc">Langer Tastendruck für die Anzeige der Item-Details.</string>
+    <!-- Intro -->
+    <string name="intro_btn_skip">Überspringen</string>
+    <string name="intro_btn_finish">Beenden</string>
+    <string name="intro_btn_indicator">Indicator</string>
+    <string name="intro_btn_next">Next</string>
+    <!-- Intro texts -->
+    <string name="intro_title_1">Daten importieren</string>
+    <string name="intro_desc_1">Diese App verwendet die Daten, welche mit Relations-RCP erzeugt worden sind (https://sourceforge.net/projects/relations-rcp/).\nSie müssen zuerst die Daten synchronisieren. Zu diesem Zweck konfigurieren Sie die Cloud-Konfiguration (in Konfiguration) und starten danach eine volle Datenbank-Synchronisierung.</string>
+    <string name="intro_title_2">Details anzeigen</string>
+    <string name="intro_desc_2">Nachdem die Daten synchronisiert worden sind, werden sie in einer Liste angezeigt. Wenn Sie einen Eintrag nach links wischen, werden dessen Details angezeigt.</string>
+    <string name="intro_title_3">Zugeordnete anzeigen</string>
+    <string name="intro_desc_3">Die Detailseite können Sie nach links wischen, um die zugeordneten Einträge anzuzeigen.</string>
+    <string name="intro_title_4">Einträge suchen</string>
+    <string name="intro_desc_4">Wenn Sie einen Eintrag suchen wollen, geben Sie einen Suchbegriff im Suchfeld ein.\nHinweis: der Suchindex für die Volltextsuche muss in der Sprache der Einträge erzeugt worden sein (in Konfiguration -> Sprache).</string>
 </resources>

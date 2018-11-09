@@ -14,4 +14,6 @@
     <color name="switchThumbNormal">#64b5f6</color>
     <color name="swipeItem">#29BB42</color>
     <color name="switchThumbText">#FFFFFF</color>
+
+    <color name="indicator_unselected">#4D000000</color>
 </resources>

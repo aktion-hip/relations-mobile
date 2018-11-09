@@ -2,6 +2,7 @@ package org.elbe.relations.mobile
 
 import android.content.Intent
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
@@ -21,6 +22,7 @@ import org.elbe.relations.mobile.util.RetrieveListHelper
 const val EXTRA_ITEM = "org.elbe.relations.mobile.ITEM"
 const val EXTRA_QUERY = "org.elbe.relations.mobile.QUERY"
 const val EXTRA_QUERY_FLAG = "org.elbe.relations.mobile.QUERY.FLAG"
+const val PREF_USER_FIRST_TIME = "user_first_time"
 private const val TAG = "MainActivity"
 
 /**
@@ -35,6 +37,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val firstTimeUser = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(PREF_USER_FIRST_TIME, true)
+        if (firstTimeUser) {
+            val introIntent = Intent(this, IntroActivity::class.java)
+            introIntent.putExtra(PREF_USER_FIRST_TIME, firstTimeUser)
+            startActivity(introIntent)
+        }
 
         mHelper = RetrieveListHelper(this, "main")
 
