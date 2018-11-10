@@ -12,7 +12,8 @@
         android:id="@+id/itemDetailPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/relationsTab" >
+        android:layout_below="@id/relationsTab"
+        tools:ignore="InconsistentLayout">
 
         <LinearLayout
             android:id="@+id/activity_details_root_container"
@@ -21,7 +22,8 @@
             android:background="@color/colorUltraLightGray"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             tools:context="org.elbe.relations.mobile.ui.ShowItemActivity"
-            tools:showIn="@layout/activity_show_item">
+            tools:showIn="@layout/activity_show_item"
+            android:baselineAligned="false">
 
             <FrameLayout
                 android:id="@+id/activity_details_show_container"

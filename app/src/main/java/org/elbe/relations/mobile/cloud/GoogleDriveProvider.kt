@@ -21,9 +21,9 @@ private const val TAG = "GoogleDriveProvider"
 /**
  * Download files (all or increment) from Google Drive.
  *
- * @see https://github.com/gsuitedevs/android-samples/blob/master/drive/demos/app/src/main/java/com/google/android/gms/drive/sample/demo/BaseDemoActivity.java
- * @see https://github.com/gsuitedevs/android-samples/blob/master/drive/demos/app/src/main/java/com/google/android/gms/drive/sample/demo/RetrieveContentsActivity.java
- * @see https://www.raywenderlich.com/192706/integrating-google-drive-in-android
+ * see https://github.com/gsuitedevs/android-samples/blob/master/drive/demos/app/src/main/java/com/google/android/gms/drive/sample/demo/BaseDemoActivity.java
+ * see https://github.com/gsuitedevs/android-samples/blob/master/drive/demos/app/src/main/java/com/google/android/gms/drive/sample/demo/RetrieveContentsActivity.java
+ * see https://www.raywenderlich.com/192706/integrating-google-drive-in-android
  */
 class GoogleDriveProvider(incremental: Boolean, context: AppCompatActivity, r: Resources, factory: IndexWriterFactory): GoogleDrive {
     private var mGoogleDriveService: GoogleDriveService? = null

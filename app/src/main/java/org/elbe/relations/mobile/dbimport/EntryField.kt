@@ -1,6 +1,7 @@
 package org.elbe.relations.mobile.dbimport
 
 import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * Module of classes to store the content (i.e. the fiels) of the parsed entries.
@@ -52,6 +53,6 @@ class TimestampField(fieldName: String?): AbstractField(fieldName) {
 
     // convert timestamp as string (with pattern '2007-03-07 00:28:33.0') to long, i.e. milliseconds since January 1, 1970, 00:00:00 GMT
     override fun setValue(input: StringBuilder) {
-        setValue(SimpleDateFormat(pattern).parse(input.toString().trim()).time.toString())
+        setValue(SimpleDateFormat(pattern, Locale.US).parse(input.toString().trim()).time.toString())
     }
 }

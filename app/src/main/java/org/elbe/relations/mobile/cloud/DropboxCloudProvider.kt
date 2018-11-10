@@ -45,7 +45,7 @@ class DropboxCloudProvider(synchronize: Boolean, context: AppCompatActivity, r: 
                     }
                 }
                 if (!relationsContent.hasMore) {
-                    break;
+                    break
                 }
                 relationsContent = client.files().listFolderContinue(relationsContent.cursor)
             }
@@ -107,7 +107,7 @@ class DropboxCloudProvider(synchronize: Boolean, context: AppCompatActivity, r: 
                     }
                 }
                 if (!relationsContent.hasMore) {
-                    break;
+                    break
                 }
                 relationsContent = client.files().listFolderContinue(relationsContent.cursor)
             }

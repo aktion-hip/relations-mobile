@@ -44,7 +44,7 @@ class ItemAdapter(context: Context?, items : List<MinItem>?) : RecyclerView.Adap
     }
 
     override fun getItemCount(): Int {
-        return if (mItems == null) 0 else mItems.size
+        return mItems?.size ?: 0
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -61,8 +61,8 @@ class ItemAdapter(context: Context?, items : List<MinItem>?) : RecyclerView.Adap
     // --- inner classes ---
 
     class ViewHolder(itemView: View, items : List<MinItem>?, showItem: (Int, Context?, List<MinItem>?) -> Unit) : RecyclerView.ViewHolder(itemView), View.OnLongClickListener  {
-        val itemTitle: TextView = itemView.findViewById<TextView>(R.id.itemTitle)
-        val itemImage: ImageView = itemView.findViewById<ImageView>(R.id.itemImage)
+        val itemTitle: TextView = itemView.findViewById(R.id.itemTitle)
+        val itemImage: ImageView = itemView.findViewById(R.id.itemImage)
         private val mItems = items
         private val mShowItem = showItem
         private val mVibrator = itemView.context.getSystemService(Context.VIBRATOR_SERVICE)

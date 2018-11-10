@@ -4,8 +4,8 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-val DATE_FORMAT : DateFormat = SimpleDateFormat("dd.MM.yyyy")
-val TIME_FORMAT : DateFormat =  SimpleDateFormat("HH:mm")
+val DATE_FORMAT : DateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.US)
+val TIME_FORMAT : DateFormat =  SimpleDateFormat("HH:mm", Locale.US)
 
 /**
  * Created by lbenno on 02.03.2018.

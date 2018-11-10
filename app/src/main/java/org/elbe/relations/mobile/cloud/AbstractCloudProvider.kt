@@ -79,7 +79,7 @@ abstract class AbstractCloudProvider<Params, Progress, Result>(incremental: Bool
             val preferences = PreferenceManager.getDefaultSharedPreferences(context)
             val editor = preferences.edit()
             editor.putBoolean(SYNC_SWITCH_VALUE_INCR, false)
-            editor.commit()
+            editor.apply()
         }
     }
 

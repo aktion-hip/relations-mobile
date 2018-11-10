@@ -3,7 +3,7 @@ package org.elbe.relations.mobile.dbimport
 /**
  *  Factory for entry handlers modelled as enum.
  */
-enum class HandlerFactory(val entryType: String, val nodeName: String, val producer: () -> EntryHandler) {
+enum class HandlerFactory(private val entryType: String, private val nodeName: String, private val producer: () -> EntryHandler) {
     TERMS("TermEntries", "TermEntry", { TermHandler() }),
     TEXTS("TextEntries", "TextEntry", { TextHandler() }),
     PERSONS("PersonEntries", "PersonEntry", { PersonHandler() }),

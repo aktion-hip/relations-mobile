@@ -17,7 +17,7 @@ interface IEntryToDB {
     fun setToDB(relDB: RelationsDataBase, writer: IndexWriter)
 }
 
-abstract class EntryHandler() {
+abstract class EntryHandler {
     private val mValue = StringBuilder()
     private var mField: EntryField? = null
     protected val mMap = mutableMapOf<String, EntryField>()
@@ -105,17 +105,17 @@ open class TermHandler: EntryHandler() {
     }
 
     override fun createEntryToDB(type: Int): IEntryToDB? {
-        when (type) {
-            1 -> return TermEntryToDBInsert(this)
-            2 -> return TermEntryToDBUpdate(this)
-            else -> return null
+        return when (type) {
+            1 -> TermEntryToDBInsert(this)
+            2 -> TermEntryToDBUpdate(this)
+            else -> null
         }
     }
 
 }
 
 class TermEntryToDBInsert(handler: TermHandler): IEntryToDB {
-    val mHandler = handler
+    private val mHandler = handler
 
     override fun setToDB(relDB: RelationsDataBase, writer: IndexWriter) {
         val term = mHandler.createEntry()
@@ -125,7 +125,7 @@ class TermEntryToDBInsert(handler: TermHandler): IEntryToDB {
 }
 
 class TermEntryToDBUpdate(handler: TermHandler): IEntryToDB {
-    val mHandler = handler
+    private val mHandler = handler
 
     override fun setToDB(relDB: RelationsDataBase, writer: IndexWriter) {
         val term = mHandler.createEntry()
@@ -155,16 +155,16 @@ open class TextHandler: EntryHandler() {
     }
 
     override fun createEntryToDB(type: Int): IEntryToDB? {
-        when (type) {
-            1 -> return TextEntryToDBInsert(this)
-            2 -> return TextEntryToDBUpdate(this)
-            else -> return null
+        return when (type) {
+            1 -> TextEntryToDBInsert(this)
+            2 -> TextEntryToDBUpdate(this)
+            else -> null
         }
     }
 }
 
 class TextEntryToDBInsert(handler: TextHandler): IEntryToDB {
-    val mHandler = handler
+    private val mHandler = handler
 
     override fun setToDB(relDB: RelationsDataBase, writer: IndexWriter) {
         val text = mHandler.createEntry()
@@ -174,7 +174,7 @@ class TextEntryToDBInsert(handler: TextHandler): IEntryToDB {
 }
 
 class TextEntryToDBUpdate(handler: TextHandler): IEntryToDB {
-    val mHandler = handler
+    private val mHandler = handler
 
     override fun setToDB(relDB: RelationsDataBase, writer: IndexWriter) {
         val text = mHandler.createEntry()
@@ -196,16 +196,16 @@ open class PersonHandler: EntryHandler() {
     }
 
     override fun createEntryToDB(type: Int): IEntryToDB? {
-        when (type) {
-            1 -> return PersonEntryToDBInsert(this)
-            2 -> return PersonEntryToDBUpdate(this)
-            else -> return null
+        return when (type) {
+            1 -> PersonEntryToDBInsert(this)
+            2 -> PersonEntryToDBUpdate(this)
+            else -> null
         }
     }
 }
 
 class PersonEntryToDBInsert(handler: PersonHandler): IEntryToDB {
-    val mHandler = handler
+    private val mHandler = handler
 
     override fun setToDB(relDB: RelationsDataBase, writer: IndexWriter) {
         val person = mHandler.createEntry()
@@ -215,7 +215,7 @@ class PersonEntryToDBInsert(handler: PersonHandler): IEntryToDB {
 }
 
 class PersonEntryToDBUpdate(handler: PersonHandler): IEntryToDB {
-    val mHandler = handler
+    private val mHandler = handler
 
     override fun setToDB(relDB: RelationsDataBase, writer: IndexWriter) {
         val person = mHandler.createEntry()
@@ -234,16 +234,16 @@ open class RelationHandler: EntryHandler() {
     }
 
     override fun createEntryToDB(type: Int): IEntryToDB? {
-        when (type) {
-            1 -> return RelationEntryToDBInsert(this)
-            2 -> return RelationEntryToDBUpdate(this)
-            else -> return null
+        return when (type) {
+            1 -> RelationEntryToDBInsert(this)
+            2 -> RelationEntryToDBUpdate(this)
+            else -> null
         }
     }
 }
 
 class RelationEntryToDBInsert(handler: RelationHandler): IEntryToDB {
-    val mHandler = handler
+    private val mHandler = handler
 
     override fun setToDB(relDB: RelationsDataBase, writer: IndexWriter) {
         relDB.relationDAO().insert(mHandler.createEntry())
@@ -251,7 +251,7 @@ class RelationEntryToDBInsert(handler: RelationHandler): IEntryToDB {
 }
 
 class RelationEntryToDBUpdate(handler: RelationHandler): IEntryToDB {
-    val mHandler = handler
+    private val mHandler = handler
 
     override fun setToDB(relDB: RelationsDataBase, writer: IndexWriter) {
         relDB.relationDAO().update(mHandler.createEntry())

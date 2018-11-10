@@ -24,11 +24,11 @@ class RetrieveListHelper(context: Context, threadId: String) {
      * Returns the list of all items of the specified type.
      */
     fun getListOf(type: Type) : List<Item> {
-        when(type) {
-            Type.TERM -> return mRelDB.termDAO().getAll()
-            Type.TEXT -> return mRelDB.textDAO().getAll()
-            Type.PERSON -> return mRelDB.personDAO().getAll()
-            Type.RELATION -> return emptyList()
+        return when(type) {
+            Type.TERM -> mRelDB.termDAO().getAll()
+            Type.TEXT -> mRelDB.textDAO().getAll()
+            Type.PERSON -> mRelDB.personDAO().getAll()
+            Type.RELATION -> emptyList()
         }
     }
 
@@ -64,10 +64,10 @@ class RetrieveListHelper(context: Context, threadId: String) {
         if (item is Item) {
             return item
         }
-        when (item.getType()) {
-            Type.TERM -> return mRelDB.termDAO().findById(item.getId())
-            Type.TEXT -> return mRelDB.textDAO().findById(item.getId())
-            Type.PERSON -> return mRelDB.personDAO().findById(item.getId())
+        return when (item.getType()) {
+            Type.TERM -> mRelDB.termDAO().findById(item.getId())
+            Type.TEXT -> mRelDB.textDAO().findById(item.getId())
+            Type.PERSON -> mRelDB.personDAO().findById(item.getId())
             Type.RELATION -> throw IllegalArgumentException("Type Relation is not allowed!")
         }
     }

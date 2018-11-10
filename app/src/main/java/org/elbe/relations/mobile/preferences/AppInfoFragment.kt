@@ -11,7 +11,7 @@ import org.elbe.relations.mobile.util.AboutInfoHelper
 /**
  * The fragment to display the Relations about info.
  */
-class AppInfoFragment(): PreferenceDialogFragmentCompat() {
+class AppInfoFragment: PreferenceDialogFragmentCompat() {
     private val mUIHandler = Handler()
     private val mHelper: AboutInfoHelper by lazy {
         AboutInfoHelper(context)
@@ -26,7 +26,7 @@ class AppInfoFragment(): PreferenceDialogFragmentCompat() {
 
         mHelper.run(Runnable {
             mHelper.initialize()
-            mUIHandler.post() {
+            mUIHandler.post {
                 val version = view?.findViewById<TextView>(R.id.relationsVersionVal)
                 version?.text = mHelper.getVersion()
                 val total = view?.findViewById<TextView>(R.id.countDbTotalVal)

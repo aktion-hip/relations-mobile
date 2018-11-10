@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <string name="key_preference_cloud" translatable="false">preference_cloud</string>
     <string name="key_preference_cloud_config" translatable="false">preference_cloud_config</string>
     <string name="key_preference_dropbox_token" translatable="false">preference_dropbox_token</string>

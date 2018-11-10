@@ -1,11 +1,14 @@
 <resources>
     <string name="app_name">Relations</string>
-    <string name="action_settings">Konfiguration</string>
     <string name="item_created">Erzeugt</string>
     <string name="item_modified">Verändert</string>
     <string name="entry_show_details">Details anzeigen</string>
     <string name="title_activity_show_related">Zugeordnet</string>
+    <!-- menu action titles -->
     <string name="action_search">Suchen</string>
+    <string name="menu_title_sync_db">Datenbank synchronisieren</string>
+    <string name="action_settings">Konfiguration</string>
+    <string name="action_help">Hilfe</string>
     <string name="person_from">von</string>
     <string name="person_to">bis</string>
     <string name="tab_terms">Begriffe</string>
@@ -20,7 +23,6 @@
     <string name="fts_create_success">Der Index für die Volltextsuche wurde erfolgreich erzeugt.</string>
     <string name="fts_create_process">Der Suchindex wird erzeugt.</string>
     <string name="menu_title_create_fts">Suchindex erzeugen</string>
-    <string name="menu_title_sync_db">Datenbank synchronisieren</string>
     <string name="preference_data_synch_title">Daten-Synchronisierung</string>
     <string name="preference_cloud_title">Cloud-Konfiguration</string>
     <string name="preference_cloud_dropbox_title">Dropbox Konfiguration</string>

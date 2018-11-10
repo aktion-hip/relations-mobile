@@ -11,10 +11,10 @@ import android.view.View
 import android.view.ViewGroup
 
 /**
- * @see https://www.androidhive.info/2017/07/android-implementing-preferences-settings-screen/
+ * see https://www.androidhive.info/2017/07/android-implementing-preferences-settings-screen/
  */
 open class AppCompatPreferenceActivity: PreferenceActivity() {
-    val mDelegate: AppCompatDelegate by lazy { AppCompatDelegate.create(this, null) }
+    private val mDelegate: AppCompatDelegate by lazy { AppCompatDelegate.create(this, null) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         mDelegate.installViewFactory()

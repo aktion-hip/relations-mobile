@@ -1,6 +1,5 @@
 package org.elbe.relations.mobile.ui
 
-import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -10,11 +9,10 @@ import android.view.MenuItem
 import org.elbe.relations.mobile.R
 
 import kotlinx.android.synthetic.main.activity_show_related.*
-import org.elbe.relations.mobile.cloud.CloudSynchronize
 import org.elbe.relations.mobile.cloud.GoogleDriveService
-import org.elbe.relations.mobile.preferences.SettingsActivity
 import org.elbe.relations.mobile.search.SearchUI
 import org.elbe.relations.mobile.util.RetrieveListHelper
+import org.elbe.relations.mobile.util.Utils
 
 /**
  * Activity to display an item's relations.
@@ -65,13 +63,8 @@ class ShowRelatedActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        return when (item?.itemId) {
-            R.id.action_settings -> {
-                startActivity(Intent(this, SettingsActivity::class.java))
-                return true
-            }
-            R.id.action_synchronize -> CloudSynchronize.synchronize(this, resources, mGoogleDriveService)
-            else -> super.onOptionsItemSelected(item)
+        return Utils.runOptions(item, this, mGoogleDriveService) {
+            item ->  super.onOptionsItemSelected(item)
         }
     }
 

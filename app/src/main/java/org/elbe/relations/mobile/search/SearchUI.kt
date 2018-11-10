@@ -110,7 +110,7 @@ class SearchUI(context: AppCompatActivity, r: Resources) {
     private fun retrieveSearchFragment(existing: List<Fragment>): Fragment? {
         val tag = "android:switcher:" + R.id.relation_tabs_views + ":" + 3
         existing.forEach {fragment ->
-            if (tag.equals(fragment.tag)) {
+            if (tag == fragment.tag) {
                 return fragment
             }
         }

@@ -66,7 +66,7 @@ class CloudSynchronize {
             val preferences = PreferenceManager.getDefaultSharedPreferences(view.context)
             val editor = preferences.edit()
             editor.putBoolean(SYNC_SWITCH_VALUE_INCR, switch.isChecked)
-            editor.commit()
+            editor.apply()
             // return value
             return switch.isChecked
         }
@@ -102,7 +102,7 @@ class CloudSynchronize {
         private fun getProviderClass(providerId: String, r: Resources): String {
             val providers = CloudProviders(r).getProviders()
             for (provider in providers) {
-                if (provider.id.equals(providerId)) {
+                if (provider.id == providerId) {
                     return  provider.className
                 }
             }

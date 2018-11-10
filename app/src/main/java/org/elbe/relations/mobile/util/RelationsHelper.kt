@@ -27,7 +27,7 @@ class RelationsHelper(context: Context?)     {
      * @return List<Item>
      */
     fun getRelated(item: MinItem) : List<Item> {
-        val items: MutableList<Item> = mutableListOf<Item>()
+        val items: MutableList<Item> = mutableListOf()
         items.addAll(mRelDB.relationTerm1DAO().getTermsOf(item.getId(), item.getType().value))
         items.addAll(mRelDB.relationTerm2DAO().getTermsOf(item.getId(), item.getType().value))
         items.addAll(mRelDB.relationText1DAO().getTextsOf(item.getId(), item.getType().value))

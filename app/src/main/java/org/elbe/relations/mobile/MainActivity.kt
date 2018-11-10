@@ -14,10 +14,10 @@ import kotlinx.android.synthetic.main.content_toolbar.*
 import org.elbe.relations.mobile.cloud.CloudSynchronize
 import org.elbe.relations.mobile.cloud.GoogleDriveService
 import org.elbe.relations.mobile.data.RelationsDataBase
-import org.elbe.relations.mobile.preferences.SettingsActivity
 import org.elbe.relations.mobile.search.SearchUI
 import org.elbe.relations.mobile.tabs.*
 import org.elbe.relations.mobile.util.RetrieveListHelper
+import org.elbe.relations.mobile.util.Utils
 
 const val EXTRA_ITEM = "org.elbe.relations.mobile.ITEM"
 const val EXTRA_QUERY = "org.elbe.relations.mobile.QUERY"
@@ -74,16 +74,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
-            R.id.action_settings -> {
-                startActivity(Intent(this, SettingsActivity::class.java))
-                return true
-            }
-            R.id.action_synchronize -> CloudSynchronize.synchronize(this, resources, mGoogleDriveService)
-            else -> super.onOptionsItemSelected(item)
+        return Utils.runOptions(item, this, mGoogleDriveService) {
+            item ->  super.onOptionsItemSelected(item)
         }
     }
 

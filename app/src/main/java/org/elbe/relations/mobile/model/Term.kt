@@ -6,8 +6,6 @@ import android.arch.persistence.room.PrimaryKey
 import android.content.res.Resources
 import org.apache.lucene.document.Document
 import org.apache.lucene.index.IndexWriter
-import org.elbe.relations.mobile.R
-import java.io.Serializable
 import java.util.*
 
 /**

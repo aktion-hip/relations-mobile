@@ -77,7 +77,7 @@ class EventProcessor {
     }
 
     fun isProcessing(): Boolean {
-        return mField != null;
+        return mField != null
     }
 
     fun testEndProcessing(name: String?): Boolean {

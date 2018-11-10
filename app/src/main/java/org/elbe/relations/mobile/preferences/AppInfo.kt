@@ -9,7 +9,7 @@ import org.elbe.relations.mobile.R
  * Preference class displaying the Relations app info dialog.
  */
 class AppInfo: DialogPreference {
-    val mDialogLayoutResId = R.layout.pref_dialog_about
+    private val mDialogLayoutResId = R.layout.pref_dialog_about
 
     constructor(context: Context): this(context, null)
 

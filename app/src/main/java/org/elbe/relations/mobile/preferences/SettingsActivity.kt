@@ -19,8 +19,7 @@ class SettingsActivity: AppCompatActivity() {
     }
 
     private fun setupActionBar() {
-        val actionBar = getSupportActionBar()
-        actionBar?.let {
+        supportActionBar?.let {
             it.setDisplayHomeAsUpEnabled(true)
             it.setDisplayShowHomeEnabled(true)
         }

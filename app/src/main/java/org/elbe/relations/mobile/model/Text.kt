@@ -49,12 +49,12 @@ data class Text(@PrimaryKey(autoGenerate = true)
     }
 
     private fun getBiblioFormatted(): String {
-        when (textType) {
-            0 -> return bookBuiler()
-            1 -> return articleBuiler()
-            2 -> return contributionBuiler()
-            3 -> return webpageBuiler()
-            else -> return bookBuiler()
+        return when (textType) {
+            0 -> bookBuiler()
+            1 -> articleBuiler()
+            2 -> contributionBuiler()
+            3 -> webpageBuiler()
+            else -> bookBuiler()
         }
     }
 

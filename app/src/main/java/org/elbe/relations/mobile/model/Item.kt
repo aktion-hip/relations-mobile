@@ -8,12 +8,11 @@ import org.elbe.relations.mobile.search.INDX_TITLE
 import org.elbe.relations.mobile.search.INDX_UNIQUE_ID
 import org.elbe.relations.mobile.search.Indexable
 import org.elbe.relations.mobile.util.UniqueID
-import java.io.Serializable
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-val DATE_FORMAT : DateFormat = SimpleDateFormat("dd.MM.yyyy, HH:mm")
+val DATE_FORMAT : DateFormat = SimpleDateFormat("dd.MM.yyyy, HH:mm", Locale.US)
 
 /**
  * Interface for all items.

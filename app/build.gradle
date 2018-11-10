@@ -31,7 +31,7 @@ android {
 }
 
 ext {
-    supportLibVersion = '27.+'
+    supportLibVersion = '27.1.1'
     playServiceVersion = '16.0.0'
     playServiceAuthVersion = '16.0.1'
     roomVersion = '1.1.1'
@@ -56,8 +56,11 @@ dependencies {
     implementation "com.google.android.gms:play-services-identity:$playServiceVersion"
     implementation "com.google.android.gms:play-services-auth:$playServiceAuthVersion"
     // Lucene
+    //noinspection GradleDependency
     implementation 'org.apache.lucene:lucene-core:4.1.0'
+    //noinspection GradleDependency
     implementation 'org.apache.lucene:lucene-analyzers-common:4.1.0'
+    //noinspection GradleDependency
     implementation 'org.apache.lucene:lucene-queryparser:4.1.0'
     // Lifecycle
     implementation 'android.arch.lifecycle:extensions:1.1.1'

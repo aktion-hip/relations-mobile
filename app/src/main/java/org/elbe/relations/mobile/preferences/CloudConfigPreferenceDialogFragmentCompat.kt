@@ -1,6 +1,7 @@
 @file:Suppress("NAME_SHADOWING")
 package org.elbe.relations.mobile.preferences
 
+import android.content.SharedPreferences
 import android.content.res.Resources
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -18,9 +19,9 @@ import org.elbe.relations.mobile.R
 /**
  * The dialog to edit the CloudConfigPreference.
  *
- * @see https://medium.com/@JakobUlbrich/building-a-settings-screen-for-android-part-3-ae9793fd31ec
+ * see https://medium.com/@JakobUlbrich/building-a-settings-screen-for-android-part-3-ae9793fd31ec
  */
-class CloudConfigPreferenceDialogFragmentCompat(): PreferenceDialogFragmentCompat() {
+class CloudConfigPreferenceDialogFragmentCompat: PreferenceDialogFragmentCompat() {
     private lateinit var mCloudProviderView: RCWrapper
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -30,7 +31,7 @@ class CloudConfigPreferenceDialogFragmentCompat(): PreferenceDialogFragmentCompa
     override fun onBindDialogView(view: View?) {
         super.onBindDialogView(view)
 
-        mCloudProviderView = RCWrapper(view?.findViewById<RecyclerView>(R.id.cloud_config_entries))
+        mCloudProviderView = RCWrapper(view?.findViewById(R.id.cloud_config_entries))
         mCloudProviderView.apply {
             setHasFixedSize(true)
             setLayoutManager(LinearLayoutManager(activity, LinearLayout.VERTICAL, false))
@@ -125,8 +126,8 @@ class CloudConfigPreferenceDialogFragmentCompat(): PreferenceDialogFragmentCompa
                 }
                 val id = mProviders[position].id
                 val radio = holder.setId(id, hint.isEmpty())
-                mMapping.put(id, radio)
-                if (id.equals(mProviderId)) {
+                mMapping[id] = radio
+                if (id == mProviderId) {
                     radio.isChecked = true
                 }
             }
@@ -143,11 +144,11 @@ class CloudConfigPreferenceDialogFragmentCompat(): PreferenceDialogFragmentCompa
 
         class ViewHolder(view: View, radioGroup: MutableList<RadioButton>): RecyclerView.ViewHolder(view) {
             var mId: String = ""
-            val mSharedPrefs = PreferenceManager.getDefaultSharedPreferences(view.context)
+            val mSharedPrefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(view.context)
             val mRadioGroup = radioGroup
-            val providerName: TextView = view.findViewById<TextView>(R.id.cloud_provider_name)
-            val providerToken: EditText = view.findViewById<EditText>(R.id.cloud_provider_token)
-            val activRadio: RadioButton = view.findViewById<RadioButton>(R.id.cloud_provider_id)
+            val providerName: TextView = view.findViewById(R.id.cloud_provider_name)
+            val providerToken: EditText = view.findViewById(R.id.cloud_provider_token)
+            val activRadio: RadioButton = view.findViewById(R.id.cloud_provider_id)
             val editor = object : TextWatcher {
                 override fun afterTextChanged(s: Editable?) = Unit
                 override fun beforeTextChanged(s: CharSequence, p1: Int, p2: Int, p3: Int) = Unit

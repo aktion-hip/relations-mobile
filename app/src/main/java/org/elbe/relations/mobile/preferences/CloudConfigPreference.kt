@@ -9,12 +9,12 @@ import org.elbe.relations.mobile.R
 /**
  * Custom preference to display the list of cloud configuration entries.
  *
- * @see https://medium.com/@JakobUlbrich/building-a-settings-screen-for-android-part-3-ae9793fd31ec
- * @see https://android.googlesource.com/platform/frameworks/support/+/6904f67/v7/preference/src/android/support/v7/preference
+ * see https://medium.com/@JakobUlbrich/building-a-settings-screen-for-android-part-3-ae9793fd31ec
+ * see https://android.googlesource.com/platform/frameworks/support/+/6904f67/v7/preference/src/android/support/v7/preference
  */
 class CloudConfigPreference: EditTextPreference {
-    val mDialogLayoutResId = R.layout.pref_dialog_cloud_config
-    var mCloudProviderId: String = ""
+    private val mDialogLayoutResId = R.layout.pref_dialog_cloud_config
+    private var mCloudProviderId: String = ""
 
     constructor(context: Context): this(context, null)
 

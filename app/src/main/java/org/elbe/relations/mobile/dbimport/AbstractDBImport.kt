@@ -11,7 +11,7 @@ import org.xml.sax.helpers.DefaultHandler
  */
 abstract class AbstractDBImport(factory: IndexWriterFactory): DefaultHandler() {
     private val ROOT = "RelationsExport"
-    protected val TAG = "DBImport"
+    private val TAG = "DBImport"
 
     private val mIndexWriter: IndexWriter by lazy { factory.createIndexWriter() }
     private var mCanImport = false

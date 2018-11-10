@@ -17,7 +17,7 @@ class IndexWriterFactory(context: Context, r: Resources): IndexFactory() {
     private val mContext = context
     private val mResources = r
     private val mPath = File(context.getExternalFilesDir(null), LUCENE_PATH)
-    var mOpenMode = IndexWriterConfig.OpenMode.CREATE_OR_APPEND
+    private var mOpenMode = IndexWriterConfig.OpenMode.CREATE_OR_APPEND
 
     /**
      * Creates the IndexWriter instance.

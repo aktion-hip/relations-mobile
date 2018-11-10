@@ -6,8 +6,8 @@ import org.elbe.relations.mobile.util.UniqueID
  * The item implementation for a Lucene search query.
  */
 class RetrievedItem(uniqueID: UniqueID, title: String): MinItem {
-    val mUniqueID = uniqueID
-    val mTitle = title
+    private val mUniqueID = uniqueID
+    private val mTitle = title
 
     override fun getId(): Long {
         return mUniqueID.id

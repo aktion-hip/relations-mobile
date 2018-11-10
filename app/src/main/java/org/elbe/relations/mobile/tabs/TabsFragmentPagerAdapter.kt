@@ -33,7 +33,7 @@ class TabsFragmentPagerAdapter constructor(fm: FragmentManager, context: Context
         }
         // with icon
         val image = getImage(iconId)
-        image.setBounds(0, 0, 32, 32);
+        image.setBounds(0, 0, 32, 32)
         // Replace blank spaces with image icon
         val spannable = SpannableString("   " + mContext.resources.getString(mTabs[position].title))
         val imageSpan = ImageSpan(image, ImageSpan.ALIGN_BASELINE)

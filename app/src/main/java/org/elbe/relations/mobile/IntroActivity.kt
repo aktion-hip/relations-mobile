@@ -9,10 +9,8 @@ import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -27,8 +25,8 @@ private const val PAGES = 4
 /**
  * Onboarding activity.
  *
- * @see http://blog.grafixartist.com/onboarding-android-viewpager-google-way/
- * @see https://github.com/Suleiman19/Android-Material-Design-for-pre-Lollipop/blob/master/MaterialSample/app/src/main/java/com/suleiman/material/activities/PagerActivity.java
+ * see http://blog.grafixartist.com/onboarding-android-viewpager-google-way/
+ * see https://github.com/Suleiman19/Android-Material-Design-for-pre-Lollipop/blob/master/MaterialSample/app/src/main/java/com/suleiman/material/activities/PagerActivity.java
  */
 class IntroActivity : AppCompatActivity() {
 
@@ -114,19 +112,6 @@ class IntroActivity : AppCompatActivity() {
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        val id = item.itemId
-
-        if (id == R.id.action_settings) {
-            return true
-        }
-
-        return super.onOptionsItemSelected(item)
-    }
-
     private fun updateIndicators(position: Int) {
         mIndicators?.forEachIndexed { index, view ->
             view.setBackgroundResource(if (index == position) R.drawable.indicator_selected else R.drawable.indicator_unselected)
@@ -175,7 +160,7 @@ class IntroActivity : AppCompatActivity() {
              * The fragment argument representing the section number for this
              * fragment.
              */
-            private val ARG_SECTION_NUMBER = "section_number"
+            private const val ARG_SECTION_NUMBER = "section_number"
 
             /**
              * Returns a new instance of this fragment for the given section

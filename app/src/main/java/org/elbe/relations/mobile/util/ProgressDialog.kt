@@ -13,7 +13,7 @@ import org.elbe.relations.mobile.R
 /**
  * Utility class to display the progress bar in a dialog.
  */
-class ProgressDialog(): DialogFragment() {
+class ProgressDialog: DialogFragment() {
     private var mView: View? = null
     private var count: Int = 0
     private var maxValue: Int = 0

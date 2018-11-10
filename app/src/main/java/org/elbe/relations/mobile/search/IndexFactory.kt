@@ -8,11 +8,11 @@ import org.apache.lucene.util.Version
 import org.elbe.relations.mobile.R
 
 val LUCENE_VERSION = Version.LUCENE_41
-val LUCENE_PATH = "lucene"
-val MAX_HITS = 100
-val INDX_CONTENT_FULL = "itemFull"
-val INDX_TITLE = "itemTitle"
-val INDX_UNIQUE_ID = "uniqueID"
+const val LUCENE_PATH = "lucene"
+const val MAX_HITS = 100
+const val INDX_CONTENT_FULL = "itemFull"
+const val INDX_TITLE = "itemTitle"
+const val INDX_UNIQUE_ID = "uniqueID"
 
 /**
  * Base class for Lucene IndexReader- and IndexWriterFactory, providing the functionality to get the correct analyzer instance.

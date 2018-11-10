@@ -1,7 +1,6 @@
 package org.elbe.relations.mobile.dbimport
 
 import android.content.Context
-import android.util.Log
 import org.elbe.relations.mobile.data.RelationsDataBase
 import org.elbe.relations.mobile.search.IndexWriterFactory
 import org.xml.sax.Attributes
@@ -61,7 +60,7 @@ class DBImportIncremental(context: Context, factory: IndexWriterFactory): Abstra
     }
 
     override fun characters(chars: CharArray?, start: Int, length: Int) {
-        var target = CharArray(length)
+        val target = CharArray(length)
         System.arraycopy(chars, start, target, 0, length)
 
         mHandler?.let {handler ->

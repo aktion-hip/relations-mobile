@@ -53,10 +53,10 @@ class BiblioBuilder {
                 if (mRendered.isNotBlank()) {
                     mRendered += separator
                 }
-                if (template.isEmpty()) {
-                    mRendered += value
+                mRendered += if (template.isEmpty()) {
+                    value
                 } else {
-                    mRendered += String.format(template, value)
+                    String.format(template, value)
                 }
             }
             return this

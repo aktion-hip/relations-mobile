@@ -72,7 +72,7 @@ class DBImportFull(context: Context, factory: IndexWriterFactory): AbstractDBImp
 
     override fun characters(chars: CharArray?, start: Int, length: Int) {
         mEntryHandler?.let { inserter ->
-            var target = CharArray(length)
+            val target = CharArray(length)
             System.arraycopy(chars, start, target, 0, length)
             inserter.append(target)
         }

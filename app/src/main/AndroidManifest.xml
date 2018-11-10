@@ -60,9 +60,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
+        <!-- the onboarding (i.e. help) activity -->
         <activity
             android:name=".IntroActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+        <!-- the preferences activity -->
+        <activity
+            android:name=".preferences.AppCompatPreferenceActivity" />
     </application>
 
 </manifest>

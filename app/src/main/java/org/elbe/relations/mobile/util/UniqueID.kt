@@ -3,7 +3,7 @@ package org.elbe.relations.mobile.util
 import org.elbe.relations.mobile.model.Type
 import java.io.Serializable
 
-private val TEMPLATE = "%s:%s"
+private const val TEMPLATE = "%s:%s"
 
 /**
  * Utility class for an item's unique ID that consists of item type and item ID.
@@ -14,8 +14,7 @@ private val TEMPLATE = "%s:%s"
 class UniqueID(val type: Type, val id: Long): Serializable {
 
     constructor(uniqueID: String) : this(getType(uniqueID.substring(0,getIndex(uniqueID)).toInt()),
-            uniqueID.substring(getIndex(uniqueID)+1).toLong()) {
-    }
+            uniqueID.substring(getIndex(uniqueID)+1).toLong())
 
 //    ---
 

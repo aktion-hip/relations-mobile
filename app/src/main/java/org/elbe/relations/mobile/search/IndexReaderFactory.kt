@@ -13,9 +13,9 @@ import java.io.File
  * Factory to create a Lucene IndexReader.
  */
 class IndexReaderFactory(context: AppCompatActivity, r: Resources): IndexFactory() {
-    val mPath = File(context.getExternalFilesDir(null), LUCENE_PATH)
+    private val mPath = File(context.getExternalFilesDir(null), LUCENE_PATH)
     val mContext = context
-    val mResources = r
+    private val mResources = r
 
     /**
      * Creates the IndexReader instance.

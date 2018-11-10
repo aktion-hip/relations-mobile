@@ -19,5 +19,4 @@ data class Relation(@PrimaryKey(autoGenerate = true)
                     @ColumnInfo(name = "nType1") var type1: Int,
                     @ColumnInfo(name = "nItem1") var item1: Long,
                     @ColumnInfo(name = "nType2") var type2: Int,
-                    @ColumnInfo(name = "nItem2") var item2: Long) : Serializable {
-}
+                    @ColumnInfo(name = "nItem2") var item2: Long) : Serializable

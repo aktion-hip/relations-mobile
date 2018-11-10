@@ -1,10 +1,8 @@
 @file:Suppress("NAME_SHADOWING")
 package org.elbe.relations.mobile.ui
 
-import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
@@ -18,12 +16,11 @@ import android.view.ViewGroup
 import kotlinx.android.synthetic.main.content_toolbar.*
 import org.elbe.relations.mobile.EXTRA_ITEM
 import org.elbe.relations.mobile.R
-import org.elbe.relations.mobile.cloud.CloudSynchronize
 import org.elbe.relations.mobile.cloud.GoogleDriveService
 import org.elbe.relations.mobile.model.MinItem
-import org.elbe.relations.mobile.preferences.SettingsActivity
 import org.elbe.relations.mobile.search.SearchUI
 import org.elbe.relations.mobile.util.RetrieveListHelper
+import org.elbe.relations.mobile.util.Utils
 
 private const val TAG = "ShowItemActivity"
 
@@ -33,8 +30,8 @@ private const val TAG = "ShowItemActivity"
  */
 class ShowItemActivity : AppCompatActivity() {
     private var mHelper: RetrieveListHelper? = null
-    lateinit var mPager: ViewPager
-    lateinit var mItem: MinItem
+    private lateinit var mPager: ViewPager
+    private lateinit var mItem: MinItem
     private val mGoogleDriveService: GoogleDriveService by lazy {
         GoogleDriveService(this)
     }
@@ -119,13 +116,8 @@ class ShowItemActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        return when (item?.itemId) {
-            R.id.action_settings -> {
-                startActivity(Intent(this, SettingsActivity::class.java))
-                return true
-            }
-            R.id.action_synchronize -> CloudSynchronize.synchronize(this, resources, mGoogleDriveService)
-            else -> super.onOptionsItemSelected(item)
+        return Utils.runOptions(item, this, mGoogleDriveService) {
+            item ->  super.onOptionsItemSelected(item)
         }
     }
 
