@@ -92,17 +92,21 @@ class IntroActivity : AppCompatActivity() {
 
         mSkipBtn = findViewById(R.id.intro_btn_skip)
         mSkipBtn?.setOnClickListener {
-            finish()
+            doFinish(it)
         }
 
         mFinishBtn = findViewById(R.id.intro_btn_finish)
         mFinishBtn?.setOnClickListener {
-            finish()
-            val preferences = PreferenceManager.getDefaultSharedPreferences(it.context)
-            val editor = preferences.edit()
-            editor.putBoolean(PREF_USER_FIRST_TIME, false)
-            editor.apply()
+            doFinish(it)
         }
+    }
+
+    private fun doFinish(view: View) {
+        finish()
+        val preferences = PreferenceManager.getDefaultSharedPreferences(view.context)
+        val editor = preferences.edit()
+        editor.putBoolean(PREF_USER_FIRST_TIME, false)
+        editor.apply()
     }
 
 
