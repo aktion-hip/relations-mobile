@@ -1,7 +1,7 @@
 package org.elbe.relations.mobile.preferences
 
 import android.content.Context
-import android.support.v7.preference.DialogPreference
+import androidx.preference.DialogPreference
 import android.util.AttributeSet
 import org.elbe.relations.mobile.R
 
@@ -13,7 +13,7 @@ class AppInfo: DialogPreference {
 
     constructor(context: Context): this(context, null)
 
-    constructor(context: Context, attrs: AttributeSet?): this(context, attrs, R.attr.dialogPreferenceStyle)
+    constructor(context: Context, attrs: AttributeSet?): this(context, attrs, androidx.preference.R.attr.dialogPreferenceStyle)
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int): this(context, attrs, defStyleAttr, 0)
 

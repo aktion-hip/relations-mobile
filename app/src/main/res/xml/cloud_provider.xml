@@ -3,16 +3,9 @@
     <CloudProvider
         name="Dropbox"
         id="dropbox"
-        class="org.elbe.relations.mobile.cloud.DropboxCloudProvider"
         hint="Token" />
-    <CloudProvider
-        name="Google Drive"
-        id="google_drive"
-        class="org.elbe.relations.mobile.cloud.GoogleDriveProvider"
-        hint="" />
     <CloudProvider
         name="Microsoft Azure"
         id="ms_azure"
-        class="org.elbe.relations.mobile.cloud.MSAzureCloudProvider"
         hint="Connection String" />
 </CloudProviders>

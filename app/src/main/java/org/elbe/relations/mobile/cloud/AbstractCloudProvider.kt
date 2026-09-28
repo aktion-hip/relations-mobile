@@ -1,72 +1,44 @@
 package org.elbe.relations.mobile.cloud
 
-import android.content.Intent
+import android.content.Context
 import android.content.res.Resources
-import android.os.AsyncTask
-import android.preference.PreferenceManager
-import android.support.v7.app.AppCompatActivity
-import org.elbe.relations.mobile.MainActivity
+import androidx.preference.PreferenceManager
 import org.elbe.relations.mobile.R
 import org.elbe.relations.mobile.search.IndexWriterFactory
-import org.elbe.relations.mobile.util.ProgressDialog
+
+/**
+ * A cloud provider downloads the data and imports it into the database and the search index.
+ */
+interface CloudProvider {
+
+    /**
+     * Blocking, must be called from a background thread.
+     *
+     * @param incremental Boolean true to import the increments, false to import all data
+     * @param progress (current: Int, max: Int) -> Unit called for each imported entry
+     * @return AbstractCloudProvider.SyncResult
+     */
+    fun synchronize(incremental: Boolean, progress: (Int, Int) -> Unit): AbstractCloudProvider.SyncResult
+}
 
 /**
  * Abstract class for CloudProviders
+ *
+ * @param context Context the application context
+ * @param r Resources
+ * @param factory IndexWriterFactory
+ * @param token String the provider's access token (or connection string)
  */
-abstract class AbstractCloudProvider<Params, Progress, Result>(incremental: Boolean, context: AppCompatActivity, r: Resources, factory: IndexWriterFactory):
-        AsyncTask<Void, Int, AbstractCloudProvider.SyncResult>() {
-    private val mIncremental = incremental
+abstract class AbstractCloudProvider(context: Context, r: Resources, factory: IndexWriterFactory, token: String): CloudProvider {
     private val mContext = context
     private val mResources = r
-    private var mDialogProgress: ProgressDialog? = null
     private val mIndexWriterFactory = factory
-    private var mToken = ""
+    private val mToken = token
 
-    protected fun isIncremental(): Boolean = mIncremental
-    protected fun getContext(): AppCompatActivity = mContext
+    protected fun getContext(): Context = mContext
     protected fun getResources(): Resources = mResources
-    protected fun getDialogProgress(): ProgressDialog? = mDialogProgress
     protected fun getIndexWriterFactory(): IndexWriterFactory = mIndexWriterFactory
-
-    fun setToken(token: String): AbstractCloudProvider<Params, Progress, Result> {
-        mToken = token
-        return this
-    }
-
     protected fun getToken(): String = mToken
-
-    override fun onPreExecute() {
-        mDialogProgress = ProgressDialog.newInstance(mResources.getString(R.string.abstract_cloud_provider_dialog_title1))
-        mDialogProgress?.let {
-            it.isCancelable = false
-            it.show(getContext().supportFragmentManager, "fragment_download")
-        }
-    }
-
-    override fun onProgressUpdate(vararg values: Int?) {
-        val max = values[1] ?: 0
-        if (max > 0) {
-            if (mDialogProgress?.isBar() == true) {
-                mDialogProgress?.increment()
-            } else {
-                mDialogProgress?.switchToBar(max)
-                mDialogProgress?.setTitle(mResources.getString(R.string.abstract_cloud_provider_dialog_title2))
-            }
-        }
-    }
-
-    override fun onPostExecute(result: SyncResult?) {
-        mDialogProgress?.let {progress ->
-            progress.finish(result?.message ?: mResources.getString(R.string.abstract_cloud_provider_dft_error))
-            progress.dismiss()
-        }
-        refresh()
-    }
-
-    private fun refresh() {
-        mContext.finish()
-        mContext.startActivity(Intent(mContext, MainActivity::class.java))
-    }
 
     protected fun sendNoIncremental(): SyncResult {
         AbstractCloudProvider.switchIncrementalVal(mContext)
@@ -75,7 +47,7 @@ abstract class AbstractCloudProvider<Params, Progress, Result>(incremental: Bool
 
     companion object {
 
-        fun switchIncrementalVal(context: AppCompatActivity) {
+        fun switchIncrementalVal(context: Context) {
             val preferences = PreferenceManager.getDefaultSharedPreferences(context)
             val editor = preferences.edit()
             editor.putBoolean(SYNC_SWITCH_VALUE_INCR, false)

@@ -1,13 +1,12 @@
 package org.elbe.relations.mobile.util
 
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
+import androidx.fragment.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import org.elbe.relations.mobile.R
 
 /**
@@ -17,6 +16,7 @@ class ProgressDialog: DialogFragment() {
     private var mView: View? = null
     private var count: Int = 0
     private var maxValue: Int = 0
+    private var pendingTitle: String? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.fragment_progress, container)
@@ -33,10 +33,14 @@ class ProgressDialog: DialogFragment() {
             } else {
                 getBar()?.max = maxValue
             }
-            val title = arguments.getString("title")
-            if (!title.isEmpty()) {
+            val title = arguments.getString("title") ?: ""
+            if (title.isNotEmpty()) {
                 setTitle(title)
             }
+        }
+        // progress reported before the view existed
+        if (count > 0 && maxValue > 0) {
+            showProgress(count, maxValue, pendingTitle ?: "")
         }
     }
 
@@ -75,20 +79,24 @@ class ProgressDialog: DialogFragment() {
     }
 
     /**
-     * Increments the progress bar by one tick.
-     */
-    fun increment() {
-        count +=1
-        getBar()?.progress = count
-    }
-
-    /**
-     * Finish the ProgressBar.
+     * Displays the progress in the bar, switches from spinner to bar if needed.
      *
-     * @param msg: String the success message to display in a Toast.
+     * @param current Int the number of processed ticks
+     * @param max Int the number of ticks
+     * @param title String the title to display with the bar
      */
-    fun finish(msg: String) {
-        Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
+    fun showProgress(current: Int, max: Int, title: String) {
+        count = current
+        pendingTitle = title
+        if (mView == null) {
+            maxValue = max
+            return
+        }
+        if (!isBar() || maxValue != max) {
+            switchToBar(max)
+            setTitle(title)
+        }
+        getBar()?.progress = count
     }
 
 //    ---

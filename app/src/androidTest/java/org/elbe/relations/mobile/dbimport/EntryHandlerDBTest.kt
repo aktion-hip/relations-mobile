@@ -1,7 +1,7 @@
 package org.elbe.relations.mobile.dbimport
 
-import android.arch.persistence.room.Room
-import android.support.test.InstrumentationRegistry
+import androidx.room.Room
+import androidx.test.platform.app.InstrumentationRegistry
 import org.apache.lucene.index.IndexWriter
 import org.elbe.relations.mobile.data.RelationsDataBase
 import org.elbe.relations.mobile.search.IndexWriterFactory
@@ -15,7 +15,7 @@ import org.xml.sax.helpers.AttributesImpl
 
 class EntryHandlerDBTest {
 
-    private val mContext = InstrumentationRegistry.getTargetContext()
+    private val mContext = InstrumentationRegistry.getInstrumentation().targetContext
     private lateinit var mFactory: IndexWriterFactory
     private lateinit var mWriter: IndexWriter
 

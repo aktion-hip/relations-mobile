@@ -1,14 +1,14 @@
 @file:Suppress("NAME_SHADOWING")
 package org.elbe.relations.mobile
 
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
-import android.support.v4.view.ViewPager
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
+import androidx.viewpager.widget.ViewPager
 import android.os.Bundle
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
@@ -17,8 +17,9 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 
-import kotlinx.android.synthetic.main.activity_intro.*
-import kotlinx.android.synthetic.main.fragment_intro.view.*
+import org.elbe.relations.mobile.databinding.ActivityIntroBinding
+import org.elbe.relations.mobile.databinding.FragmentIntroBinding
+import org.elbe.relations.mobile.util.applyEdgeToEdge
 
 private const val PAGES = 4
 
@@ -31,12 +32,12 @@ private const val PAGES = 4
 class IntroActivity : AppCompatActivity() {
 
     /**
-     * The [android.support.v4.view.PagerAdapter] that will provide
+     * The [androidx.viewpager.widget.PagerAdapter] that will provide
      * fragments for each of the sections. We use a
      * {@link FragmentPagerAdapter} derivative, which will keep every
      * loaded fragment in memory. If this becomes too memory intensive, it
      * may be best to switch to a
-     * [android.support.v4.app.FragmentStatePagerAdapter].
+     * [androidx.fragment.app.FragmentStatePagerAdapter].
      */
     private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
 
@@ -51,7 +52,9 @@ class IntroActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_intro)
+        val binding = ActivityIntroBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        applyEdgeToEdge()
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -61,7 +64,7 @@ class IntroActivity : AppCompatActivity() {
         updateIndicators(mPage)
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = intro_container
+        mViewPager = binding.introContainer
         mViewPager?.let {pager ->
             pager.adapter = mSectionsPagerAdapter
             pager.currentItem = mPage
@@ -149,14 +152,14 @@ class IntroActivity : AppCompatActivity() {
         private val mImgs = mutableListOf(R.drawable.intro1, R.drawable.intro2, R.drawable.intro3, R.drawable.intro4)
 
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-            val rootView = inflater.inflate(R.layout.fragment_intro, container, false)
+            val binding = FragmentIntroBinding.inflate(inflater, container, false)
             val index = arguments?.getInt(ARG_SECTION_NUMBER)
             index?.let {index ->
-                rootView.section_img.setImageResource(mImgs[index])
-                rootView.section_label.text = getString(mTitles[index])
-                rootView.section_desc.text = getString(mDescs[index])
+                binding.sectionImg.setImageResource(mImgs[index])
+                binding.sectionLabel.text = getString(mTitles[index])
+                binding.sectionDesc.text = getString(mDescs[index])
             }
-            return rootView
+            return binding.root
         }
 
         companion object {

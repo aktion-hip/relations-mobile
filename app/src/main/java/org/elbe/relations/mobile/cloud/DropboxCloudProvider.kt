@@ -1,7 +1,7 @@
 package org.elbe.relations.mobile.cloud
 
+import android.content.Context
 import android.content.res.Resources
-import android.support.v7.app.AppCompatActivity
 import com.dropbox.core.DbxRequestConfig
 import com.dropbox.core.v2.DbxClientV2
 import com.dropbox.core.v2.files.FileMetadata
@@ -21,11 +21,13 @@ private const val FILE_PREFIX_INCR = "relations_delta_"
 /**
  * Download files (all or increment) from Dropbox.
  */
-class DropboxCloudProvider(synchronize: Boolean, context: AppCompatActivity, r: Resources, factory: IndexWriterFactory):
-        AbstractCloudProvider<Void, Int, AbstractCloudProvider.SyncResult>(synchronize, context, r, factory) {
+class DropboxCloudProvider(context: Context, r: Resources, factory: IndexWriterFactory, token: String):
+        AbstractCloudProvider(context, r, factory, token) {
+    private var mProgress: (Int, Int) -> Unit = { _, _ -> }
 
-    override fun doInBackground(vararg param: Void): SyncResult {
-        if (isIncremental()) {
+    override fun synchronize(incremental: Boolean, progress: (Int, Int) -> Unit): SyncResult {
+        mProgress = progress
+        if (incremental) {
             if (!hasIncremental()) {
                 return sendNoIncremental()
             }
@@ -59,7 +61,7 @@ class DropboxCloudProvider(synchronize: Boolean, context: AppCompatActivity, r: 
             return Pair(null, SyncResult(false, getResources().getString(R.string.cloud_provider_dropbox_no_config)))
         }
 
-        val config = DbxRequestConfig(DROP_BOX_CLIENT_ID)
+        val config = DbxRequestConfig.newBuilder(DROP_BOX_CLIENT_ID).build()
         return Pair(DbxClientV2(config, token), null)
     }
 
@@ -73,12 +75,12 @@ class DropboxCloudProvider(synchronize: Boolean, context: AppCompatActivity, r: 
         }
 
         getIndexWriterFactory().setOpenMode(true)
-        val zipAll = createTempFile("relationsDownload", ".zip")
+        val zipAll = File.createTempFile("relationsDownload", ".zip")
         downloadFile(value.first!!, DROP_BOX_PATH_ALL, zipAll)
 
         val importer = XMLImporter(zipAll)
         val handler = DBImportFull(getContext(), getIndexWriterFactory()).setProgress { current, max ->
-            publishProgress(current, max)
+            mProgress(current, max)
         }
         if (importer.import(handler)) {
             zipAll.delete()
@@ -123,12 +125,12 @@ class DropboxCloudProvider(synchronize: Boolean, context: AppCompatActivity, r: 
     }
 
     private fun processIncremental(metadata: FileMetadata, client: DbxClientV2) {
-        val zipIncremental = createTempFile(metadata.name, ".zip")  // creates the temporary file
+        val zipIncremental = File.createTempFile(metadata.name, ".zip")  // creates the temporary file
         downloadFile(client, "$DROP_BOX_PATH_BASE/${metadata.name}", zipIncremental)
 
         val importer = XMLImporter(zipIncremental)
         val handler = DBImportIncremental(getContext(), getIndexWriterFactory()).setProgress { current, max ->
-            publishProgress(current, max)
+            mProgress(current, max)
         }
         if (importer.import(handler)) {
             zipIncremental.delete()  // deletes the temporary file

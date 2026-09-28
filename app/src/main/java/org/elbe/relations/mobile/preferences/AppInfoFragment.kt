@@ -2,7 +2,8 @@ package org.elbe.relations.mobile.preferences
 
 import android.os.Bundle
 import android.os.Handler
-import android.support.v7.preference.PreferenceDialogFragmentCompat
+import android.os.Looper
+import androidx.preference.PreferenceDialogFragmentCompat
 import android.view.View
 import android.widget.TextView
 import org.elbe.relations.mobile.R
@@ -12,7 +13,7 @@ import org.elbe.relations.mobile.util.AboutInfoHelper
  * The fragment to display the Relations about info.
  */
 class AppInfoFragment: PreferenceDialogFragmentCompat() {
-    private val mUIHandler = Handler()
+    private val mUIHandler = Handler(Looper.getMainLooper())
     private val mHelper: AboutInfoHelper by lazy {
         AboutInfoHelper(context)
     }
@@ -21,7 +22,7 @@ class AppInfoFragment: PreferenceDialogFragmentCompat() {
         mHelper.quit()
     }
 
-    override fun onBindDialogView(view: View?) {
+    override fun onBindDialogView(view: View) {
         super.onBindDialogView(view)
 
         mHelper.run(Runnable {

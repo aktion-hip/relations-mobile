@@ -26,10 +26,8 @@
     <string name="preference_data_synch_title">Data Synchronization</string>
     <string name="preference_cloud_title">Cloud Configuration</string>
     <string name="preference_cloud_dropbox_title">Dropbox Configuration</string>
-    <string name="preference_cloud_google_title">Google Configuration</string>
     <string name="preference_lbl_active">Active</string>
     <string name="preference_dropbox_token_lbl">Dropbox Access Token</string>
-    <string name="preference_google_token_lbl">Google Access Token</string>
     <string name="preference_search_index">Search Index Configuration</string>
     <string name="preference_about_title">About Relations</string>
     <string name="preference_nr_total">Total number of entries:</string>
@@ -44,7 +42,7 @@
     <string name="abstract_cloud_provider_dft_error">An error occurred during the data synchronization.</string>
     <string name="cloud_provider_dft_success">Successfully synchronized the database.</string>
     <string name="cloud_provider_dropbox_no_config">Configuration Problem: No Dropbox access token configured!</string>
-    <string name="cloud_provider_drive_error">An error occurred during the import.</string>
+    <string name="cloud_provider_unsupported">The selected cloud provider is no longer supported. Please select Dropbox or Microsoft Azure in the cloud configuration.</string>
     <string name="cloud_provider_azure_no_config">Configuration Problem: No MS Azure connection string is configured!</string>
     <string name="cloud_provider_azure_no_export1">No Relations export found on &lt;MS Azure>:/%s!</string>
     <string name="cloud_provider_azure_no_export2">No Relations export &lt;MS Azure>:/%s/%s found!</string>
@@ -56,10 +54,6 @@
     <string name="sync_text">synchronize</string>
     <string name="sync_switch_off">full</string>
     <string name="sync_switch_on">incremental</string>
-    <!-- GoogleDriveService: folder or file not found -->
-    <string name="err_msg_google_drive_download">Could not find file to download from Google Drive!</string>
-    <!-- GoogleDriveService: problem with content of downloaded file -->
-    <string name="err_msg_google_drive_process">Could not process downloaded file from Google Drive!</string>
     <!-- Preferences: Category Settings -->
     <string name="preference_settings">Settings</string>
     <!-- Preferences: Category Settings: long press title -->
@@ -80,4 +74,7 @@
     <string name="intro_desc_3">To display the items related to the actual entry, swipe the details page to the left.</string>
     <string name="intro_title_4">Search Items</string>
     <string name="intro_desc_4">To search for an item, enter the search term in the search field.\nNote: the fulltext search index must be created in the language of your items (see Settings -> Language).</string>
+    <!-- About dialog: release notes of the installed version, same text as fastlane/metadata/android/en-US/changelogs/<versionCode>.txt -->
+    <string name="whats_new_title">What\'s new</string>
+    <string name="whats_new_text">Relations 2.0.0\n• Requires Android 6.0 or newer.\n• Google Drive is no longer supported. If you synchronized with Google Drive, upload your Relations export to Dropbox or Microsoft Azure and select that provider in Settings → Cloud Configuration.\n• Updated for Android 16: edge-to-edge display and the predictive back gesture.\n• More reliable data synchronization.</string>
 </resources>

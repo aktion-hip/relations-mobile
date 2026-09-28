@@ -3,23 +3,24 @@ package org.elbe.relations.mobile.ui
 
 import android.content.res.Configuration
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentStatePagerAdapter
-import android.support.v4.view.ViewPager
-import android.support.v7.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.viewpager.widget.ViewPager
+import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
 
-import kotlinx.android.synthetic.main.content_toolbar.*
+import androidx.appcompat.widget.Toolbar
 import org.elbe.relations.mobile.EXTRA_ITEM
 import org.elbe.relations.mobile.R
-import org.elbe.relations.mobile.cloud.GoogleDriveService
 import org.elbe.relations.mobile.model.MinItem
 import org.elbe.relations.mobile.search.SearchUI
 import org.elbe.relations.mobile.util.RetrieveListHelper
+import org.elbe.relations.mobile.util.SyncObserver
+import org.elbe.relations.mobile.util.applyEdgeToEdge
 import org.elbe.relations.mobile.util.Utils
 
 private const val TAG = "ShowItemActivity"
@@ -32,9 +33,6 @@ class ShowItemActivity : AppCompatActivity() {
     private var mHelper: RetrieveListHelper? = null
     private lateinit var mPager: ViewPager
     private lateinit var mItem: MinItem
-    private val mGoogleDriveService: GoogleDriveService by lazy {
-        GoogleDriveService(this)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +40,9 @@ class ShowItemActivity : AppCompatActivity() {
         mHelper = RetrieveListHelper(this, "showItem")
 
         setContentView(R.layout.activity_show_item)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(findViewById<Toolbar>(R.id.toolbar))
+        SyncObserver.observe(this)
+        applyEdgeToEdge()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         if (savedInstanceState == null) {
@@ -115,17 +115,17 @@ class ShowItemActivity : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        return Utils.runOptions(item, this, mGoogleDriveService) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return Utils.runOptions(item, this) {
             item ->  super.onOptionsItemSelected(item)
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         mItem.let {item ->
             Log.v(TAG, "onSaveInstanceState: saving item '${item.getTitle()}' (id: ${item.getId()}).")
-            outState?.putSerializable(EXTRA_ITEM, item)
+            outState.putSerializable(EXTRA_ITEM, item)
         }
     }
 

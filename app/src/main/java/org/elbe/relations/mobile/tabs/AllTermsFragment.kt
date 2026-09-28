@@ -3,10 +3,11 @@ package org.elbe.relations.mobile.tabs
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
-import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.helper.ItemTouchHelper
+import android.os.Looper
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.ItemTouchHelper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,7 +24,7 @@ import org.elbe.relations.mobile.util.RetrieveListHelper
  */
 class AllTermsFragment : Fragment() {
     private var mHelper: RetrieveListHelper? = null
-    private val mUiHandler = Handler()
+    private val mUiHandler = Handler(Looper.getMainLooper())
     private var mAdapter: ItemAdapter? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -40,7 +41,7 @@ class AllTermsFragment : Fragment() {
                 mUiHandler.post {
                     emptyText.visibility = View.GONE
                     val recyclerView = view.findViewById<RecyclerView>(R.id.items_term)
-                    recyclerView.layoutManager = LinearLayoutManager(activity, LinearLayout.VERTICAL, false)
+                    recyclerView.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
                     mAdapter = ItemAdapter(activity, terms)
                     recyclerView.adapter = mAdapter
                     ItemTouchHelper(ItemSwipeHelper(recyclerView, activity)).attachToRecyclerView(recyclerView)
@@ -49,8 +50,8 @@ class AllTermsFragment : Fragment() {
         })
     }
 
-    override fun onAttach(context: Context?) {
-        mHelper = RetrieveListHelper(context!!, "allTerms")
+    override fun onAttach(context: Context) {
+        mHelper = RetrieveListHelper(context, "allTerms")
         super.onAttach(context)
     }
 

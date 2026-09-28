@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- "@string/key_preference_cloud" -->
-    <android.support.v7.preference.PreferenceCategory
+    <androidx.preference.PreferenceCategory
         android:key="@string/key_preference_cloud"
         android:title="@string/preference_data_synch_title"
         android:persistent="false">
@@ -13,9 +13,9 @@
             android:summary="@string/preference_cloud_hint"
             android:defaultValue="dropbox" />
 
-    </android.support.v7.preference.PreferenceCategory>
+    </androidx.preference.PreferenceCategory>
 
-    <android.support.v7.preference.PreferenceCategory
+    <androidx.preference.PreferenceCategory
         android:key="preference_index"
         android:title="@string/preference_search_index"
         android:persistent="false" >
@@ -25,9 +25,9 @@
             android:title="@string/preference_index_title"
             android:summary="@string/preference_index_hint" />
 
-    </android.support.v7.preference.PreferenceCategory>
+    </androidx.preference.PreferenceCategory>
 
-    <android.support.v7.preference.PreferenceCategory
+    <androidx.preference.PreferenceCategory
         android:key="preference_settings_category"
         android:title="@string/preference_settings"
         android:persistent="false" >
@@ -38,9 +38,9 @@
             android:summary="@string/preference_settings_long_press_desc"
             android:defaultValue="true" />
 
-    </android.support.v7.preference.PreferenceCategory>
+    </androidx.preference.PreferenceCategory>
 
-    <android.support.v7.preference.PreferenceCategory
+    <androidx.preference.PreferenceCategory
         android:key="preference_about"
         android:title="@string/preference_about_title"
         android:persistent="false" >
@@ -50,6 +50,6 @@
             android:title="@string/preference_about_app_title"
             android:summary="@string/preference_about_app_hint"/>
 
-    </android.support.v7.preference.PreferenceCategory>
+    </androidx.preference.PreferenceCategory>
 
-</android.support.v7.preference.PreferenceScreen>
+</androidx.preference.PreferenceScreen>

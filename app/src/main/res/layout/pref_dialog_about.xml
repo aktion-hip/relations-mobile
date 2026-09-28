@@ -1,19 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -175,6 +170,28 @@
                 android:textSize="17sp"/>
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/whatsNewLbl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/whats_new_title"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:paddingTop="20dp"
+            android:paddingStart="5dp"
+            android:paddingEnd="7dp" />
+
+        <TextView
+            android:id="@+id/whatsNewVal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/whats_new_text"
+            android:textSize="15sp"
+            android:paddingTop="5dp"
+            android:paddingStart="5dp"
+            android:paddingEnd="7dp"
+            android:paddingBottom="10dp" />
+
     </LinearLayout>
 
-</android.support.constraint.ConstraintLayout>
+</ScrollView>

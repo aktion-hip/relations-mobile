@@ -1,12 +1,11 @@
 package org.elbe.relations.mobile.util
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.view.MenuItem
 import org.elbe.relations.mobile.IntroActivity
 import org.elbe.relations.mobile.R
 import org.elbe.relations.mobile.cloud.CloudSynchronize
-import org.elbe.relations.mobile.cloud.GoogleDriveService
 import org.elbe.relations.mobile.preferences.SettingsActivity
 
 /**
@@ -21,13 +20,12 @@ class Utils {
          *
          * @param item the menu item clicked
          * @param context the activity
-         * @param driveService GoogleDriveService instance, used for the syncronize item
          * @param elseOption lamda {item ->  super.onOptionsItemSelected(item)}
          * @return Boolean
          */
-        fun runOptions(item: MenuItem?, context: AppCompatActivity, driveService: GoogleDriveService, elseOption: (item: MenuItem?) -> Boolean): Boolean {
-            return when (item?.itemId) {
-                R.id.action_synchronize -> CloudSynchronize.synchronize(context, context.resources, driveService)
+        fun runOptions(item: MenuItem, context: AppCompatActivity, elseOption: (item: MenuItem) -> Boolean): Boolean {
+            return when (item.itemId) {
+                R.id.action_synchronize -> CloudSynchronize.synchronize(context, context.resources)
                 R.id.action_settings -> {
                     context.startActivity(Intent(context, SettingsActivity::class.java))
                     return true

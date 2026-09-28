@@ -26,10 +26,8 @@
     <string name="preference_data_synch_title">Daten-Synchronisierung</string>
     <string name="preference_cloud_title">Cloud-Konfiguration</string>
     <string name="preference_cloud_dropbox_title">Dropbox Konfiguration</string>
-    <string name="preference_cloud_google_title">Google Konfiguration</string>
     <string name="preference_lbl_active">Aktiv</string>
     <string name="preference_dropbox_token_lbl">Zugangs-Token Dropbox</string>
-    <string name="preference_google_token_lbl">Zugangs-Token Google</string>
     <string name="preference_search_index">Konfiguration Suchindex</string>
     <string name="preference_about_title">Über Relations</string>
     <string name="preference_nr_total">Total Anzahl Einträge:</string>
@@ -44,7 +42,7 @@
     <string name="abstract_cloud_provider_dft_error">Während der Datensynchronisierung ist ein Fehler aufgetreten.</string>
     <string name="cloud_provider_dft_success">Die Datenbank wurde erfolgreich synchronisiert.</string>
     <string name="cloud_provider_dropbox_no_config">Konfigurations-Problem: Es ist kein Dropbox Zugriffs-Token konfiguriert!</string>
-    <string name="cloud_provider_drive_error">Beim Import ist ein Fehler aufgetreten.</string>
+    <string name="cloud_provider_unsupported">Der gewählte Cloud-Anbieter wird nicht mehr unterstützt. Bitte wählen Sie in der Cloud-Konfiguration Dropbox oder Microsoft Azure.</string>
     <string name="cloud_provider_azure_no_config">Konfigurataions-Problem: Es ist kein MS Azure Zugriffsschlüssel konfiguriert worden!</string>
     <string name="cloud_provider_azure_no_export1">Kein Relations-Export gefunden auf &lt;MS Azure>:/%s!</string>
     <string name="cloud_provider_azure_no_export2">Kein Relations-Export auf &lt;MS Azure>:/%s/%s gefunden!</string>
@@ -56,8 +54,6 @@
     <string name="sync_switch_off">voll</string>
     <string name="sync_switch_on">inkrementell</string>
     <string name="sync_text">synchronisieren</string>
-    <string name="err_msg_google_drive_download">Das Relations-File konnte auf Google Drive nicht gefunden werden!</string>
-    <string name="err_msg_google_drive_process">Das File von Google Drive konnte nicht ausgewertet werden!</string>
     <string name="preference_settings">Einstellungen</string>
     <string name="preference_settings_long_press_title">Langer Tastendruck</string>
     <string name="preference_settings_long_press_desc">Langer Tastendruck für die Anzeige der Item-Details.</string>
@@ -75,4 +71,7 @@
     <string name="intro_desc_3">Die Detailseite können Sie nach links wischen, um die zugeordneten Einträge anzuzeigen.</string>
     <string name="intro_title_4">Einträge suchen</string>
     <string name="intro_desc_4">Wenn Sie einen Eintrag suchen wollen, geben Sie einen Suchbegriff im Suchfeld ein.\nHinweis: der Suchindex für die Volltextsuche muss in der Sprache der Einträge erzeugt worden sein (in Konfiguration -> Sprache).</string>
+    <!-- About dialog: release notes of the installed version, same text as fastlane/metadata/android/de-DE/changelogs/<versionCode>.txt -->
+    <string name="whats_new_title">Neuigkeiten</string>
+    <string name="whats_new_text">Relations 2.0.0\n• Benötigt Android 6.0 oder neuer.\n• Google Drive wird nicht mehr unterstützt. Wenn Sie mit Google Drive synchronisiert haben, laden Sie Ihren Relations-Export auf Dropbox oder Microsoft Azure hoch und wählen Sie diesen Anbieter unter Konfiguration → Cloud-Konfiguration.\n• Für Android 16 aktualisiert: randlose Darstellung und vorausschauende Zurück-Geste.\n• Zuverlässigere Datensynchronisation.</string>
 </resources>

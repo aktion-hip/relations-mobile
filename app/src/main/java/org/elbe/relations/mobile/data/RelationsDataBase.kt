@@ -1,10 +1,10 @@
 @file:Suppress("NAME_SHADOWING")
 package org.elbe.relations.mobile.data
 
-import android.arch.persistence.room.Database
-import android.arch.persistence.room.Room
-import android.arch.persistence.room.RoomDatabase
-import android.arch.persistence.room.TypeConverters
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import android.content.Context
 import org.elbe.relations.mobile.model.Person
 import org.elbe.relations.mobile.model.Relation
@@ -14,7 +14,7 @@ import org.elbe.relations.mobile.model.Text
 /**
  * The application's database.
  */
-@Database(entities = [Term::class, Text::class, Person::class, Relation::class], version = 1, exportSchema = false)
+@Database(entities = [Term::class, Text::class, Person::class, Relation::class], version = 1, exportSchema = true)
 @TypeConverters(Converters::class)
 abstract class RelationsDataBase : RoomDatabase() {
     abstract fun termDAO(): TermDAO

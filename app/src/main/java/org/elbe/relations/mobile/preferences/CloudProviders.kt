@@ -22,7 +22,6 @@ class CloudProviders(resources: Resources) {
                         providers.add(ProviderModel(
                                 parser.getAttributeValue(null, "name"),
                                 parser.getAttributeValue(null, "id"),
-                                parser.getAttributeValue(null, "class"),
                                 parser.getAttributeValue(null, "hint")))
                     }
                 }
@@ -41,6 +40,6 @@ class CloudProviders(resources: Resources) {
         return mProviders
     }
 
-    data class ProviderModel(val name: String, val id: String, val className: String, val hint: String)
+    data class ProviderModel(val name: String, val id: String, val hint: String)
 
 }
