@@ -42,7 +42,7 @@
     <string name="abstract_cloud_provider_dft_error">Während der Datensynchronisierung ist ein Fehler aufgetreten.</string>
     <string name="cloud_provider_dft_success">Die Datenbank wurde erfolgreich synchronisiert.</string>
     <string name="cloud_provider_dropbox_no_config">Konfigurations-Problem: Es ist kein Dropbox Zugriffs-Token konfiguriert!</string>
-    <string name="cloud_provider_unsupported">Der gewählte Cloud-Anbieter wird nicht mehr unterstützt. Bitte wählen Sie in der Cloud-Konfiguration Dropbox oder Microsoft Azure.</string>
+    <string name="cloud_provider_unsupported">Der gewählte Cloud-Anbieter wird nicht mehr unterstützt. Bitte wählen Sie in der Cloud-Konfiguration Dropbox, Microsoft Azure oder Relations Desktop (WLAN).</string>
     <string name="cloud_provider_azure_no_config">Konfigurataions-Problem: Es ist kein MS Azure Zugriffsschlüssel konfiguriert worden!</string>
     <string name="cloud_provider_azure_no_export1">Kein Relations-Export gefunden auf &lt;MS Azure>:/%s!</string>
     <string name="cloud_provider_azure_no_export2">Kein Relations-Export auf &lt;MS Azure>:/%s/%s gefunden!</string>
@@ -74,4 +74,19 @@
     <!-- About dialog: release notes of the installed version, same text as fastlane/metadata/android/de-DE/changelogs/<versionCode>.txt -->
     <string name="whats_new_title">Neuigkeiten</string>
     <string name="whats_new_text">Relations 2.0.0\n• Benötigt Android 6.0 oder neuer.\n• Google Drive wird nicht mehr unterstützt. Wenn Sie mit Google Drive synchronisiert haben, laden Sie Ihren Relations-Export auf Dropbox oder Microsoft Azure hoch und wählen Sie diesen Anbieter unter Konfiguration → Cloud-Konfiguration.\n• Für Android 16 aktualisiert: randlose Darstellung und vorausschauende Zurück-Geste.\n• Zuverlässigere Datensynchronisation.</string>
+    <!-- Peer-to-peer synchronization (jvm-libp2p) -->
+    <string name="p2p_provider_name">Relations Desktop (WLAN)</string>
+    <string name="p2p_waiting">Warte auf die Relations Desktop-Anwendung… Starten Sie das Senden der Daten auf Ihrem Computer.\n\nFalls Ihr Computer dieses Telefon nicht findet, geben Sie dort diese Adresse ein:</string>
+    <string name="p2p_confirm_title">Mit %1$s verbinden?</string>
+    <string name="p2p_confirm_message">Prüfen Sie, ob Ihr Computer denselben Code anzeigt:\n\n%1$s</string>
+    <string name="p2p_accept">Annehmen</string>
+    <string name="p2p_reject">Ablehnen</string>
+    <string name="p2p_receiving">Daten empfangen.</string>
+    <string name="p2p_canceled">Die Synchronisation wurde abgebrochen.</string>
+    <string name="p2p_no_computer">Es wurde kein Computer gefunden. Starten Sie das Senden der Daten in der Relations Desktop-Anwendung und stellen Sie sicher, dass beide Geräte dasselbe WLAN verwenden. Falls der Computer das Telefon nicht findet, geben Sie die auf dem Telefon angezeigte Adresse ein.</string>
+    <string name="p2p_connection_lost">Die Verbindung zum Computer wurde unterbrochen. Ihre Daten wurden nicht verändert.</string>
+    <string name="p2p_timed_out">Die Übertragung hat zu lange gedauert. Ihre Daten wurden nicht verändert.</string>
+    <string name="p2p_unexpected_data">Der Computer hat unerwartete Daten gesendet. Ihre Daten wurden nicht verändert.</string>
+    <string name="p2p_listen_failed">Die Synchronisation mit Relations Desktop konnte nicht gestartet werden. Prüfen Sie die WLAN-Verbindung.</string>
+    <string name="p2p_no_wifi">Verbinden Sie dieses Telefon mit demselben WLAN wie Ihren Computer, um mit Relations Desktop zu synchronisieren.</string>
 </resources>

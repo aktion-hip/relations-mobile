@@ -8,4 +8,9 @@
         name="Microsoft Azure"
         id="ms_azure"
         hint="Connection String" />
+    <!-- peer-to-peer (Relations desktop over WiFi): no token, i.e. empty hint -->
+    <CloudProvider
+        name="@string/p2p_provider_name"
+        id="p2p"
+        hint="" />
 </CloudProviders>

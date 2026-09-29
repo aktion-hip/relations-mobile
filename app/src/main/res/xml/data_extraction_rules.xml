@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Backup rules for API 31+, same content as relations_backup_rules.xml (used up to API 30). -->
+<data-extraction-rules>
+    <cloud-backup>
+        <include domain="root" path="."/>
+        <include domain="sharedpref" path="."/>
+        <!-- the peer-to-peer identity is device specific, a restored device gets a new one -->
+        <exclude domain="root" path="files/p2p_identity.key"/>
+    </cloud-backup>
+    <device-transfer>
+        <include domain="root" path="."/>
+        <include domain="sharedpref" path="."/>
+        <!-- the peer-to-peer identity is device specific, a restored device gets a new one -->
+        <exclude domain="root" path="files/p2p_identity.key"/>
+    </device-transfer>
+</data-extraction-rules>

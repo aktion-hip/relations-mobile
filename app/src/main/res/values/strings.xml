@@ -42,7 +42,7 @@
     <string name="abstract_cloud_provider_dft_error">An error occurred during the data synchronization.</string>
     <string name="cloud_provider_dft_success">Successfully synchronized the database.</string>
     <string name="cloud_provider_dropbox_no_config">Configuration Problem: No Dropbox access token configured!</string>
-    <string name="cloud_provider_unsupported">The selected cloud provider is no longer supported. Please select Dropbox or Microsoft Azure in the cloud configuration.</string>
+    <string name="cloud_provider_unsupported">The selected cloud provider is no longer supported. Please select Dropbox, Microsoft Azure or Relations desktop (WiFi) in the cloud configuration.</string>
     <string name="cloud_provider_azure_no_config">Configuration Problem: No MS Azure connection string is configured!</string>
     <string name="cloud_provider_azure_no_export1">No Relations export found on &lt;MS Azure>:/%s!</string>
     <string name="cloud_provider_azure_no_export2">No Relations export &lt;MS Azure>:/%s/%s found!</string>
@@ -77,4 +77,19 @@
     <!-- About dialog: release notes of the installed version, same text as fastlane/metadata/android/en-US/changelogs/<versionCode>.txt -->
     <string name="whats_new_title">What\'s new</string>
     <string name="whats_new_text">Relations 2.0.0\n• Requires Android 6.0 or newer.\n• Google Drive is no longer supported. If you synchronized with Google Drive, upload your Relations export to Dropbox or Microsoft Azure and select that provider in Settings → Cloud Configuration.\n• Updated for Android 16: edge-to-edge display and the predictive back gesture.\n• More reliable data synchronization.</string>
+    <!-- Peer-to-peer synchronization (jvm-libp2p) -->
+    <string name="p2p_provider_name">Relations desktop (WiFi)</string>
+    <string name="p2p_waiting">Waiting for the Relations desktop application… Start sending the data on your computer.\n\nIf your computer does not find this phone, enter this address there:</string>
+    <string name="p2p_confirm_title">Connect to %1$s?</string>
+    <string name="p2p_confirm_message">Check that your computer shows the same code:\n\n%1$s</string>
+    <string name="p2p_accept">Accept</string>
+    <string name="p2p_reject">Reject</string>
+    <string name="p2p_receiving">Receive data.</string>
+    <string name="p2p_canceled">The synchronization was canceled.</string>
+    <string name="p2p_no_computer">No computer was found. Start sending the data in the Relations desktop application and make sure that both devices use the same WiFi. If the computer does not find the phone, enter the address shown on the phone.</string>
+    <string name="p2p_connection_lost">The connection to the computer was lost. Your data was not changed.</string>
+    <string name="p2p_timed_out">The transfer timed out. Your data was not changed.</string>
+    <string name="p2p_unexpected_data">The computer sent unexpected data. Your data was not changed.</string>
+    <string name="p2p_listen_failed">The synchronization with the Relations desktop could not be started. Check the WiFi connection.</string>
+    <string name="p2p_no_wifi">Connect this phone to the same WiFi as your computer to synchronize with the Relations desktop.</string>
 </resources>

@@ -3,6 +3,7 @@ package org.elbe.relations.mobile.preferences
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import org.elbe.relations.mobile.R
@@ -15,9 +16,13 @@ class SettingsActivity: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        applyEdgeToEdge(hasDecorActionBar = true)
+        setContentView(R.layout.activity_settings)
+        setSupportActionBar(findViewById<Toolbar>(R.id.toolbar))
+        applyEdgeToEdge()
         setupActionBar()
-        supportFragmentManager.beginTransaction().replace(android.R.id.content, SettingsFragment()).commit()
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction().replace(R.id.settings_container, SettingsFragment()).commit()
+        }
     }
 
     private fun setupActionBar() {

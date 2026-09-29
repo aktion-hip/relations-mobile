@@ -9,6 +9,8 @@ import android.util.Log
 import android.view.View
 import android.widget.Switch
 import org.elbe.relations.mobile.R
+import org.elbe.relations.mobile.p2p.Libp2pTransport
+import org.elbe.relations.mobile.p2p.LocalAddress
 import org.elbe.relations.mobile.preferences.SettingsActivity
 import org.elbe.relations.mobile.search.IndexWriterFactory
 
@@ -75,11 +77,38 @@ class CloudSynchronize {
             // the provider must not hold a reference to the activity, it outlives it (e.g. device rotation)
             val appContext = context.applicationContext
             val factory = IndexWriterFactory(appContext, r)
+            val incremental = isIncremental(view)
             val provider = when (kind) {
                 CloudProviderKind.DROPBOX -> DropboxCloudProvider(appContext, r, factory, providerConfig.token)
                 CloudProviderKind.MS_AZURE -> MSAzureCloudProvider(appContext, r, factory, providerConfig.token)
+                CloudProviderKind.P2P -> {
+                    startPeerToPeer(context, r, factory, incremental)
+                    return
+                }
             }
-            SyncRunner.instance.start(provider, isIncremental(view), r.getString(R.string.abstract_cloud_provider_dft_error))
+            SyncRunner.instance.start(provider, incremental, r.getString(R.string.abstract_cloud_provider_dft_error))
+        }
+
+        /**
+         * Checks the WiFi prerequisite and starts the peer-to-peer synchronization with the Relations desktop.
+         */
+        private fun startPeerToPeer(context: AppCompatActivity, r: Resources, factory: IndexWriterFactory, incremental: Boolean) {
+            val address = LocalAddress.current()
+            if (address == null) {
+                showMessage(context, r, R.string.p2p_no_wifi)
+                return
+            }
+            val appContext = context.applicationContext
+            val provider = PeerCloudProvider.create(appContext, r, factory, Libp2pTransport(appContext, address))
+            SyncRunner.instance.start(provider, incremental, r.getString(R.string.abstract_cloud_provider_dft_error))
+        }
+
+        private fun showMessage(context: AppCompatActivity, r: Resources, messageId: Int) {
+            AlertDialog.Builder(context)
+                    .setTitle(r.getString(R.string.menu_title_sync_db))
+                    .setMessage(r.getString(messageId))
+                    .setPositiveButton(android.R.string.ok) { _, _ -> }
+                    .show()
         }
 
         private fun isIncremental(view: View): Boolean {

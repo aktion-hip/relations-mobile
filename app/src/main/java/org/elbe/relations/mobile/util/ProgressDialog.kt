@@ -17,6 +17,12 @@ class ProgressDialog: DialogFragment() {
     private var count: Int = 0
     private var maxValue: Int = 0
     private var pendingTitle: String? = null
+    private var mTitle: String? = null
+    private var mShowCancel = false
+    private var mDetail: String? = null
+
+    /** Called when the user taps Cancel, see showCancel(). */
+    var onCancel: (() -> Unit)? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.fragment_progress, container)
@@ -38,10 +44,33 @@ class ProgressDialog: DialogFragment() {
                 setTitle(title)
             }
         }
-        // progress reported before the view existed
+        // title, cancel and progress set before the view existed
+        mTitle?.let { setTitle(it) }
+        showDetail(mDetail)
+        view.findViewById<View>(R.id.progress_cancel)?.setOnClickListener { onCancel?.invoke() }
+        showCancel(mShowCancel)
         if (count > 0 && maxValue > 0) {
             showProgress(count, maxValue, pendingTitle ?: "")
         }
+    }
+
+    /**
+     * @param detail String? the (selectable) text below the title, null to hide it
+     */
+    fun showDetail(detail: String?) {
+        mDetail = detail
+        mView?.findViewById<TextView>(R.id.progress_detail)?.let {
+            it.text = detail ?: ""
+            it.visibility = if (detail == null) View.GONE else View.VISIBLE
+        }
+    }
+
+    /**
+     * @param show Boolean true to display the Cancel button
+     */
+    fun showCancel(show: Boolean) {
+        mShowCancel = show
+        mView?.findViewById<View>(R.id.progress_cancel)?.visibility = if (show) View.VISIBLE else View.GONE
     }
 
     private fun getBar(): ProgressBar? {
@@ -56,6 +85,7 @@ class ProgressDialog: DialogFragment() {
      * @param title String the progress dialog's new text to display
      */
     fun setTitle(title: String) {
+        mTitle = title
         mView?.findViewById<TextView>(R.id.progress_count)?.text = title
     }
 

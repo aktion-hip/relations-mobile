@@ -16,6 +16,19 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        // jvm-libp2p and its transitive dependencies, restricted to their groups
+        maven {
+            url 'https://dl.cloudsmith.io/public/libp2p/jvm-libp2p/maven/'
+            content { includeGroup 'io.libp2p' }
+        }
+        maven {
+            url 'https://jitpack.io'
+            content { includeGroup 'com.github.multiformats' }
+        }
+        maven {
+            url 'https://artifacts.consensys.net/public/maven/maven/'
+            content { includeGroup 'tech.pegasys' }
+        }
     }
 }
 

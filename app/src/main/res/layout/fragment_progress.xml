@@ -8,11 +8,28 @@
     <TextView
         android:id="@+id/progress_count"
         android:text="@string/fts_create_process"
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:minHeight="20dp"
         android:layout_marginTop="7dp"
         android:layout_marginBottom="3dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
         android:gravity="center" />
+
+    <!-- e.g. the address for manual entry on the computer, selectable for copying -->
+    <TextView
+        android:id="@+id/progress_detail"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="3dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:gravity="center"
+        android:textIsSelectable="true"
+        android:typeface="monospace"
+        android:textSize="12sp"
+        android:visibility="gone" />
 
     <ProgressBar xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/progress_bar"
@@ -33,6 +50,16 @@
         android:id="@+id/progress_indeterminate"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+    <!-- shown while waiting for or receiving from a peer -->
+    <Button
+        android:id="@+id/progress_cancel"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:text="@android:string/cancel"
         android:visibility="gone" />
 
 </LinearLayout>

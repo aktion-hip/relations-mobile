@@ -19,8 +19,10 @@ class CloudProviders(resources: Resources) {
             while (event != XmlPullParser.END_DOCUMENT) {
                 if (event == XmlPullParser.START_TAG) {
                     if (parser.name == "CloudProvider") {
+                        // the name is either a literal or a string resource (@string/...)
+                        val nameId = parser.getAttributeResourceValue(null, "name", 0)
                         providers.add(ProviderModel(
-                                parser.getAttributeValue(null, "name"),
+                                if (nameId != 0) resources.getString(nameId) else parser.getAttributeValue(null, "name"),
                                 parser.getAttributeValue(null, "id"),
                                 parser.getAttributeValue(null, "hint")))
                     }

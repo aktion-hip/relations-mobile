@@ -2,4 +2,6 @@
 <full-backup-content>
     <include domain="root" path="."/>
     <include domain="sharedpref" path="."/>
+    <!-- the peer-to-peer identity is device specific, a restored device gets a new one -->
+    <exclude domain="root" path="files/p2p_identity.key"/>
 </full-backup-content>
