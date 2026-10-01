@@ -15,7 +15,10 @@ import java.util.Locale
 object PeerProtocol {
     const val PROTOCOL_ID = "/relations/sync/1.0.0"
     const val VERSION = 1
+    /** The TCP port the desktop application prefers to listen on. */
     const val DEFAULT_PORT = 47112
+    /** The mDNS service the desktop application announces itself with (the domain is required by jvm-libp2p). */
+    const val MDNS_SERVICE_TAG = "_relations-sync._udp.local."
     /** The maximal size of a control frame's JSON. */
     const val MAX_FRAME = 65_536
     const val FILE_NAME_ALL = "relations_all.zip"

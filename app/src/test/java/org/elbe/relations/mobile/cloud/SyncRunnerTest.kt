@@ -94,31 +94,34 @@ class SyncRunnerTest {
     }
 
     /**
-     * Waits for the peer, asks for confirmation and receives, controlled by the user's answers.
+     * Searches, asks for confirmation and receives, controlled by the user's answers.
      */
     private class FakeInteractiveProvider : InteractiveCloudProvider {
         val answers = java.util.concurrent.LinkedBlockingQueue<PeerAnswer>()
         val states = mutableListOf<SyncState>()
         lateinit var session: SyncSession
         val started = java.util.concurrent.CountDownLatch(1)
+        @Volatile
+        var connectedWith: PeerAnswer? = null
 
         override fun synchronize(incremental: Boolean, session: SyncSession): AbstractCloudProvider.SyncResult {
             this.session = session
             session.setAnswerListener { answers.add(it) }
-            session.waitingForPeer("/ip4/192.168.1.23/tcp/47112/p2p/12D3KooWTest")
+            session.selectComputer(listOf(computer), false)
             started.countDown()
             var answer = answers.take()
-            if (answer == PeerAnswer.CANCEL) {
+            if (answer == PeerAnswer.Cancel) {
                 return AbstractCloudProvider.SyncResult(false, "canceled")
             }
+            connectedWith = answer
             session.confirmPeer("PC", "1234")
             answer = answers.take()
-            if (answer != PeerAnswer.ACCEPT) {
+            if (answer != PeerAnswer.Accept) {
                 return AbstractCloudProvider.SyncResult(false, "rejected")
             }
             session.receiving()
             answer = answers.take()
-            if (answer == PeerAnswer.CANCEL) {
+            if (answer == PeerAnswer.Cancel) {
                 return AbstractCloudProvider.SyncResult(false, "canceled")
             }
             session.importing()
@@ -136,27 +139,42 @@ class SyncRunnerTest {
     }
 
     @Test
-    fun testCancelWhileWaiting() {
+    fun testCancelWhileSelecting() {
         val provider = FakeInteractiveProvider()
         assertTrue(threadRunner.start(provider, false, "error"))
-        assertEquals(SyncState.WaitingForPeer("/ip4/192.168.1.23/tcp/47112/p2p/12D3KooWTest"),
-                awaitState { it is SyncState.WaitingForPeer })
+        assertEquals(SyncState.SelectComputer(listOf(computer), false), awaitState { it is SyncState.SelectComputer })
+        assertEquals("/ip4/192.168.1.10/tcp/47112/p2p/12D3KooWTest", computer.preferred)
         threadRunner.cancel()
         assertEquals(SyncState.Failed("canceled"), awaitState { it is SyncState.Failed })
+    }
+
+    @Test
+    fun testConnectToReachesProvider() {
+        val provider = FakeInteractiveProvider()
+        assertTrue(threadRunner.start(provider, false, "error"))
+        awaitState { it is SyncState.SelectComputer }
+        threadRunner.connectTo(computer = "12D3KooWTest")
+        awaitState { it is SyncState.ConfirmPeer }
+        assertEquals(PeerAnswer.Connect(null, "12D3KooWTest"), provider.connectedWith)
+        // ignored outside SelectComputer: the provider would take it as its confirmation answer
+        threadRunner.connectTo(address = "/ip4/10.0.2.2/tcp/47112/p2p/12D3KooWTest")
+        Thread.sleep(100)
+        assertTrue(provider.answers.isEmpty())
+        threadRunner.answerPeer(false)
+        assertEquals(SyncState.Failed("rejected"), awaitState { it is SyncState.Failed })
     }
 
     @Test
     fun testConfirmAccept() {
         val provider = FakeInteractiveProvider()
         assertTrue(threadRunner.start(provider, true, "error"))
-        awaitState { it is SyncState.WaitingForPeer }
-        // the provider continues on any answer other than CANCEL, the fake uses ACCEPT to proceed
+        awaitState { it is SyncState.SelectComputer }
         threadRunner.answerPeer(true) // ignored: not in ConfirmPeer state
-        provider.answers.add(PeerAnswer.ACCEPT)
+        threadRunner.connectTo(computer = "12D3KooWTest")
         assertEquals(SyncState.ConfirmPeer("PC", "1234"), awaitState { it is SyncState.ConfirmPeer })
         threadRunner.answerPeer(true)
         awaitState { it == SyncState.Running(0, 0, true) }
-        provider.answers.add(PeerAnswer.ACCEPT)
+        provider.answers.add(PeerAnswer.Accept)
         assertEquals(SyncState.Done("ok"), awaitState { it is SyncState.Done })
     }
 
@@ -164,8 +182,8 @@ class SyncRunnerTest {
     fun testConfirmReject() {
         val provider = FakeInteractiveProvider()
         assertTrue(threadRunner.start(provider, false, "error"))
-        awaitState { it is SyncState.WaitingForPeer }
-        provider.answers.add(PeerAnswer.ACCEPT)
+        awaitState { it is SyncState.SelectComputer }
+        threadRunner.connectTo(computer = "12D3KooWTest")
         awaitState { it is SyncState.ConfirmPeer }
         threadRunner.answerPeer(false)
         assertEquals(SyncState.Failed("rejected"), awaitState { it is SyncState.Failed })
@@ -175,8 +193,8 @@ class SyncRunnerTest {
     fun testCancelWhileReceiving() {
         val provider = FakeInteractiveProvider()
         assertTrue(threadRunner.start(provider, false, "error"))
-        awaitState { it is SyncState.WaitingForPeer }
-        provider.answers.add(PeerAnswer.ACCEPT)
+        awaitState { it is SyncState.SelectComputer }
+        threadRunner.connectTo(computer = "12D3KooWTest")
         awaitState { it is SyncState.ConfirmPeer }
         threadRunner.answerPeer(true)
         awaitState { it == SyncState.Running(0, 0, true) }
@@ -203,13 +221,13 @@ class SyncRunnerTest {
     }
 
     @Test
-    fun testNoSecondStartWhileWaitingOrConfirming() {
+    fun testNoSecondStartWhileSelectingOrConfirming() {
         val provider = FakeInteractiveProvider()
         assertTrue(threadRunner.start(provider, false, "error"))
-        awaitState { it is SyncState.WaitingForPeer }
+        awaitState { it is SyncState.SelectComputer }
         assertFalse(threadRunner.start(FakeProvider { AbstractCloudProvider.SyncResult(true, "ok") }, false, "error"))
         assertFalse(threadRunner.start(FakeInteractiveProvider(), false, "error"))
-        provider.answers.add(PeerAnswer.ACCEPT)
+        threadRunner.connectTo(computer = "12D3KooWTest")
         awaitState { it is SyncState.ConfirmPeer }
         assertFalse(threadRunner.start(FakeProvider { AbstractCloudProvider.SyncResult(true, "ok") }, false, "error"))
         threadRunner.cancel()
@@ -228,4 +246,7 @@ class SyncRunnerTest {
         assertEquals(SyncState.Done("ok"), runner.state.value)
     }
 
+    companion object {
+        private val computer = FoundComputer("12D3KooWTest", listOf("/ip4/192.168.1.10/tcp/47112"))
+    }
 }

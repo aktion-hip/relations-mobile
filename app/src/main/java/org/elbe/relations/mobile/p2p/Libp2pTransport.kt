@@ -9,32 +9,32 @@ import java.net.Inet4Address
 const val P2P_IDENTITY_FILE = "p2p_identity.key"
 
 /**
- * The Android PeerTransport: a Libp2pHost that holds a multicast lock while listening, so that mDNS works.
+ * The Android PeerTransport: a Libp2pHost that holds a multicast lock while searching, so that mDNS works.
  *
  * @param context Context the application context
- * @param address Inet4Address the WiFi address to listen on, see LocalAddress
+ * @param address Inet4Address? the WiFi address to search on, see LocalAddress, null to not search
  */
 class Libp2pTransport private constructor(context: Context, private val host: Libp2pHost) : PeerTransport by host {
 
-    constructor(context: Context, address: Inet4Address) :
+    constructor(context: Context, address: Inet4Address?) :
             this(context, Libp2pHost(File(context.applicationContext.filesDir, P2P_IDENTITY_FILE), address))
 
     private val mLock: WifiManager.MulticastLock =
             (context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager)
                     .createMulticastLock("relations-p2p").apply { setReferenceCounted(false) }
 
-    override fun start(port: Int): String {
+    override fun startDiscovery() {
         mLock.acquire()
         try {
-            return host.start(port)
+            host.startDiscovery()
         } catch (e: Exception) {
-            mLock.release()
+            release()
             throw e
         }
     }
 
-    override fun stopListening() {
-        host.stopListening()
+    override fun stopDiscovery() {
+        host.stopDiscovery()
         release()
     }
 

@@ -14,6 +14,7 @@ import org.elbe.relations.mobile.cloud.SyncState
 
 private const val DIALOG_TAG = "fragment_download"
 private const val CONFIRM_TAG = "fragment_confirm_peer"
+private const val SELECT_TAG = "fragment_select_computer"
 
 /**
  * Displays the state of the data synchronization (see SyncRunner) in an activity.
@@ -35,8 +36,12 @@ object SyncObserver {
         val fm = activity.supportFragmentManager
         val dialog = fm.findFragmentByTag(DIALOG_TAG) as? ProgressDialog
         val confirm = fm.findFragmentByTag(CONFIRM_TAG) as? ConfirmPeerDialog
+        val select = fm.findFragmentByTag(SELECT_TAG) as? SelectComputerDialog
         if (state !is SyncState.ConfirmPeer) {
             confirm?.dismissAllowingStateLoss()
+        }
+        if (state !is SyncState.SelectComputer) {
+            select?.dismissAllowingStateLoss()
         }
         when (state) {
             is SyncState.Running -> {
@@ -51,11 +56,10 @@ object SyncObserver {
                     progress.showProgress(state.current, state.max, activity.getString(R.string.abstract_cloud_provider_dialog_title2))
                 }
             }
-            is SyncState.WaitingForPeer -> {
-                val progress = showProgress(activity, dialog, activity.getString(R.string.p2p_waiting))
-                progress.setTitle(activity.getString(R.string.p2p_waiting))
-                progress.showDetail(state.address)
-                progress.showCancel(true)
+            is SyncState.SelectComputer -> {
+                dialog?.dismissAllowingStateLoss()
+                val selection = select ?: SelectComputerDialog.newInstance(state.editable).also { it.showNow(fm, SELECT_TAG) }
+                selection.update(state.computers)
             }
             is SyncState.ConfirmPeer -> {
                 dialog?.showCancel(false)

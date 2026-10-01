@@ -9,26 +9,38 @@ class FakePeerTransport(override val localPeerId: ByteArray = byteArrayOf(0, 1, 
     @Volatile
     private var listener: ((PeerEvent) -> Unit)? = null
 
-    /** The operations in the order they were called, e.g. "start:47112", "close:pc". */
+    /** The operations in the order they were called, e.g. "discover", "connect:/ip4/...", "close:pc". */
     val calls = CopyOnWriteArrayList<String>()
     /** The frames sent (without the length header), as text. */
     val sent = CopyOnWriteArrayList<String>()
 
-    var address = "/ip4/192.168.1.23/tcp/47112/p2p/12D3KooWPhone"
-    var startFailure: Exception? = null
+    var discoveryFailure: Exception? = null
+    /** The addresses whose connect() fails. */
+    val connectFailures = mutableSetOf<String>()
+    /** The connection ID and the remote peer ID a successful connect() reports. */
+    var connectionId = "pc"
+    var remotePeerId: ByteArray = byteArrayOf(9, 9)
 
     override fun setListener(listener: ((PeerEvent) -> Unit)?) {
         this.listener = listener
     }
 
-    override fun start(port: Int): String {
-        calls.add("start:$port")
-        startFailure?.let { throw it }
-        return address
+    override fun startDiscovery() {
+        calls.add("discover")
+        discoveryFailure?.let { throw it }
     }
 
-    override fun stopListening() {
-        calls.add("stopListening")
+    override fun stopDiscovery() {
+        calls.add("stopDiscovery")
+    }
+
+    override fun connect(address: String): String {
+        calls.add("connect:$address")
+        if (address in connectFailures) {
+            throw java.io.IOException("Connection refused: $address")
+        }
+        emit(PeerEvent.Connected(connectionId, remotePeerId))
+        return connectionId
     }
 
     override fun send(connectionId: String, bytes: ByteArray) {
@@ -48,8 +60,8 @@ class FakePeerTransport(override val localPeerId: ByteArray = byteArrayOf(0, 1, 
         listener?.invoke(event)
     }
 
-    fun connect(connectionId: String, remotePeerId: ByteArray = byteArrayOf(9, 9)) =
-            emit(PeerEvent.Connected(connectionId, remotePeerId))
+    /** A computer announces itself. */
+    fun found(peerId: String, vararg addresses: String) = emit(PeerEvent.Found(peerId, addresses.toList()))
 
     /** Sends a control frame from the desktop. */
     fun frame(connectionId: String, json: String) =

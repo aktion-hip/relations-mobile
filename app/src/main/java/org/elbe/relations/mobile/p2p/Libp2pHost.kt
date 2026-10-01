@@ -13,7 +13,9 @@ import io.libp2p.core.dsl.host
 import io.libp2p.core.multiformats.Multiaddr
 import io.libp2p.core.multistream.StrictProtocolBinding
 import io.libp2p.core.mux.StreamMuxerProtocol
-import io.libp2p.discovery.MDnsDiscovery
+import io.libp2p.discovery.mdns.AnswerListener
+import io.libp2p.discovery.mdns.JmDNS
+import io.libp2p.discovery.mdns.impl.DNSRecord
 import io.libp2p.protocol.ProtocolHandler
 import io.libp2p.protocol.ProtocolMessageHandler
 import io.libp2p.security.noise.NoiseXXSecureChannel
@@ -29,26 +31,31 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 
 private const val START_TIMEOUT_S = 10L
+private const val CONNECT_TIMEOUT_S = 10L
 private const val CLOSE_TIMEOUT_S = 5L
+/** Seconds between the mDNS queries. */
+private const val QUERY_INTERVAL_S = 3
 
 /**
- * A jvm-libp2p host (TCP, Noise, mplex) that accepts streams for PeerProtocol.PROTOCOL_ID, see design.md (Decision 2).
+ * A jvm-libp2p host (TCP, Noise, mplex) that dials the Relations desktop application and opens the stream for
+ * PeerProtocol.PROTOCOL_ID, see design.md of the change reverse-p2p-roles (Decisions 1 to 3).
  *
- * Pure JVM, i.e. usable in unit tests and by the Relations desktop application.
+ * The host doesn't listen. It finds the desktop applications with an mDNS query (JmDNS without registering a service,
+ * jvm-libp2p's MDnsDiscovery needs a listen address).
+ *
+ * Pure JVM, i.e. usable in unit tests.
  *
  * @param identityFile File the Ed25519 key, created if it doesn't exist
- * @param bindAddress Inet4Address the address to listen on (the WiFi address, 127.0.0.1 in tests)
- * @param announce Boolean true to announce this host with mDNS while listening
+ * @param discoveryAddress InetAddress? the address of the interface to search on (the WiFi address, 127.0.0.1 in tests),
+ * null to not search
  */
-class Libp2pHost(identityFile: File,
-                 private val bindAddress: Inet4Address,
-                 private val announce: Boolean = true) : PeerTransport {
+class Libp2pHost(identityFile: File, private val discoveryAddress: InetAddress?) : PeerTransport {
     private val mKey: PrivKey = loadOrCreateKey(identityFile)
     private val mStreams = ConcurrentHashMap<String, Stream>()
     private val mCounter = AtomicInteger()
+    private val mBinding = SyncBinding(SyncProtocol())
     private var mHost: Host? = null
-    private var mListenAddress: Multiaddr? = null
-    private var mDiscovery: MDnsDiscovery? = null
+    private var mDiscovery: JmDNS? = null
 
     @Volatile
     private var mListener: ((PeerEvent) -> Unit)? = null
@@ -67,56 +74,56 @@ class Libp2pHost(identityFile: File,
     }
 
     @Synchronized
-    override fun start(port: Int): String {
-        check(mHost == null) { "Already started." }
-        var listen = listenAddress(port)
-        val host = try {
-            startHost(listen)
-        } catch (e: Exception) {
-            // the preferred port is taken
-            listen = listenAddress(0)
-            startHost(listen)
-        }
-        mHost = host
-        // unlisten() expects the configured address
-        mListenAddress = Multiaddr(listen)
-        // e.g. /ip4/192.168.1.23/tcp/47112/p2p/12D3KooW...
-        val address = host.listenAddresses().first().toString()
-        if (announce) {
-            mDiscovery = MDnsDiscovery(host, address = bindAddress).also {
-                it.start().get(START_TIMEOUT_S, TimeUnit.SECONDS)
-            }
-        }
-        return if (address.contains("/p2p/")) address else "$address/p2p/$peerId"
-    }
-
-    private fun listenAddress(port: Int): String = "/ip4/${bindAddress.hostAddress}/tcp/$port"
-
-    private fun startHost(listen: String): Host {
-        val host = host(Builder.Defaults.None) {
-            identity { factory = { mKey } }
-            transports { add(::TcpTransport) }
-            secureChannels { add { key, muxers -> NoiseXXSecureChannel(key, muxers) } }
-            muxers { add(StreamMuxerProtocol.Mplex) }
-            network { listen(listen) }
-            protocols { add(SyncBinding(SyncProtocol())) }
-        }
+    private fun host(): Host = mHost ?: host(Builder.Defaults.None) {
+        identity { factory = { mKey } }
+        transports { add(::TcpTransport) }
+        secureChannels { add { key, muxers -> NoiseXXSecureChannel(key, muxers) } }
+        muxers { add(StreamMuxerProtocol.Mplex) }
+        protocols { add(mBinding) }
+    }.also {
         try {
-            host.start().get(START_TIMEOUT_S, TimeUnit.SECONDS)
+            it.start().get(START_TIMEOUT_S, TimeUnit.SECONDS)
         } catch (e: Exception) {
-            host.stop()
+            it.stop()
             throw e
         }
-        return host
+        mHost = it
     }
 
     @Synchronized
-    override fun stopListening() {
+    override fun startDiscovery() {
+        val address = discoveryAddress ?: return
+        if (mDiscovery != null) {
+            return
+        }
+        val discovery = JmDNS.create(address)
+        try {
+            discovery.start()
+            discovery.addAnswerListener(PeerProtocol.MDNS_SERVICE_TAG, QUERY_INTERVAL_S, AnswerListener { records ->
+                answer(records)?.let { emit(it) }
+            })
+        } catch (e: Exception) {
+            discovery.stop()
+            throw e
+        }
+        mDiscovery = discovery
+    }
+
+    @Synchronized
+    override fun stopDiscovery() {
         mDiscovery?.stop()
         mDiscovery = null
-        val host = mHost ?: return
-        mListenAddress?.let { host.network.unlisten(it) }
-        mListenAddress = null
+    }
+
+    override fun connect(address: String): String {
+        val promise = mBinding.dial(host(), Multiaddr(address))
+        try {
+            return promise.controller.get(CONNECT_TIMEOUT_S, TimeUnit.SECONDS)
+        } catch (e: Exception) {
+            // a connection completing after the timeout is not used
+            promise.stream.thenAccept { it.connection.close() }
+            throw e
+        }
     }
 
     override fun send(connectionId: String, bytes: ByteArray) {
@@ -136,33 +143,38 @@ class Libp2pHost(identityFile: File,
 
     @Synchronized
     override fun stop() {
-        stopListening()
+        stopDiscovery()
         mStreams.keys.toList().forEach { close(it) }
         mHost?.stop()?.get(START_TIMEOUT_S, TimeUnit.SECONDS)
         mHost = null
     }
 
-    // --- the /relations/sync/1.0.0 protocol, responder side only
+    // --- the /relations/sync/1.0.0 protocol, initiator side only
 
-    private inner class SyncBinding(protocol: SyncProtocol) : StrictProtocolBinding<Unit>(PeerProtocol.PROTOCOL_ID, protocol)
+    private inner class SyncBinding(protocol: SyncProtocol) : StrictProtocolBinding<String>(PeerProtocol.PROTOCOL_ID, protocol)
 
-    private inner class SyncProtocol : ProtocolHandler<Unit>(Long.MAX_VALUE, Long.MAX_VALUE) {
-        override fun onStartInitiator(stream: Stream): CompletableFuture<Unit> {
-            stream.close()
-            // CompletableFuture.failedFuture() requires API 31
-            return CompletableFuture<Unit>().apply { completeExceptionally(IllegalStateException("This host does not dial.")) }
+    /** The controller is the connection ID, available once the stream is active. */
+    private inner class SyncProtocol : ProtocolHandler<String>(Long.MAX_VALUE, Long.MAX_VALUE) {
+        override fun onStartInitiator(stream: Stream): CompletableFuture<String> {
+            val connectionId = "c${mCounter.incrementAndGet()}"
+            val active = CompletableFuture<String>()
+            stream.pushHandler(StreamHandler(connectionId, active))
+            return active
         }
 
-        override fun onStartResponder(stream: Stream): CompletableFuture<Unit> {
-            stream.pushHandler(StreamHandler("c${mCounter.incrementAndGet()}"))
-            return CompletableFuture.completedFuture(Unit)
+        override fun onStartResponder(stream: Stream): CompletableFuture<String> {
+            stream.close()
+            // CompletableFuture.failedFuture() requires API 31
+            return CompletableFuture<String>().apply { completeExceptionally(IllegalStateException("This host does not listen.")) }
         }
     }
 
-    private inner class StreamHandler(private val connectionId: String) : ProtocolMessageHandler<ByteBuf> {
+    private inner class StreamHandler(private val connectionId: String,
+                                      private val active: CompletableFuture<String>) : ProtocolMessageHandler<ByteBuf> {
         override fun onActivated(stream: Stream) {
             mStreams[connectionId] = stream
             emit(PeerEvent.Connected(connectionId, stream.remotePeerId().bytes))
+            active.complete(connectionId)
         }
 
         override fun onMessage(stream: Stream, msg: ByteBuf) {
@@ -172,11 +184,13 @@ class Libp2pHost(identityFile: File,
         }
 
         override fun onClosed(stream: Stream) {
+            active.completeExceptionally(IllegalStateException("The stream was closed."))
             mStreams.remove(connectionId)
             emit(PeerEvent.Closed(connectionId))
         }
 
         override fun onException(cause: Throwable?) {
+            active.completeExceptionally(cause ?: IllegalStateException("The stream failed."))
             mStreams.remove(connectionId)?.close()
             emit(PeerEvent.Closed(connectionId))
         }
@@ -207,5 +221,36 @@ class Libp2pHost(identityFile: File,
 
         /** @return Inet4Address the loopback address, e.g. for tests */
         fun loopback(): Inet4Address = InetAddress.getByName("127.0.0.1") as Inet4Address
+
+        /**
+         * Turns the answers to an mDNS query into a found computer.
+         */
+        private fun answer(records: List<DNSRecord>): PeerEvent.Found? = parseAnswer(
+                records.filterIsInstance<DNSRecord.Text>().firstOrNull()?.text,
+                records.filterIsInstance<DNSRecord.Service>().firstOrNull()?.port,
+                records.filterIsInstance<DNSRecord.Address>().map { it.address })
+
+        /**
+         * @param txt ByteArray? the TXT record's text: a length byte followed by the base58 peer ID
+         * @param port Int? the SRV record's port
+         * @param addresses List<InetAddress> the A (and AAAA) records' addresses
+         * @return PeerEvent.Found? the computer with its IPv4 addresses, null if the answer is incomplete or invalid
+         */
+        fun parseAnswer(txt: ByteArray?, port: Int?, addresses: List<InetAddress>): PeerEvent.Found? {
+            if (txt == null || txt.isEmpty() || port == null || port !in 1..65535) {
+                return null
+            }
+            val length = txt[0].toInt() and 0xff
+            if (length == 0 || length > txt.size - 1) {
+                return null
+            }
+            val peerId = try {
+                PeerId.fromBase58(String(txt, 1, length, Charsets.US_ASCII)).toBase58()
+            } catch (e: Exception) {
+                return null
+            }
+            val ipv4 = addresses.filterIsInstance<Inet4Address>().map { "/ip4/${it.hostAddress}/tcp/$port" }
+            return if (ipv4.isEmpty()) null else PeerEvent.Found(peerId, ipv4)
+        }
     }
 }

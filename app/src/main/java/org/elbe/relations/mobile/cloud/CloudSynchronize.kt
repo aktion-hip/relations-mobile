@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.widget.Switch
+import org.elbe.relations.mobile.BuildConfig
 import org.elbe.relations.mobile.R
 import org.elbe.relations.mobile.p2p.Libp2pTransport
 import org.elbe.relations.mobile.p2p.LocalAddress
@@ -91,15 +92,17 @@ class CloudSynchronize {
 
         /**
          * Checks the WiFi prerequisite and starts the peer-to-peer synchronization with the Relations desktop.
+         * Debug builds skip the check, the user can enter a connection string (e.g. in the emulator).
          */
         private fun startPeerToPeer(context: AppCompatActivity, r: Resources, factory: IndexWriterFactory, incremental: Boolean) {
-            val address = LocalAddress.current()
-            if (address == null) {
+            val local = LocalAddress.current()
+            if (local == null && !BuildConfig.DEBUG) {
                 showMessage(context, r, R.string.p2p_no_wifi)
                 return
             }
             val appContext = context.applicationContext
-            val provider = PeerCloudProvider.create(appContext, r, factory, Libp2pTransport(appContext, address))
+            val provider = PeerCloudProvider.create(appContext, r, factory, Libp2pTransport(appContext, local?.address),
+                    editable = BuildConfig.DEBUG, localAddress = local)
             SyncRunner.instance.start(provider, incremental, r.getString(R.string.abstract_cloud_provider_dft_error))
         }
 

@@ -79,17 +79,22 @@
     <string name="whats_new_text">Relations 2.0.0\n• Requires Android 6.0 or newer.\n• Google Drive is no longer supported. If you synchronized with Google Drive, upload your Relations export to Dropbox or Microsoft Azure and select that provider in Settings → Cloud Configuration.\n• Updated for Android 16: edge-to-edge display and the predictive back gesture.\n• More reliable data synchronization.</string>
     <!-- Peer-to-peer synchronization (jvm-libp2p) -->
     <string name="p2p_provider_name">Relations desktop (WiFi)</string>
-    <string name="p2p_waiting">Waiting for the Relations desktop application… Start sending the data on your computer.\n\nIf your computer does not find this phone, enter this address there:</string>
+    <string name="p2p_select_title">Select your computer</string>
+    <string name="p2p_searching">Searching for the Relations desktop application… Start sending the data on your computer.</string>
+    <string name="p2p_connect">Connect</string>
+    <string name="p2p_connection_string_hint" translatable="false">/ip4/10.0.2.2/tcp/47112/p2p/12D3KooW…</string>
+    <string name="p2p_connection_string_invalid">Enter an address like /ip4/192.168.1.10/tcp/47112/p2p/&lt;peer ID&gt;.</string>
+    <string name="p2p_connect_failed">Could not connect to the computer. Check that the Relations desktop application is still sending and that both devices use the same WiFi. Your data was not changed.</string>
     <string name="p2p_confirm_title">Connect to %1$s?</string>
     <string name="p2p_confirm_message">Check that your computer shows the same code:\n\n%1$s</string>
     <string name="p2p_accept">Accept</string>
     <string name="p2p_reject">Reject</string>
     <string name="p2p_receiving">Receive data.</string>
     <string name="p2p_canceled">The synchronization was canceled.</string>
-    <string name="p2p_no_computer">No computer was found. Start sending the data in the Relations desktop application and make sure that both devices use the same WiFi. If the computer does not find the phone, enter the address shown on the phone.</string>
+    <string name="p2p_no_computer">No computer was found. Start sending the data in the Relations desktop application first, and make sure that both devices use the same WiFi.</string>
     <string name="p2p_connection_lost">The connection to the computer was lost. Your data was not changed.</string>
     <string name="p2p_timed_out">The transfer timed out. Your data was not changed.</string>
     <string name="p2p_unexpected_data">The computer sent unexpected data. Your data was not changed.</string>
-    <string name="p2p_listen_failed">The synchronization with the Relations desktop could not be started. Check the WiFi connection.</string>
+    <string name="p2p_search_failed">The search for the Relations desktop could not be started. Check the WiFi connection.</string>
     <string name="p2p_no_wifi">Connect this phone to the same WiFi as your computer to synchronize with the Relations desktop.</string>
 </resources>

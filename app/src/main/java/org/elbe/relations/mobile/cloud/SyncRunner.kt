@@ -25,11 +25,12 @@ sealed class SyncState {
     data class Running(val current: Int, val max: Int, val cancelable: Boolean = false) : SyncState()
 
     /**
-     * Waiting for the Relations desktop application to connect.
+     * Searching for the Relations desktop applications, the user selects the one to connect to.
      *
-     * @param address String this device's address for manual entry on the computer (libp2p multiaddress)
+     * @param computers List<FoundComputer> the computers found so far
+     * @param editable Boolean true if the user can enter a connection string (debug builds)
      */
-    data class WaitingForPeer(val address: String) : SyncState()
+    data class SelectComputer(val computers: List<FoundComputer>, val editable: Boolean) : SyncState()
 
     /**
      * A computer requests a connection, the user has to compare and confirm the token.
@@ -45,9 +46,33 @@ sealed class SyncState {
 }
 
 /**
+ * A Relations desktop application found on the local network.
+ *
+ * @param peerId String the computer's peer ID (base58)
+ * @param addresses List<String> the computer's addresses in the order to try, e.g. /ip4/192.168.1.10/tcp/47112
+ */
+data class FoundComputer(val peerId: String, val addresses: List<String>) {
+    /** The multiaddress to display and to dial first, e.g. /ip4/192.168.1.10/tcp/47112/p2p/12D3KooW... */
+    val preferred: String
+        get() = "${addresses.first()}/p2p/$peerId"
+}
+
+/**
  * The user's answers during an interactive synchronization.
  */
-enum class PeerAnswer { ACCEPT, REJECT, CANCEL }
+sealed class PeerAnswer {
+    object Accept : PeerAnswer()
+    object Reject : PeerAnswer()
+    object Cancel : PeerAnswer()
+
+    /**
+     * Connect to a computer.
+     *
+     * @param address String? the entered connection string (debug builds), dialed as it is
+     * @param computer String? the peer ID of the selected computer, all its addresses are tried
+     */
+    data class Connect(val address: String? = null, val computer: String? = null) : PeerAnswer()
+}
 
 /**
  * A synchronization source that interacts with the user while running (e.g. peer-to-peer).
@@ -85,21 +110,28 @@ class SyncSession internal constructor(private val publish: (SyncState) -> Unit)
     fun setAnswerListener(listener: (PeerAnswer) -> Unit) {
         synchronized(this) { mListener = listener }
         if (isCanceled) {
-            listener(PeerAnswer.CANCEL)
+            listener(PeerAnswer.Cancel)
         }
     }
 
     /**
-     * @param address String this device's address, displayed for manual entry on the computer
+     * @param computers List<FoundComputer> the computers found so far
+     * @param editable Boolean true if the user can enter a connection string
      */
-    fun waitingForPeer(address: String) {
+    fun selectComputer(computers: List<FoundComputer>, editable: Boolean) {
         mCancelable = true
-        publish(SyncState.WaitingForPeer(address))
+        publish(SyncState.SelectComputer(computers, editable))
     }
 
     fun confirmPeer(endpointName: String, token: String) {
         mCancelable = true
         publish(SyncState.ConfirmPeer(endpointName, token))
+    }
+
+    /** Connecting to the selected computer, the user can cancel. */
+    fun connecting() {
+        mCancelable = true
+        publish(SyncState.Running(0, 0, true))
     }
 
     /** Receiving the data, the user can cancel. */
@@ -126,7 +158,7 @@ class SyncSession internal constructor(private val publish: (SyncState) -> Unit)
     }
 
     internal fun answer(answer: PeerAnswer) {
-        if (answer == PeerAnswer.CANCEL) {
+        if (answer == PeerAnswer.Cancel) {
             if (!mCancelable) {
                 return
             }
@@ -196,13 +228,25 @@ class SyncRunner(private val scope: CoroutineScope,
     }
 
     private fun isActive(state: SyncState): Boolean =
-            state is SyncState.Running || state is SyncState.WaitingForPeer || state is SyncState.ConfirmPeer
+            state is SyncState.Running || state is SyncState.SelectComputer || state is SyncState.ConfirmPeer
 
     /**
-     * Cancels an interactive synchronization while waiting for or receiving from the peer, no-op otherwise.
+     * Cancels an interactive synchronization while searching for, confirming or receiving from the peer, no-op otherwise.
      */
     fun cancel() {
-        mSession?.answer(PeerAnswer.CANCEL)
+        mSession?.answer(PeerAnswer.Cancel)
+    }
+
+    /**
+     * Connects to a computer while in the SelectComputer state, no-op otherwise.
+     *
+     * @param address String? the entered connection string (debug builds)
+     * @param computer String? the peer ID of the selected computer
+     */
+    fun connectTo(address: String? = null, computer: String? = null) {
+        if (mState.value is SyncState.SelectComputer) {
+            mSession?.answer(PeerAnswer.Connect(address, computer))
+        }
     }
 
     /**
@@ -210,7 +254,7 @@ class SyncRunner(private val scope: CoroutineScope,
      */
     fun answerPeer(accept: Boolean) {
         if (mState.value is SyncState.ConfirmPeer) {
-            mSession?.answer(if (accept) PeerAnswer.ACCEPT else PeerAnswer.REJECT)
+            mSession?.answer(if (accept) PeerAnswer.Accept else PeerAnswer.Reject)
         }
     }
 
