@@ -7,7 +7,7 @@ Prerequisites:
 
 - JDK 21. The Gradle daemon requires it (see `gradle/gradle-daemon-jvm.properties`) and Gradle finds it among the
   installed JDKs; Android Studio (Narwhal 2025.1.3 or newer) bundles one.
-- Android SDK with platform `android-36` (Android 16). Point `sdk.dir` in `local.properties` (or `ANDROID_HOME`) to it.
+- Android SDK with platform `android-37` (Android 17). Point `sdk.dir` in `local.properties` (or `ANDROID_HOME`) to it.
 
 Build the APKs and run the unit tests with the Gradle wrapper:
 
