@@ -3,16 +3,14 @@
     <CloudProvider
         name="Dropbox"
         id="dropbox"
-        class="org.elbe.relations.mobile.cloud.DropboxCloudProvider"
         hint="Token" />
-    <CloudProvider
-        name="Google Drive"
-        id="google_drive"
-        class="org.elbe.relations.mobile.cloud.GoogleDriveProvider"
-        hint="" />
     <CloudProvider
         name="Microsoft Azure"
         id="ms_azure"
-        class="org.elbe.relations.mobile.cloud.MSAzureCloudProvider"
         hint="Connection String" />
+    <!-- peer-to-peer (Relations desktop over WiFi): no token, i.e. empty hint -->
+    <CloudProvider
+        name="@string/p2p_provider_name"
+        id="p2p"
+        hint="" />
 </CloudProviders>

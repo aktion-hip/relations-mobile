@@ -4,10 +4,10 @@ package org.elbe.relations.mobile.preferences
 import android.content.SharedPreferences
 import android.content.res.Resources
 import android.os.Bundle
-import android.preference.PreferenceManager
-import android.support.v7.preference.PreferenceDialogFragmentCompat
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.preference.PreferenceManager
+import androidx.preference.PreferenceDialogFragmentCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -15,6 +15,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import org.elbe.relations.mobile.R
+import org.elbe.relations.mobile.cloud.CloudProviderKind
 
 /**
  * The dialog to edit the CloudConfigPreference.
@@ -28,13 +29,13 @@ class CloudConfigPreferenceDialogFragmentCompat: PreferenceDialogFragmentCompat(
         return inflater.inflate(R.layout.pref_dialog_cloud_config, container, false)
     }
 
-    override fun onBindDialogView(view: View?) {
+    override fun onBindDialogView(view: View) {
         super.onBindDialogView(view)
 
-        mCloudProviderView = RCWrapper(view?.findViewById(R.id.cloud_config_entries))
+        mCloudProviderView = RCWrapper(view.findViewById(R.id.cloud_config_entries))
         mCloudProviderView.apply {
             setHasFixedSize(true)
-            setLayoutManager(LinearLayoutManager(activity, LinearLayout.VERTICAL, false))
+            setLayoutManager(LinearLayoutManager(activity, RecyclerView.VERTICAL, false))
             setAdapter(ProviderAdapter(resources))
         }
 
@@ -45,9 +46,9 @@ class CloudConfigPreferenceDialogFragmentCompat: PreferenceDialogFragmentCompat(
             // set preference to list
             cloudProviderId = pref.getCloudConfig()
         }
-        if (!cloudProviderId.isEmpty()) {
-            mCloudProviderView.setCloudProviderId(cloudProviderId)
-        }
+        // a stored provider that is no longer supported (e.g. Google Drive) falls back to the default provider
+        val availableIds = CloudProviders(resources).getProviders().map { it.id }
+        mCloudProviderView.setCloudProviderId(CloudProviderKind.selectableId(cloudProviderId, availableIds))
     }
 
     override fun onDialogClosed(positiveResult: Boolean) {

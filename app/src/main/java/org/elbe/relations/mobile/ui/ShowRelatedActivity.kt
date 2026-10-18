@@ -2,16 +2,17 @@ package org.elbe.relations.mobile.ui
 
 import android.content.res.Configuration
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import org.elbe.relations.mobile.R
 
-import kotlinx.android.synthetic.main.activity_show_related.*
-import org.elbe.relations.mobile.cloud.GoogleDriveService
+import org.elbe.relations.mobile.databinding.ActivityShowRelatedBinding
 import org.elbe.relations.mobile.search.SearchUI
 import org.elbe.relations.mobile.util.RetrieveListHelper
+import org.elbe.relations.mobile.util.SyncObserver
+import org.elbe.relations.mobile.util.applyEdgeToEdge
 import org.elbe.relations.mobile.util.Utils
 
 /**
@@ -19,9 +20,6 @@ import org.elbe.relations.mobile.util.Utils
  */
 class ShowRelatedActivity : AppCompatActivity() {
     private var mHelper: RetrieveListHelper? = null
-    private val mGoogleDriveService: GoogleDriveService by lazy {
-        GoogleDriveService(this)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,8 +34,11 @@ class ShowRelatedActivity : AppCompatActivity() {
         }
 
         Log.v("ShowRelatedActivity", ">>> onCreate: portrait -> 2")
-        setContentView(R.layout.activity_show_related)
-        setSupportActionBar(toolbar)
+        val binding = ActivityShowRelatedBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
+        SyncObserver.observe(this)
+        applyEdgeToEdge()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         mHelper = RetrieveListHelper(this, "showRelated")
@@ -62,8 +63,8 @@ class ShowRelatedActivity : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        return Utils.runOptions(item, this, mGoogleDriveService) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return Utils.runOptions(item, this) {
             item ->  super.onOptionsItemSelected(item)
         }
     }

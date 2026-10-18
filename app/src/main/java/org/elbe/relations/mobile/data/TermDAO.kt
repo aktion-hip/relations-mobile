@@ -1,6 +1,6 @@
 package org.elbe.relations.mobile.data
 
-import android.arch.persistence.room.*
+import androidx.room.*
 import org.elbe.relations.mobile.model.Term
 
 /**

@@ -1,7 +1,7 @@
 package org.elbe.relations.mobile.cloud
 
+import android.content.Context
 import android.content.res.Resources
-import android.support.v7.app.AppCompatActivity
 import com.microsoft.azure.storage.CloudStorageAccount
 import com.microsoft.azure.storage.file.CloudFile
 import com.microsoft.azure.storage.file.CloudFileDirectory
@@ -10,6 +10,7 @@ import org.elbe.relations.mobile.dbimport.DBImportFull
 import org.elbe.relations.mobile.dbimport.DBImportIncremental
 import org.elbe.relations.mobile.dbimport.XMLImporter
 import org.elbe.relations.mobile.search.IndexWriterFactory
+import java.io.File
 
 /**
  * Download files (all or increment) from MS Azure.
@@ -18,11 +19,13 @@ private const val AZ_SHARE = "relations"
 private const val AZ_FILE_NAME_ALL = "relations_all.zip"
 private const val AZ_FILE_NAME_INCR = "relations_delta_"
 
-class MSAzureCloudProvider(synchronize: Boolean, context: AppCompatActivity, r: Resources, factory: IndexWriterFactory):
-        AbstractCloudProvider<Void, Int, AbstractCloudProvider.SyncResult>(synchronize, context, r, factory) {
+class MSAzureCloudProvider(context: Context, r: Resources, factory: IndexWriterFactory, token: String):
+        AbstractCloudProvider(context, r, factory, token) {
+    private var mProgress: (Int, Int) -> Unit = { _, _ -> }
 
-    override fun doInBackground(vararg param: Void): SyncResult {
-        if (isIncremental()) {
+    override fun synchronize(incremental: Boolean, progress: (Int, Int) -> Unit): SyncResult {
+        mProgress = progress
+        if (incremental) {
             if (!hasIncremental()) {
                 return sendNoIncremental()
             }
@@ -62,12 +65,12 @@ class MSAzureCloudProvider(synchronize: Boolean, context: AppCompatActivity, r: 
         val sortedList = fileList.sortedWith(compareBy { it.properties.lastModified } )
         // process the list items
         sortedList.forEach { incremental ->
-            val zipIncremental = createTempFile("relationsDownload", ".zip")
+            val zipIncremental = File.createTempFile("relationsDownload", ".zip")
             incremental.downloadToFile(zipIncremental.absolutePath)
 
             val importer = XMLImporter(zipIncremental)
             val handler = DBImportIncremental(getContext(), getIndexWriterFactory()).setProgress { current, max ->
-                publishProgress(current, max)
+                mProgress(current, max)
             }
             if (importer.import(handler)) {
                 zipIncremental.delete()
@@ -105,12 +108,12 @@ class MSAzureCloudProvider(synchronize: Boolean, context: AppCompatActivity, r: 
         if (!cloudFile.exists()) {
             return SyncResult(false, String.format(getResources().getString(R.string.cloud_provider_azure_no_export2), AZ_SHARE, AZ_FILE_NAME_ALL))
         }
-        val zipAll = createTempFile("relationsDownload", ".zip")
+        val zipAll = File.createTempFile("relationsDownload", ".zip")
         cloudFile.downloadToFile(zipAll.absolutePath)
 
         val importer = XMLImporter(zipAll)
         val handler = DBImportFull(getContext(), getIndexWriterFactory()).setProgress { current, max ->
-            publishProgress(current, max)
+            mProgress(current, max)
         }
         if (importer.import(handler)) {
             zipAll.delete()

@@ -1,0 +1,5 @@
+Relations 2.0.0
+• Benötigt Android 6.0 oder neuer.
+• Google Drive wird nicht mehr unterstützt. Wenn Sie mit Google Drive synchronisiert haben, laden Sie Ihren Relations-Export auf Dropbox oder Microsoft Azure hoch und wählen Sie diesen Anbieter unter Konfiguration → Cloud-Konfiguration.
+• Für Android 16 aktualisiert: randlose Darstellung und vorausschauende Zurück-Geste.
+• Zuverlässigere Datensynchronisation.

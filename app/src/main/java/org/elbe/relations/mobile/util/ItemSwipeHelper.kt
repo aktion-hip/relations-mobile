@@ -7,10 +7,10 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.helper.ItemTouchHelper
-import kotlinx.android.synthetic.main.item.view.*
+import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.ItemTouchHelper
 import org.elbe.relations.mobile.R
 import org.elbe.relations.mobile.ui.ItemAdapter
 
@@ -33,27 +33,27 @@ class ItemSwipeHelper(recyclerView: RecyclerView, context: Activity?): ItemTouch
         }
     }
 
-    override fun onChildDraw(c: Canvas?, recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
-        val itemView = viewHolder?.itemView
+    override fun onChildDraw(c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
+        val itemView = viewHolder.itemView
 
         if (background is ColorDrawable) {
             mContext?.applicationContext?.let {context ->
                 background.color = ContextCompat.getColor(context, R.color.swipeItem)
             }
         }
-        background.setBounds(itemView!!.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)
+        background.setBounds(itemView.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)
         background.draw(c)
 
         //Setting Swipe Text
-        val textSize : Float = viewHolder.itemView.itemTitle.textSize
-        val label = mContext?.resources?.getString(R.string.entry_show_details)
+        val textSize : Float = itemView.findViewById<TextView>(R.id.itemTitle).textSize
+        val label = mContext?.resources?.getString(R.string.entry_show_details) ?: ""
         val paint = Paint()
         paint.color = Color.WHITE
         paint.textSize = textSize
         paint.textAlign = Paint.Align.CENTER
         val textWidth = paint.measureText(label)
         val rect = RectF(itemView.right.toFloat(), itemView.top.toFloat(), itemView.left.toFloat(), itemView.bottom.toFloat())
-        c?.drawText(label, rect.centerX() - (textWidth/2) + 200, rect.centerY() + (textSize/2), paint)
+        c.drawText(label, rect.centerX() - (textWidth/2) + 200, rect.centerY() + (textSize/2), paint)
 
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
     }

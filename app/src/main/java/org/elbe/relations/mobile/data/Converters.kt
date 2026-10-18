@@ -1,6 +1,6 @@
 package org.elbe.relations.mobile.data
 
-import android.arch.persistence.room.TypeConverter
+import androidx.room.TypeConverter
 import java.util.*
 
 /**

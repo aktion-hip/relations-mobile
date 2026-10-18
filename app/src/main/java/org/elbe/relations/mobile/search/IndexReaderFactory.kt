@@ -2,7 +2,7 @@ package org.elbe.relations.mobile.search
 
 import android.content.Context
 import android.content.res.Resources
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import org.apache.lucene.analysis.Analyzer
 import org.apache.lucene.index.DirectoryReader
 import org.apache.lucene.index.IndexReader

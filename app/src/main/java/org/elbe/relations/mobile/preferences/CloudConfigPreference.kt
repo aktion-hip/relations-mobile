@@ -2,7 +2,7 @@ package org.elbe.relations.mobile.preferences
 
 import android.content.Context
 import android.content.res.TypedArray
-import android.support.v7.preference.EditTextPreference
+import androidx.preference.EditTextPreference
 import android.util.AttributeSet
 import org.elbe.relations.mobile.R
 
@@ -18,7 +18,7 @@ class CloudConfigPreference: EditTextPreference {
 
     constructor(context: Context): this(context, null)
 
-    constructor(context: Context, attrs: AttributeSet?): this(context, attrs, R.attr.dialogPreferenceStyle)
+    constructor(context: Context, attrs: AttributeSet?): this(context, attrs, androidx.preference.R.attr.dialogPreferenceStyle)
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int): this(context, attrs, defStyleAttr, 0)
 
@@ -40,8 +40,8 @@ class CloudConfigPreference: EditTextPreference {
         return mDialogLayoutResId
     }
 
-    override fun onGetDefaultValue(a: TypedArray?, index: Int): Any {
-        return a?.getString(index) ?: ""
+    override fun onGetDefaultValue(a: TypedArray, index: Int): Any {
+        return a.getString(index) ?: ""
     }
 
     override fun onSetInitialValue(restoreValue: Boolean, defaultValue: Any?) {

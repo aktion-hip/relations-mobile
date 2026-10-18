@@ -63,3 +63,18 @@ fastlane/Preview.html
 fastlane/screenshots
 fastlane/test_output
 fastlane/readme.md
+
+# Claude Code local-only files
+.claude/settings.local.json
+.claude/mcp.json
+.claude/history/
+.claude/chats/
+.claude/cache/
+.claude/*.log
+
+# OpenSpec local state and runtime artifacts
+openspec/.cache/
+openspec/.tmp/
+openspec/build/
+openspec/local.yaml
+openspec/*.log

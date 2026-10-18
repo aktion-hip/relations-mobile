@@ -4,10 +4,11 @@ package org.elbe.relations.mobile.search
 import android.content.Intent
 import android.content.res.Resources
 import android.os.Handler
-import android.support.design.widget.TabLayout
-import android.support.v4.app.Fragment
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.SearchView
+import android.os.Looper
+import com.google.android.material.tabs.TabLayout
+import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import android.view.Menu
 import android.view.MenuItem
 import org.apache.lucene.document.Document
@@ -30,7 +31,7 @@ import org.elbe.relations.mobile.util.UniqueID
 class SearchUI(context: AppCompatActivity, r: Resources) {
     private val mContext = context
     private var mSearchView: SearchView? = null
-    private val mHandler = Handler()
+    private val mHandler = Handler(Looper.getMainLooper())
     private val mIndexReaderFactory = IndexReaderFactory(context, r)
 
     /**

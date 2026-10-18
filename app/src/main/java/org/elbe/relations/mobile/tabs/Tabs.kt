@@ -1,6 +1,6 @@
 package org.elbe.relations.mobile.tabs
 
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import org.elbe.relations.mobile.R
 
 /**

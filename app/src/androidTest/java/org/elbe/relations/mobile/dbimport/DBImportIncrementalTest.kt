@@ -1,8 +1,8 @@
 package org.elbe.relations.mobile.dbimport
 
-import android.arch.persistence.room.Room
-import android.support.test.InstrumentationRegistry
-import android.support.test.runner.AndroidJUnit4
+import androidx.room.Room
+import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import junit.framework.Assert
 import org.elbe.relations.mobile.data.RelationsDataBase
 import org.elbe.relations.mobile.model.Relation
@@ -21,7 +21,7 @@ import javax.xml.parsers.SAXParserFactory
 class DBImportIncrementalTest {
 
     private val mProgress: (Int, Int) -> Unit = { n1: Int, n2: Int -> }
-    private val mContext = InstrumentationRegistry.getTargetContext()
+    private val mContext = InstrumentationRegistry.getInstrumentation().targetContext
     private lateinit var mFactory: IndexWriterFactory
 
     private lateinit var mDb: RelationsDataBase
@@ -56,7 +56,7 @@ class DBImportIncrementalTest {
 
         // we update 1:5, delete 0:14 and create 0:17 and 0:18
         val parser = SAXParserFactory.newInstance().newSAXParser().xmlReader
-        parser.contentHandler = DBImportIncremental(mContext, mFactory, mProgress)
+        parser.contentHandler = DBImportIncremental(mContext, mFactory).setProgress(mProgress)
         parser.parse(InputSource(DBImportIncrementalTest::class.java.classLoader.getResourceAsStream("relations_delta.xml")))
 
         Assert.assertEquals(1, termDAO.getCount())

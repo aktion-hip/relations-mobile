@@ -2,28 +2,26 @@ package org.elbe.relations.mobile
 
 import android.content.Intent
 import android.os.Bundle
-import android.preference.PreferenceManager
-import android.support.design.widget.TabLayout
-import android.support.v4.view.ViewPager
-import android.support.v7.app.AppCompatActivity
-import android.util.Log
+import androidx.preference.PreferenceManager
+import com.google.android.material.tabs.TabLayout
+import androidx.viewpager.widget.ViewPager
+import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 
-import kotlinx.android.synthetic.main.content_toolbar.*
-import org.elbe.relations.mobile.cloud.CloudSynchronize
-import org.elbe.relations.mobile.cloud.GoogleDriveService
+import androidx.appcompat.widget.Toolbar
 import org.elbe.relations.mobile.data.RelationsDataBase
 import org.elbe.relations.mobile.search.SearchUI
 import org.elbe.relations.mobile.tabs.*
 import org.elbe.relations.mobile.util.RetrieveListHelper
+import org.elbe.relations.mobile.util.SyncObserver
+import org.elbe.relations.mobile.util.applyEdgeToEdge
 import org.elbe.relations.mobile.util.Utils
 
 const val EXTRA_ITEM = "org.elbe.relations.mobile.ITEM"
 const val EXTRA_QUERY = "org.elbe.relations.mobile.QUERY"
 const val EXTRA_QUERY_FLAG = "org.elbe.relations.mobile.QUERY.FLAG"
 const val PREF_USER_FIRST_TIME = "user_first_time"
-private const val TAG = "MainActivity"
 
 /**
  * Initial view of the Relations Mobile app.
@@ -31,9 +29,6 @@ private const val TAG = "MainActivity"
 class MainActivity : AppCompatActivity() {
     private var mHelper: RetrieveListHelper? = null
     private val mTabsAdapter: TabsFragmentPagerAdapter = TabsFragmentPagerAdapter(supportFragmentManager, this)
-    private val mGoogleDriveService: GoogleDriveService by lazy {
-        GoogleDriveService(this)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +43,9 @@ class MainActivity : AppCompatActivity() {
         mHelper = RetrieveListHelper(this, "main")
 
         setContentView(R.layout.activity_main)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(findViewById<Toolbar>(R.id.toolbar))
+        SyncObserver.observe(this)
+        applyEdgeToEdge()
 
         val tabsViewer = findViewById<ViewPager>(R.id.relation_tabs_views)
         tabsViewer.adapter = mTabsAdapter
@@ -59,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         if (intent.getBooleanExtra(EXTRA_QUERY_FLAG, false)) {
             val query = intent.getStringExtra(EXTRA_QUERY)
             val searchUI = SearchUI(this, resources)
-            searchUI.process(query)
+            query?.let { searchUI.process(it) }
         }
     }
 
@@ -74,15 +71,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return Utils.runOptions(item, this, mGoogleDriveService) {
+        return Utils.runOptions(item, this) {
             item ->  super.onOptionsItemSelected(item)
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        Log.v(TAG, "onActivityResult: requestCode=$requestCode, resultCode=$resultCode")
-        if (requestCode == GoogleDriveService.REQUEST_CODE_SIGN_IN) {
-            CloudSynchronize.synchronizeFromGoogleDrive(this, resources, mGoogleDriveService, data)
         }
     }
 

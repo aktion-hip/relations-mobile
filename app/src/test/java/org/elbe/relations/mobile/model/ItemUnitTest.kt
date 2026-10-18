@@ -8,9 +8,8 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.MockitoAnnotations
 import org.mockito.Mockito.`when` as _when
-import org.mockito.runners.MockitoJUnitRunner
+import org.mockito.junit.MockitoJUnitRunner
 import java.util.*
 
 /**
@@ -24,8 +23,6 @@ class ItemUnitTest {
 
     @Before
     fun setUp() {
-        MockitoAnnotations.initMocks(this)
-
         _when(res.getString(R.string.item_created)).thenReturn("Created")
         _when(res.getString(R.string.item_modified)).thenReturn("Modified")
     }

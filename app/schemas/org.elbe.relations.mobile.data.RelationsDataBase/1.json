@@ -1,0 +1,381 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "a633dd3b2b99031e0b139b57cc2e31a7",
+    "entities": [
+      {
+        "tableName": "tblTerm",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`TermId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `sTitle` TEXT NOT NULL, `sText` TEXT NOT NULL, `dtCreation` INTEGER NOT NULL, `dtMutation` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "TermId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "sTitle",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "text",
+            "columnName": "sText",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "creationDate",
+            "columnName": "dtCreation",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mutationDate",
+            "columnName": "dtMutation",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "TermId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_tblTerm_sTitle",
+            "unique": false,
+            "columnNames": [
+              "sTitle"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_tblTerm_sTitle` ON `${TABLE_NAME}` (`sTitle`)"
+          },
+          {
+            "name": "index_tblTerm_dtCreation",
+            "unique": false,
+            "columnNames": [
+              "dtCreation"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_tblTerm_dtCreation` ON `${TABLE_NAME}` (`dtCreation`)"
+          },
+          {
+            "name": "index_tblTerm_dtMutation",
+            "unique": false,
+            "columnNames": [
+              "dtMutation"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_tblTerm_dtMutation` ON `${TABLE_NAME}` (`dtMutation`)"
+          }
+        ]
+      },
+      {
+        "tableName": "tblText",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`TextID` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `sTitle` TEXT NOT NULL, `sText` TEXT NOT NULL, `sAuthor` TEXT, `sCoAuthors` TEXT, `sSubtitle` TEXT, `sYear` TEXT, `sPublication` TEXT, `sPages` TEXT, `nVolume` INTEGER, `nNumber` INTEGER, `sPublisher` TEXT, `sPlace` TEXT, `nType` INTEGER, `dtCreation` INTEGER NOT NULL, `dtMutation` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "TextID",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "sTitle",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "text",
+            "columnName": "sText",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "author",
+            "columnName": "sAuthor",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "coAuthors",
+            "columnName": "sCoAuthors",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "subtitle",
+            "columnName": "sSubtitle",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "year",
+            "columnName": "sYear",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "publication",
+            "columnName": "sPublication",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "pages",
+            "columnName": "sPages",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "volume",
+            "columnName": "nVolume",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "number",
+            "columnName": "nNumber",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "publisher",
+            "columnName": "sPublisher",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "place",
+            "columnName": "sPlace",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "textType",
+            "columnName": "nType",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "creationDate",
+            "columnName": "dtCreation",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mutationDate",
+            "columnName": "dtMutation",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "TextID"
+          ]
+        },
+        "indices": [
+          {
+            "name": "idxText",
+            "unique": false,
+            "columnNames": [
+              "sAuthor",
+              "sCoAuthors"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idxText` ON `${TABLE_NAME}` (`sAuthor`, `sCoAuthors`)"
+          },
+          {
+            "name": "index_tblText_sTitle",
+            "unique": false,
+            "columnNames": [
+              "sTitle"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_tblText_sTitle` ON `${TABLE_NAME}` (`sTitle`)"
+          },
+          {
+            "name": "index_tblText_dtCreation",
+            "unique": false,
+            "columnNames": [
+              "dtCreation"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_tblText_dtCreation` ON `${TABLE_NAME}` (`dtCreation`)"
+          },
+          {
+            "name": "index_tblText_dtMutation",
+            "unique": false,
+            "columnNames": [
+              "dtMutation"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_tblText_dtMutation` ON `${TABLE_NAME}` (`dtMutation`)"
+          }
+        ]
+      },
+      {
+        "tableName": "tblPerson",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`PersonID` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `sName` TEXT NOT NULL, `sFirstname` TEXT, `sText` TEXT NOT NULL, `sFrom` TEXT, `sTo` TEXT, `dtCreation` INTEGER NOT NULL, `dtMutation` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "PersonID",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "sName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "firstname",
+            "columnName": "sFirstname",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "text",
+            "columnName": "sText",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "from",
+            "columnName": "sFrom",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "to",
+            "columnName": "sTo",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "creationDate",
+            "columnName": "dtCreation",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mutationDate",
+            "columnName": "dtMutation",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "PersonID"
+          ]
+        },
+        "indices": [
+          {
+            "name": "idxPerson_01",
+            "unique": false,
+            "columnNames": [
+              "sName",
+              "sFirstname"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idxPerson_01` ON `${TABLE_NAME}` (`sName`, `sFirstname`)"
+          },
+          {
+            "name": "idxPerson_02",
+            "unique": false,
+            "columnNames": [
+              "sFrom",
+              "sTo"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idxPerson_02` ON `${TABLE_NAME}` (`sFrom`, `sTo`)"
+          },
+          {
+            "name": "index_tblPerson_dtCreation",
+            "unique": false,
+            "columnNames": [
+              "dtCreation"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_tblPerson_dtCreation` ON `${TABLE_NAME}` (`dtCreation`)"
+          },
+          {
+            "name": "index_tblPerson_dtMutation",
+            "unique": false,
+            "columnNames": [
+              "dtMutation"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_tblPerson_dtMutation` ON `${TABLE_NAME}` (`dtMutation`)"
+          }
+        ]
+      },
+      {
+        "tableName": "tblRelation",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`RelationID` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `nType1` INTEGER NOT NULL, `nItem1` INTEGER NOT NULL, `nType2` INTEGER NOT NULL, `nItem2` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "RelationID",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type1",
+            "columnName": "nType1",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "item1",
+            "columnName": "nItem1",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type2",
+            "columnName": "nType2",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "item2",
+            "columnName": "nItem2",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "RelationID"
+          ]
+        },
+        "indices": [
+          {
+            "name": "idxRelation_01",
+            "unique": false,
+            "columnNames": [
+              "nType1",
+              "nItem1"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idxRelation_01` ON `${TABLE_NAME}` (`nType1`, `nItem1`)"
+          },
+          {
+            "name": "idxRelation_02",
+            "unique": false,
+            "columnNames": [
+              "nType2",
+              "nItem2"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `idxRelation_02` ON `${TABLE_NAME}` (`nType2`, `nItem2`)"
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a633dd3b2b99031e0b139b57cc2e31a7')"
+    ]
+  }
+}

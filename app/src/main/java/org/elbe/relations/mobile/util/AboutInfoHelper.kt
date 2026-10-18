@@ -26,7 +26,7 @@ class AboutInfoHelper(context: Context?) {
         context?.let {context ->
             mNumberOfIndexed = IndexReaderFactory.getNumberOfIndexed(context)
             val pkgInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-            mVersion = pkgInfo.versionName
+            mVersion = pkgInfo.versionName ?: ""
         }
     }
 
