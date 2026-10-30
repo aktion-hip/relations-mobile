@@ -13,31 +13,40 @@ The connection uses [libp2p](https://libp2p.io). The phone uses [jvm-libp2p](htt
 | Stream multiplexer | mplex |
 | Protocol ID | `/relations/sync/1.0.0` |
 | Protocol version | `1` |
-| Desktop role | Listens on port `47112`, or on a port chosen by the system if 47112 is taken. Announces itself through libp2p mDNS with the service tag `_relations-sync._udp.local.`. |
-| Phone role | Searches through mDNS, dials the desktop and opens the stream. It doesn't listen. |
+| Desktop role | Listens on port `47112`, or on a port chosen by the system if 47112 is taken. Shows its address as a QR code and as copyable text. No mDNS. |
+| Phone role | Scans the QR code (or the user pastes or types the address), dials the desktop and opens the stream. It doesn't listen. |
 | Maximum control frame | 65,536 bytes of JSON |
 
 ## Offering the data
 
-1. The user starts sending in the desktop application. The desktop creates (or loads) its libp2p identity, starts listening, and announces itself through mDNS. With jvm-libp2p, this is `MDnsDiscovery(host, "_relations-sync._udp.local.", queryInterval, <address of the LAN or WiFi interface>)`. The service tag must include the `.local.` domain. The desktop should keep its identity across sessions, so that its peer ID stays the same.
-2. The desktop shows its peer ID and the multiaddresses it listens on, e.g. `/ip4/192.168.1.10/tcp/47112/p2p/12D3KooW…`. It should highlight the **last 6 characters of the peer ID**, because the phone lists each computer as `<address>:<port> · …<last 6 characters>`.
+1. The user starts sending in the desktop application. The desktop creates (or loads) its libp2p identity and starts listening. It should keep its identity across sessions, so that its peer ID stays the same.
+2. The desktop shows **exactly one** address, a multiaddress such as `/ip4/192.168.1.10/tcp/47112/p2p/12D3KooW…`:
+   - as a **QR code** whose content is the multiaddress text itself, UTF-8, without a prefix or any other text
+   - as **copyable text**, for phones without a camera or when the user doesn't allow the camera
 3. The desktop accepts **one stream per synchronization**. While a synchronization runs, it rejects other connections and streams.
 
-## Finding the computer
+### Picking the address
 
-1. The user selects *Relations desktop (WiFi)* in the phone's cloud configuration, chooses *Synchronize Database*, and picks full or incremental. The phone searches through mDNS for up to **120 seconds** and lists the computers it finds.
-2. The user selects the computer and taps *Connect*. The phone tries the computer's announced IPv4 addresses one after the other, addresses in its own subnet first, each for up to **10 seconds**. It accepts only a connection whose Noise-authenticated peer ID is the announced one.
-3. The phone opens a stream with the protocol ID `/relations/sync/1.0.0`. It is the only stream the phone opens on the connection. The phone rejects streams the desktop opens.
+A desktop that listens on `0.0.0.0` can't show that address: the phone has to dial a concrete one. Computers often have several interfaces (LAN, WiFi, WSL or Hyper-V adapters, VPN), and only one of them is reachable from the phone. The phone dials exactly the address it got; it doesn't try others.
 
-Debug builds of the app also let the developer enter the connection string, e.g. `/ip4/10.0.2.2/tcp/47112/p2p/12D3KooW…`, and dial exactly that address.
+- Take the address of the interface with the default route: open a UDP socket, `connect` it towards any external address (no packet is sent), and read its local address. In Java: `try (DatagramSocket socket = new DatagramSocket()) { socket.connect(InetAddress.getByName("192.0.2.1"), 9); return socket.getLocalAddress(); }`.
+- Skip loopback (`127.x`) and link-local (`169.254.x`) addresses.
+- Let the user switch to another interface if the phone can't connect.
+
+## Connecting to the computer
+
+1. The user selects *Relations desktop (WiFi)* in the phone's cloud configuration, chooses *Synchronize Database*, and picks full or incremental. The phone shows a dialog with *Scan QR code* and a field for the address. The field is empty every time; the phone doesn't remember addresses.
+2. The user scans the desktop's QR code, and the phone connects right away. Alternatively, the user pastes or types the address and taps *Connect*. The phone accepts only an address of the form `/ip4/<IPv4 address>/tcp/<port>/p2p/<peer ID>`. If nothing happens within **120 seconds**, the dialog closes.
+3. The phone dials exactly that address and gives up after **10 seconds**. It accepts only a connection whose Noise-authenticated peer ID is the one in the address.
+4. The phone opens a stream with the protocol ID `/relations/sync/1.0.0`. It is the only stream the phone opens on the connection. The phone rejects streams the desktop opens.
 
 ### Firewall
 
-The desktop has to accept incoming TCP connections on its listening port. On Windows, starting to listen triggers a Windows Defender Firewall prompt the first time. The desktop should tell the user to allow access on private networks. If the user denies it, the phone lists the computer but can't connect, and it shows "Could not connect to the computer".
+The desktop has to accept incoming TCP connections on its listening port. On Windows, starting to listen triggers a Windows Defender Firewall prompt the first time. The desktop should tell the user to allow access on private networks. If the user denies it, the phone can't connect, and it shows "Could not connect to the computer".
 
 ### Android emulator
 
-In the Android emulator, `10.0.2.2` is the host computer's loopback address, and mDNS doesn't reach the host. To test with a desktop running on the host, use a debug build and enter `/ip4/10.0.2.2/tcp/<desktop port>/p2p/<desktop peer ID>`. No port forwarding is needed.
+In the Android emulator, `10.0.2.2` is the host computer's loopback address. To test with a desktop running on the host, type `/ip4/10.0.2.2/tcp/<desktop port>/p2p/<desktop peer ID>` into the phone's field and tap *Connect*. No port forwarding is needed. The desktop must listen on `0.0.0.0` or `127.0.0.1` for this.
 
 ## Framing
 

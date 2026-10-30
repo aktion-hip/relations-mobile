@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
-    <!-- peer-to-peer synchronization (jvm-libp2p): WiFi address and mDNS, no runtime permissions -->
+    <!-- peer-to-peer synchronization (jvm-libp2p): the phone dials the scanned or entered address -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+    <!-- QR code scanner (ZXing, which also declares CAMERA): requested only when scanning, the app works without a camera -->
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -60,6 +61,10 @@
             android:name=".IntroActivity"
             android:exported="false"
             android:theme="@style/AppTheme.NoActionBar" />
+        <!-- ZXing's scan screen follows the device orientation (ScanOptions.setOrientationLocked(false)) -->
+        <activity
+            android:name="com.journeyapps.barcodescanner.CaptureActivity"
+            tools:remove="android:screenOrientation" />
     </application>
 
 </manifest>

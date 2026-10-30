@@ -1,5 +1,7 @@
 # Tasks
 
+Groups 1 to 6 describe the first implementation with mDNS discovery (commit `a7a87a1`); their references to design decisions point to the design of that time. Group 7 replaces the discovery with the QR code.
+
 ## 1. Dialing libp2p host
 
 - [x] 1.1 Spike, in `Libp2pHostTest`: start two hosts on the loopback interface. One listens and announces itself with `MDnsDiscovery(host, "_relations-sync._udp", …)`, the other doesn't listen and only discovers. Verify that the host that doesn't listen receives the listener's `PeerInfo` without throwing. If `start()` throws for the non-listening host, implement the `JmDNS` query-only fallback from design Decision 2 instead, and record the outcome in this task.
@@ -79,7 +81,7 @@
 
 ## 5. Desktop contract
 
-- [x] 5.1 Rewrite `docs/peer-to-peer-protocol.md` for the new roles (design Decision 9):
+- [x] 5.1 Rewrite `docs/peer-to-peer-protocol.md` for the new roles (now design Decision 8):
   - parameters: the desktop listens on 47112 or a fallback port, with the service tag `_relations-sync._udp`
   - "Offering the data": show the multiaddresses and peer ID
   - the phone dials and opens the stream; the desktop accepts one stream per synchronization
@@ -92,6 +94,28 @@
 ## 6. Integration checks
 
 - [x] 6.1 In `Libp2pHostTest`, add an end-to-end test that runs a listening desktop stand-in, the real `Libp2pHost` and `PeerCloudProvider` through discovery → connect → confirm → full transfer on loopback. Verify that the provider returns success, the received file matches, and the desktop receives the `result` frame.
-- [ ] 6.2 On a debug build in the Android emulator, with a desktop that implements the new contract listening on the host, connect with `/ip4/10.0.2.2/tcp/<port>/p2p/<desktop ID>`. Verify the confirmation, the transfer and the remembered connection string. Also verify that rotating during the search keeps the list and the text.
-- [ ] 6.3 On a release build on a phone on the same WiFi as the desktop, verify that the desktop is listed, that Connect is enabled only after selecting it, that no connection string is shown, and that the synchronization succeeds.
-- [x] 6.4 Run `openspec validate reverse-p2p-roles --strict` and verify that it passes.
+- [ ] 6.2 On a debug build in the Android emulator, with a desktop that implements the new contract listening on the host, type `/ip4/10.0.2.2/tcp/<port>/p2p/<desktop ID>` and tap Connect. Verify the confirmation and the transfer, that the field is empty at the next synchronization, and that rotating with typed text keeps the text.
+- [ ] 6.3 On a release build on a phone on the same WiFi as the desktop, scan the desktop's QR code. Verify that the phone connects without another tap, that the synchronization succeeds, that the camera permission was requested only on the first scan, and that after denying it pasting the copied text still works.
+- [x] 6.4 Run `openspec validate reverse-p2p-roles --strict` and verify that it passes. Rerun it after group 7.
+
+## 7. QR code instead of mDNS discovery
+
+- [x] 7.1 Remove discovery from the transport (design Decisions 2 and 3): `startDiscovery`, `stopDiscovery` and `PeerEvent.Found` from `PeerTransport` and `FakePeerTransport`; JmDNS, `parseAnswer` and the `discoveryAddress` parameter from `Libp2pHost`; the multicast lock from `Libp2pTransport`. Remove the discovery tests from `Libp2pHostTest` (`testDiscovery`, `testDiscoveryWithoutAddress`, `testParseAnswer`), and change `testProviderEndToEnd` to connect with the desktop stand-in's address. Verify that `Libp2pHostTest` passes.
+- [x] 7.2 Remove `LocalAddress.rank`, `Local.sameSubnet` and the prefix length; `current()` returns the `Inet4Address` again (design Decision 5). Verify that `LocalAddressTest` passes with the `pick` cases.
+- [x] 7.3 In `SyncRunner.kt`: `SelectComputer` without a list and without `editable`, `PeerAnswer.Connect(address)`, and remove `FoundComputer`. In `PeerCloudProvider`: wait for `Connect` for at most 2 minutes (`NO_COMPUTER`), then exactly one `connect()` (`CONNECT_FAILED`); remove the `editable` and `localAddress` parameters and `SEARCH_FAILED` (design Decision 4). Verify with the adapted `SyncRunnerTest` and `PeerCloudProviderTest`:
+  - connect with an address
+  - cancel and the 2-minute timeout
+  - connect fails, and a wrong peer ID (`connect()` throws), both `CONNECT_FAILED`
+  - the unchanged HELLO-to-FILES tests
+- [x] 7.4 Add `com.journeyapps:zxing-android-embedded` to `gradle/libs.versions.toml` and `app/build.gradle` (design Decision 9). In `AndroidManifest.xml`, remove `CHANGE_WIFI_MULTICAST_STATE` (and `ACCESS_WIFI_STATE` if nothing uses it anymore), and declare the camera feature with `required="false"`. Verify that the merged release manifest contains `CAMERA`, no multicast permission and no Google Play services component, and that `./gradlew assembleRelease` succeeds. Record the release APK size before and after in this task.
+  *Recorded (2026-10-30, unsigned release APK):* 17,430,024 bytes with mDNS (commit `398dd0e`), 17,681,024 bytes with ZXing and without mDNS (+251,000 bytes). The merged manifest declares `CAMERA`, all camera features with `required="false"`, no `CHANGE_WIFI_MULTICAST_STATE` or `ACCESS_WIFI_STATE`, and no Google Play services component. ZXing's `CaptureActivity` loses its fixed orientation (`tools:remove`), so the scan screen follows the device; a fixed `fullSensor` would have triggered lint's `DiscouragedApi` (Android 16).
+- [x] 7.5 Rebuild `SelectComputerDialog` and its layout (design Decision 6):
+  - *Scan QR code*, the empty field, Cancel and Connect
+  - scan via `ScanContract`: a valid result connects right away, an invalid one sets the text and the error, a canceled scan changes nothing
+  - Connect checks with `PeerAddress.parse` and keeps the dialog open on an error
+  - remove the list, `BuildConfig.DEBUG` and `p2pDebugConnectAddress`; adapt `SyncObserver`
+  - strings in `values` and `values-de`: new `p2p_scan` and `p2p_address_hint`, `p2p_select_title` and `p2p_no_computer` reworded, `p2p_searching` and `p2p_search_failed` removed
+
+  Verify that `./gradlew assembleDebug assembleRelease lintDebug` succeeds without missing translations or unused resources for these keys.
+- [x] 7.6 In `CloudSynchronize`, apply the WiFi check in all builds, and remove the `editable` and `localAddress` arguments. Verify that `./gradlew testDebugUnitTest` passes (with `TZ=Europe/Zurich`).
+- [x] 7.7 Update `docs/peer-to-peer-protocol.md` (design Decision 8): no mDNS, one address as a QR code and as text, picking the interface, the emulator. Verify that `PeerProtocolTest`'s documentation checks pass.

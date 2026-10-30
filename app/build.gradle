@@ -83,6 +83,8 @@ dependencies {
         exclude group: 'io.netty', module: 'netty-tcnative-boringssl-static'
         exclude group: 'io.netty', module: 'netty-transport-classes-epoll'
     }
+    // QR code scanner for the desktop's address (no Google Play services)
+    implementation libs.zxing.android.embedded
     // Lucene
     //noinspection GradleDependency
     implementation libs.lucene.core

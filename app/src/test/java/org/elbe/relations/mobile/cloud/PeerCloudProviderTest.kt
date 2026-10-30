@@ -1,7 +1,6 @@
 package org.elbe.relations.mobile.cloud
 
 import org.elbe.relations.mobile.p2p.FakePeerTransport
-import org.elbe.relations.mobile.p2p.LocalAddress
 import org.elbe.relations.mobile.p2p.PeerEvent
 import org.elbe.relations.mobile.p2p.PeerProtocol
 import org.json.JSONObject
@@ -24,8 +23,7 @@ class PeerCloudProviderTest {
     private val phoneId = byteArrayOf(1, 2, 3)
     private val computerId = byteArrayOf(7, 8, 9)
     private val transport = FakePeerTransport(phoneId).apply { remotePeerId = computerId }
-    private val desktop = "12D3KooWDesktop"
-    private val desktopAddress = "/ip4/192.168.1.10/tcp/47112"
+    private val desktopAddress = "/ip4/192.168.1.10/tcp/47112/p2p/12D3KooWDesktop"
     private val tempDir: File = Files.createTempDirectory("p2pTest").toFile()
     private val states = CopyOnWriteArrayList<SyncState>()
     private val session = SyncSession { states.add(it) }
@@ -57,9 +55,8 @@ class PeerCloudProviderTest {
     private val importer = RecordingImport()
     private val logs = CopyOnWriteArrayList<String>()
 
-    private fun start(incremental: Boolean, searchTimeoutMs: Long = 5000, stallTimeoutMs: Long = 5000, editable: Boolean = false,
-                      local: LocalAddress.Local? = null): Future<AbstractCloudProvider.SyncResult> {
-        val provider = PeerCloudProvider(transport, importer, tempDir, { it.name }, searchTimeoutMs, stallTimeoutMs, editable, local) { message, _ -> logs.add(message) }
+    private fun start(incremental: Boolean, selectTimeoutMs: Long = 5000, stallTimeoutMs: Long = 5000): Future<AbstractCloudProvider.SyncResult> {
+        val provider = PeerCloudProvider(transport, importer, tempDir, { it.name }, selectTimeoutMs, stallTimeoutMs) { message, _ -> logs.add(message) }
         return executor.submit<AbstractCloudProvider.SyncResult> { provider.synchronize(incremental, session) }
     }
 
@@ -85,15 +82,11 @@ class PeerCloudProviderTest {
 
     private fun selecting() = await("selecting") { states.lastOrNull() is SyncState.SelectComputer }
 
-    private fun computers(): List<FoundComputer> = (states.last { it is SyncState.SelectComputer } as SyncState.SelectComputer).computers
-
-    /** The desktop is found, the user selects it and the phone connects as "pc". */
+    /** The user scans the desktop's address and the phone connects as "pc". */
     private fun connectOnly() {
         selecting()
-        transport.found(desktop, desktopAddress)
-        await("found") { computers().isNotEmpty() }
-        session.answer(PeerAnswer.Connect(computer = desktop))
-        await("connect") { transport.calls.contains("connect:$desktopAddress/p2p/$desktop") }
+        session.answer(PeerAnswer.Connect(desktopAddress))
+        await("connect") { transport.calls.contains("connect:$desktopAddress") }
     }
 
     /** Connects as "pc", sends hello and waits for the confirmation. */
@@ -133,18 +126,15 @@ class PeerCloudProviderTest {
     fun testFullSynchronization() {
         val future = start(false)
         selecting()
-        assertEquals(SyncState.SelectComputer(emptyList(), false), states.last())
-        assertEquals("discover", transport.calls.first())
-        transport.found(desktop, desktopAddress)
-        await("found") { computers().isNotEmpty() }
-        assertEquals(SyncState.SelectComputer(listOf(FoundComputer(desktop, listOf(desktopAddress))), false), states.last())
-        session.answer(PeerAnswer.Connect(computer = desktop))
+        assertEquals(SyncState.SelectComputer, states.last())
+        assertTrue(transport.calls.isEmpty())
+        session.answer(PeerAnswer.Connect(desktopAddress))
         await("connect") { transport.calls.any { it.startsWith("connect:") } }
         transport.frame("pc", hello)
         await("confirm") { states.lastOrNull() is SyncState.ConfirmPeer }
         assertEquals(SyncState.ConfirmPeer("PC", PeerProtocol.confirmationCode(phoneId, computerId)), states.last())
-        // the search stops before connecting
-        assertEquals(listOf("discover", "stopDiscovery", "connect:$desktopAddress/p2p/$desktop"), transport.calls.take(3))
+        // exactly the scanned address is dialed
+        assertEquals(listOf("connect:$desktopAddress"), transport.calls.take(1))
         // nothing is sent before the user accepts
         assertTrue(transport.sent.isEmpty())
         session.answer(PeerAnswer.Accept)
@@ -245,110 +235,25 @@ class PeerCloudProviderTest {
     }
 
     @Test
-    fun testComputersMergedAndRanked() {
-        val future = start(false, local = LocalAddress.Local(java.net.InetAddress.getByName("192.168.1.23") as java.net.Inet4Address, 24))
-        selecting()
-        transport.found(desktop, "/ip4/172.20.0.1/tcp/47112", "/ip4/127.0.0.1/tcp/47112")
-        await("first") { computers().size == 1 }
-        val published = states.count { it is SyncState.SelectComputer }
-        // repeated answer: no new state
-        transport.found(desktop, "/ip4/172.20.0.1/tcp/47112")
-        transport.found("12D3KooWOther", "/ip4/192.168.1.11/tcp/47112")
-        await("second") { computers().size == 2 }
-        assertEquals(published + 1, states.count { it is SyncState.SelectComputer })
-        // another address of the first computer, in the phone's subnet: tried first
-        transport.found(desktop, desktopAddress)
-        await("merged") { computers().first().addresses.size == 2 }
-        assertEquals(listOf(FoundComputer(desktop, listOf(desktopAddress, "/ip4/172.20.0.1/tcp/47112")),
-                FoundComputer("12D3KooWOther", listOf("/ip4/192.168.1.11/tcp/47112"))), computers())
-        session.answer(PeerAnswer.Cancel)
-        assertEquals("CANCELED", result(future).message)
-    }
-
-    @Test
-    fun testFirstAddressFailsSecondSucceeds() {
-        val second = "/ip4/192.168.2.10/tcp/47112"
-        transport.connectFailures.add("$desktopAddress/p2p/$desktop")
+    fun testConnectFails() {
+        // e.g. nothing listens, or the computer's peer ID is not the one in the address
+        transport.connectFailures.add(desktopAddress)
         val future = start(false)
         selecting()
-        transport.found(desktop, desktopAddress, second)
-        await("found") { computers().isNotEmpty() }
-        session.answer(PeerAnswer.Connect(computer = desktop))
-        await("second attempt") { transport.calls.contains("connect:$second/p2p/$desktop") }
-        transport.frame("pc", hello)
-        await("confirm") { states.lastOrNull() is SyncState.ConfirmPeer }
-        session.answer(PeerAnswer.Accept)
-        await("request") { transport.sent.size == 1 }
-        sendFiles("relations_all.zip" to "ALL")
-        assertTrue(result(future).value)
-    }
-
-    @Test
-    fun testAllAddressesFail() {
-        transport.connectFailures.add("$desktopAddress/p2p/$desktop")
-        val future = start(false)
-        selecting()
-        transport.found(desktop, desktopAddress)
-        await("found") { computers().isNotEmpty() }
-        session.answer(PeerAnswer.Connect(computer = desktop))
+        session.answer(PeerAnswer.Connect(desktopAddress))
         assertEquals("CONNECT_FAILED", result(future).message)
+        assertEquals(listOf("connect:$desktopAddress", "stop"), transport.calls)
         assertTrue(importer.imported.isEmpty())
-        assertTrue(transport.calls.contains("stop"))
         assertFalse(transport.hasListener())
-    }
-
-    @Test
-    fun testConnectionStringDialedExactly() {
-        val entered = "/ip4/10.0.2.2/tcp/47112/p2p/$desktop"
-        val future = start(false, editable = true)
-        selecting()
-        assertEquals(SyncState.SelectComputer(emptyList(), true), states.last())
-        transport.found(desktop, desktopAddress)
-        session.answer(PeerAnswer.Connect(address = entered))
-        await("connect") { transport.calls.any { it.startsWith("connect:") } }
-        transport.frame("pc", hello)
-        await("confirm") { states.lastOrNull() is SyncState.ConfirmPeer }
-        assertEquals(listOf("connect:$entered"), transport.calls.filter { it.startsWith("connect:") })
-        session.answer(PeerAnswer.Reject)
-        assertEquals("CANCELED", result(future).message)
-    }
-
-    @Test
-    fun testConnectionStringIgnoredInRelease() {
-        val future = start(false, searchTimeoutMs = 300)
-        selecting()
-        // not editable, and an unknown computer: both ignored
-        session.answer(PeerAnswer.Connect(address = "/ip4/10.0.2.2/tcp/47112/p2p/$desktop"))
-        session.answer(PeerAnswer.Connect(computer = "12D3KooWUnknown"))
-        assertEquals("NO_COMPUTER", result(future).message)
-        assertTrue(transport.calls.none { it.startsWith("connect:") })
     }
 
     @Test
     fun testNoComputerWithinTimeout() {
-        val result = result(start(false, searchTimeoutMs = 100))
+        val result = result(start(false, selectTimeoutMs = 100))
         assertFalse(result.value)
         assertEquals("NO_COMPUTER", result.message)
         assertTrue(transport.calls.contains("stop"))
         assertFalse(transport.hasListener())
-    }
-
-    @Test
-    fun testSearchFailure() {
-        transport.discoveryFailure = java.io.IOException("no network")
-        val result = result(start(false))
-        assertEquals("SEARCH_FAILED", result.message)
-        assertTrue(states.none { it is SyncState.SelectComputer })
-    }
-
-    @Test
-    fun testSearchFailureInDebugBuild() {
-        transport.discoveryFailure = java.io.IOException("no network")
-        val future = start(false, editable = true)
-        // the connection string can be entered anyway
-        selecting()
-        session.answer(PeerAnswer.Cancel)
-        assertEquals("CANCELED", result(future).message)
     }
 
     @Test
@@ -405,7 +310,7 @@ class PeerCloudProviderTest {
     }
 
     @Test
-    fun testCancelWhileSearching() {
+    fun testCancelWhileSelecting() {
         val future = start(false)
         selecting()
         session.answer(PeerAnswer.Cancel)

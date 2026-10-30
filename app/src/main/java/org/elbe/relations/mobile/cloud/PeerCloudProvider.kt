@@ -7,7 +7,6 @@ import org.elbe.relations.mobile.R
 import org.elbe.relations.mobile.dbimport.DBImportFull
 import org.elbe.relations.mobile.dbimport.DBImportIncremental
 import org.elbe.relations.mobile.dbimport.XMLImporter
-import org.elbe.relations.mobile.p2p.LocalAddress
 import org.elbe.relations.mobile.p2p.PeerEvent
 import org.elbe.relations.mobile.p2p.PeerProtocol
 import org.elbe.relations.mobile.p2p.PeerProtocol.ManifestFile
@@ -21,7 +20,7 @@ import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.TimeUnit
 
 private const val TAG = "PeerCloudProvider"
-const val P2P_SEARCH_TIMEOUT_MS = 120_000L
+const val P2P_SELECT_TIMEOUT_MS = 120_000L
 const val P2P_STALL_TIMEOUT_MS = 60_000L
 /** The number of bytes logged of invalid data. */
 private const val LOG_BYTES = 16
@@ -30,7 +29,7 @@ private const val LOG_BYTES = 16
  * The messages the peer-to-peer synchronization displays.
  */
 enum class PeerMessage {
-    SUCCESS, NO_INCREMENTAL, CANCELED, NO_COMPUTER, CONNECT_FAILED, CONNECTION_LOST, TIMED_OUT, UNEXPECTED_DATA, SEARCH_FAILED, IMPORT_FAILED
+    SUCCESS, NO_INCREMENTAL, CANCELED, NO_COMPUTER, CONNECT_FAILED, CONNECTION_LOST, TIMED_OUT, UNEXPECTED_DATA, IMPORT_FAILED
 }
 
 /**
@@ -71,20 +70,16 @@ class DBPeerImport(private val context: Context, private val factory: IndexWrite
  * @param importer PeerImport imports the received files
  * @param tempDir File the directory for the received files
  * @param text (PeerMessage) -> String the message to display
- * @param searchTimeoutMs Long how long to wait for the user to select a computer
+ * @param selectTimeoutMs Long how long to wait for the user to scan or enter the computer's address
  * @param stallTimeoutMs Long how long to wait for data from the computer
- * @param editable Boolean true if the user can enter a connection string (debug builds)
- * @param localAddress LocalAddress.Local? this device's address, to try the computer's addresses in its subnet first
  * @param log (String, Exception?) -> Unit logs a failed synchronization
  */
 class PeerCloudProvider(private val transport: PeerTransport,
                         private val importer: PeerImport,
                         private val tempDir: File,
                         private val text: (PeerMessage) -> String,
-                        private val searchTimeoutMs: Long = P2P_SEARCH_TIMEOUT_MS,
+                        private val selectTimeoutMs: Long = P2P_SELECT_TIMEOUT_MS,
                         private val stallTimeoutMs: Long = P2P_STALL_TIMEOUT_MS,
-                        private val editable: Boolean = false,
-                        private val localAddress: LocalAddress.Local? = null,
                         private val log: (String, Exception?) -> Unit = { message, e -> Log.w(TAG, message, e) }) : InteractiveCloudProvider {
 
     private sealed class Event {
@@ -112,18 +107,8 @@ class PeerCloudProvider(private val transport: PeerTransport,
         transport.setListener { mEvents.add(Event.Transport(it)) }
         session.setAnswerListener { mEvents.add(Event.User(it)) }
         try {
-            try {
-                transport.startDiscovery()
-            } catch (e: Exception) {
-                log("Could not start searching.", e)
-                // a connection string can be entered anyway
-                if (!editable) {
-                    return fail(text(PeerMessage.SEARCH_FAILED))
-                }
-            }
-            val targets = awaitSelection(session)
-            transport.stopDiscovery()
-            val (connection, remotePeerId) = connect(targets, session)
+            val address = awaitAddress(session)
+            val (connection, remotePeerId) = connect(address, session)
             val hello = awaitHello(connection)
             session.confirmPeer(hello.name.ifBlank { "Relations" },
                     PeerProtocol.confirmationCode(transport.localPeerId, remotePeerId))
@@ -153,70 +138,38 @@ class PeerCloudProvider(private val transport: PeerTransport,
     // --- phases
 
     /**
-     * Lists the found computers until the user selects one.
+     * Waits until the user has scanned or entered the computer's address.
      *
-     * @return List<String> the multiaddresses to try, in this order
+     * @return String the multiaddress to dial
      */
-    private fun awaitSelection(session: SyncSession): List<String> {
-        val computers = LinkedHashMap<String, FoundComputer>()
-        session.selectComputer(emptyList(), editable)
-        val deadline = now() + searchTimeoutMs
+    private fun awaitAddress(session: SyncSession): String {
+        session.selectComputer()
+        val deadline = now() + selectTimeoutMs
         while (true) {
             when (val event = next(deadline) ?: throw Abort(fail(text(PeerMessage.NO_COMPUTER)))) {
                 is Event.User -> when (val answer = event.answer) {
                     PeerAnswer.Cancel -> throw Abort(fail(text(PeerMessage.CANCELED)))
-                    is PeerAnswer.Connect -> {
-                        val targets = when {
-                            editable && answer.address != null -> listOf(answer.address)
-                            answer.computer != null -> computers[answer.computer]?.let { computer ->
-                                computer.addresses.map { "$it/p2p/${computer.peerId}" }
-                            }
-                            else -> null
-                        }
-                        if (!targets.isNullOrEmpty()) {
-                            return targets
-                        }
-                    }
+                    is PeerAnswer.Connect -> return answer.address
                     else -> Unit
                 }
-                is Event.Transport -> when (val e = event.event) {
-                    is PeerEvent.Found -> {
-                        val known = computers[e.peerId]?.addresses.orEmpty()
-                        val ranked = LocalAddress.rank(known + e.addresses, localAddress)
-                        // mDNS answers are repeated: publish changes only
-                        if (ranked.isNotEmpty() && ranked != known) {
-                            computers[e.peerId] = FoundComputer(e.peerId, ranked)
-                            session.selectComputer(computers.values.toList(), editable)
-                        }
-                    }
-                    is PeerEvent.Failed -> if (!editable) throw Abort(fail(text(PeerMessage.SEARCH_FAILED)))
-                    else -> Unit
-                }
+                is Event.Transport -> Unit
             }
         }
     }
 
     /**
-     * Tries the addresses one after the other.
-     *
      * @return Pair<String, ByteArray> the connection ID and the computer's peer ID
      */
-    private fun connect(targets: List<String>, session: SyncSession): Pair<String, ByteArray> {
+    private fun connect(address: String, session: SyncSession): Pair<String, ByteArray> {
         session.connecting()
-        for (target in targets) {
-            if (session.isCanceled) {
-                throw Abort(fail(text(PeerMessage.CANCELED)))
-            }
-            val connection = try {
-                transport.connect(target)
-            } catch (e: Exception) {
-                log("Could not connect to $target.", e)
-                continue
-            }
-            mConnection = connection
-            return connection to awaitConnected(connection)
+        val connection = try {
+            transport.connect(address)
+        } catch (e: Exception) {
+            log("Could not connect to $address.", e)
+            throw Abort(fail(text(if (session.isCanceled) PeerMessage.CANCELED else PeerMessage.CONNECT_FAILED)))
         }
-        throw Abort(fail(text(if (session.isCanceled) PeerMessage.CANCELED else PeerMessage.CONNECT_FAILED)))
+        mConnection = connection
+        return connection to awaitConnected(connection)
     }
 
     /** The transport reports the connection before connect() returns. */
@@ -361,8 +314,6 @@ class PeerCloudProvider(private val transport: PeerTransport,
             is PeerEvent.Connected -> transport.close(e.connectionId)
             is PeerEvent.Closed -> if (e.connectionId == connection) throw Abort(fail(text(PeerMessage.CONNECTION_LOST)))
             is PeerEvent.Failed -> throw Abort(fail(text(PeerMessage.CONNECTION_LOST)))
-            // late mDNS answers
-            is PeerEvent.Found -> Unit
         }
         return false
     }
@@ -393,10 +344,9 @@ class PeerCloudProvider(private val transport: PeerTransport,
         /**
          * Creates the provider for the peer-to-peer synchronization with the app's default collaborators.
          */
-        fun create(context: Context, r: Resources, factory: IndexWriterFactory, transport: PeerTransport,
-                   editable: Boolean, localAddress: LocalAddress.Local?): PeerCloudProvider {
+        fun create(context: Context, r: Resources, factory: IndexWriterFactory, transport: PeerTransport): PeerCloudProvider {
             val appContext = context.applicationContext
-            return PeerCloudProvider(transport, DBPeerImport(appContext, factory), appContext.cacheDir, editable = editable, localAddress = localAddress, text = { message ->
+            return PeerCloudProvider(transport, DBPeerImport(appContext, factory), appContext.cacheDir, text = { message ->
                 r.getString(when (message) {
                     PeerMessage.SUCCESS -> R.string.cloud_provider_dft_success
                     PeerMessage.NO_INCREMENTAL -> R.string.abstract_cloud_provider_no_incremental
@@ -406,7 +356,6 @@ class PeerCloudProvider(private val transport: PeerTransport,
                     PeerMessage.CONNECTION_LOST -> R.string.p2p_connection_lost
                     PeerMessage.TIMED_OUT -> R.string.p2p_timed_out
                     PeerMessage.UNEXPECTED_DATA -> R.string.p2p_unexpected_data
-                    PeerMessage.SEARCH_FAILED -> R.string.p2p_search_failed
                     PeerMessage.IMPORT_FAILED -> R.string.abstract_cloud_provider_dft_error
                 })
             })

@@ -58,8 +58,9 @@ object SyncObserver {
             }
             is SyncState.SelectComputer -> {
                 dialog?.dismissAllowingStateLoss()
-                val selection = select ?: SelectComputerDialog.newInstance(state.editable).also { it.showNow(fm, SELECT_TAG) }
-                selection.update(state.computers)
+                if (select == null) {
+                    SelectComputerDialog.newInstance().showNow(fm, SELECT_TAG)
+                }
             }
             is SyncState.ConfirmPeer -> {
                 dialog?.showCancel(false)
