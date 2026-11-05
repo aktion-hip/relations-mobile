@@ -19,6 +19,7 @@ room = "2.8.5"
 dropbox = "8.0.2"
 azureStorage = "2.0.0"
 libp2p = "1.3.7-RELEASE"
+zxingAndroidEmbedded = "4.3.0"
 lucene = "4.1.0"
 junit = "4.13.2"
 orgJson = "20260814"
@@ -49,6 +50,7 @@ androidx-room-testing = { module = "androidx.room:room-testing", version.ref = "
 dropbox-core-sdk = { module = "com.dropbox.core:dropbox-core-sdk", version.ref = "dropbox" }
 azure-storage-android = { module = "com.microsoft.azure.android:azure-storage-android", version.ref = "azureStorage" }
 jvm-libp2p = { module = "io.libp2p:jvm-libp2p", version.ref = "libp2p" }
+zxing-android-embedded = { module = "com.journeyapps:zxing-android-embedded", version.ref = "zxingAndroidEmbedded" }
 lucene-core = { module = "org.apache.lucene:lucene-core", version.ref = "lucene" }
 lucene-analyzers-common = { module = "org.apache.lucene:lucene-analyzers-common", version.ref = "lucene" }
 lucene-queryparser = { module = "org.apache.lucene:lucene-queryparser", version.ref = "lucene" }

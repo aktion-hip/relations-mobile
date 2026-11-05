@@ -8,7 +8,6 @@ import io.libp2p.core.dsl.Builder
 import io.libp2p.core.dsl.host
 import io.libp2p.core.multistream.StrictProtocolBinding
 import io.libp2p.core.mux.StreamMuxerProtocol
-import io.libp2p.discovery.MDnsDiscovery
 import io.libp2p.protocol.ProtocolHandler
 import io.libp2p.protocol.ProtocolMessageHandler
 import io.libp2p.security.noise.NoiseXXSecureChannel
@@ -24,13 +23,11 @@ import org.elbe.relations.mobile.cloud.SyncState
 import org.junit.After
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.net.InetAddress
 import java.net.ServerSocket
 import java.nio.file.Files
 import java.util.concurrent.CompletableFuture
@@ -55,14 +52,14 @@ class Libp2pHostTest {
     }
 
     private fun phone(): Libp2pHost {
-        val phone = Libp2pHost(File(dir, "p2p_identity.key"), Libp2pHost.loopback())
+        val phone = Libp2pHost(File(dir, "p2p_identity.key"))
         phones.add(phone)
         phone.setListener { events.add(it) }
         return phone
     }
 
-    /** The desktop side: listens, optionally announces itself, and exchanges raw bytes on the stream the phone opens. */
-    private class Computer(announce: Boolean) {
+    /** The desktop side: listens, and exchanges raw bytes on the stream the phone opens. */
+    private class Computer {
         val received = ByteArrayOutputStream()
         @Volatile
         var stream: Stream? = null
@@ -103,12 +100,6 @@ class Libp2pHostTest {
         /** The full multiaddress the phone dials. */
         val address: String = "$listenAddress/p2p/${peerId.toBase58()}"
 
-        private val discovery: MDnsDiscovery? = if (announce) {
-            MDnsDiscovery(host, PeerProtocol.MDNS_SERVICE_TAG, 1, Libp2pHost.loopback()).also {
-                it.start().get(10, TimeUnit.SECONDS)
-            }
-        } else null
-
         fun send(bytes: ByteArray) {
             stream!!.writeAndFlush(Unpooled.wrappedBuffer(bytes))
         }
@@ -116,12 +107,11 @@ class Libp2pHostTest {
         fun receivedBytes(): ByteArray = synchronized(received) { received.toByteArray() }
 
         fun stop() {
-            discovery?.stop()
             host.stop().get(10, TimeUnit.SECONDS)
         }
     }
 
-    private fun computer(announce: Boolean = false): Computer = Computer(announce).also { computers.add(it) }
+    private fun computer(): Computer = Computer().also { computers.add(it) }
 
     private fun await(description: String, timeoutMs: Long = 10_000, condition: () -> Boolean) {
         val deadline = System.currentTimeMillis() + timeoutMs
@@ -154,41 +144,6 @@ class Libp2pHostTest {
         first.stop()
         phones.clear()
         assertEquals(first.peerId, phone().peerId)
-    }
-
-    @Test
-    fun testDiscovery() {
-        val computer = computer(announce = true)
-        val phone = phone()
-        phone.startDiscovery()
-        await("found", 20_000) { events.any { it is PeerEvent.Found && it.peerId == computer.peerId.toBase58() } }
-        val found = events.filterIsInstance<PeerEvent.Found>().first { it.peerId == computer.peerId.toBase58() }
-        assertTrue(found.addresses.toString(), found.addresses.contains(computer.listenAddress))
-        phone.stopDiscovery()
-    }
-
-    @Test
-    fun testDiscoveryWithoutAddress() {
-        val phone = Libp2pHost(File(dir, "p2p_identity.key"), null)
-        phones.add(phone)
-        // no interface to search on: nothing happens
-        phone.startDiscovery()
-        phone.stopDiscovery()
-    }
-
-    @Test
-    fun testParseAnswer() {
-        val id = otherPeerId().toBase58()
-        val txt = byteArrayOf(id.length.toByte()) + id.toByteArray()
-        val v4 = InetAddress.getByName("192.168.1.10")
-        val v6 = InetAddress.getByName("fe80::1")
-        assertEquals(PeerEvent.Found(id, listOf("/ip4/192.168.1.10/tcp/47112")), Libp2pHost.parseAnswer(txt, 47112, listOf(v6, v4)))
-        assertNull(Libp2pHost.parseAnswer(null, 47112, listOf(v4)))
-        assertNull(Libp2pHost.parseAnswer(txt, null, listOf(v4)))
-        assertNull(Libp2pHost.parseAnswer(txt, 47112, listOf(v6)))
-        // wrong length byte, invalid id
-        assertNull(Libp2pHost.parseAnswer(byteArrayOf(100) + id.toByteArray(), 47112, listOf(v4)))
-        assertNull(Libp2pHost.parseAnswer(byteArrayOf(4) + "0OIl".toByteArray(), 47112, listOf(v4)))
     }
 
     @Test
@@ -253,8 +208,8 @@ class Libp2pHostTest {
     }
 
     /**
-     * The whole stack: PeerCloudProvider on a real Libp2pHost finds the listening computer through mDNS on 127.0.0.1,
-     * connects, confirms and receives a full synchronization.
+     * The whole stack: PeerCloudProvider on a real Libp2pHost connects to the listening computer's address on 127.0.0.1,
+     * confirms and receives a full synchronization.
      */
     @Test
     fun testProviderEndToEnd() {
@@ -270,20 +225,14 @@ class Libp2pHostTest {
 
             override fun noIncremental() = Unit
         }
-        val computer = computer(announce = true)
-        val phone = Libp2pHost(File(dir, "p2p_identity.key"), Libp2pHost.loopback())
-        val provider = PeerCloudProvider(phone, importer, dir, { it.name },
-                localAddress = LocalAddress.Local(Libp2pHost.loopback(), 8)) { _, _ -> }
+        val computer = computer()
+        val phone = Libp2pHost(File(dir, "p2p_identity.key"))
+        val provider = PeerCloudProvider(phone, importer, dir, { it.name }) { _, _ -> }
         val executor = Executors.newSingleThreadExecutor()
         try {
             val future = executor.submit<AbstractCloudProvider.SyncResult> { provider.synchronize(false, session) }
-            // the computer is listed with its address
-            await("listed", 20_000) {
-                (states.lastOrNull() as? SyncState.SelectComputer)?.computers?.any { it.peerId == computer.peerId.toBase58() } == true
-            }
-            val listed = (states.last() as SyncState.SelectComputer).computers.single()
-            assertEquals(computer.address, listed.preferred)
-            session.answer(PeerAnswer.Connect(computer = listed.peerId))
+            await("address dialog") { states.lastOrNull() == SyncState.SelectComputer }
+            session.answer(PeerAnswer.Connect(computer.address))
 
             await("computer stream") { computer.stream != null }
             computer.send(PeerProtocol.frame("""{"type":"hello","protocol":1,"name":"Office PC"}""".toByteArray()))

@@ -24,13 +24,8 @@ sealed class SyncState {
      */
     data class Running(val current: Int, val max: Int, val cancelable: Boolean = false) : SyncState()
 
-    /**
-     * Searching for the Relations desktop applications, the user selects the one to connect to.
-     *
-     * @param computers List<FoundComputer> the computers found so far
-     * @param editable Boolean true if the user can enter a connection string (debug builds)
-     */
-    data class SelectComputer(val computers: List<FoundComputer>, val editable: Boolean) : SyncState()
+    /** Waiting for the user to scan or enter the Relations desktop application's address. */
+    object SelectComputer : SyncState()
 
     /**
      * A computer requests a connection, the user has to compare and confirm the token.
@@ -46,18 +41,6 @@ sealed class SyncState {
 }
 
 /**
- * A Relations desktop application found on the local network.
- *
- * @param peerId String the computer's peer ID (base58)
- * @param addresses List<String> the computer's addresses in the order to try, e.g. /ip4/192.168.1.10/tcp/47112
- */
-data class FoundComputer(val peerId: String, val addresses: List<String>) {
-    /** The multiaddress to display and to dial first, e.g. /ip4/192.168.1.10/tcp/47112/p2p/12D3KooW... */
-    val preferred: String
-        get() = "${addresses.first()}/p2p/$peerId"
-}
-
-/**
  * The user's answers during an interactive synchronization.
  */
 sealed class PeerAnswer {
@@ -68,10 +51,9 @@ sealed class PeerAnswer {
     /**
      * Connect to a computer.
      *
-     * @param address String? the entered connection string (debug builds), dialed as it is
-     * @param computer String? the peer ID of the selected computer, all its addresses are tried
+     * @param address String the scanned or entered multiaddress, dialed as it is
      */
-    data class Connect(val address: String? = null, val computer: String? = null) : PeerAnswer()
+    data class Connect(val address: String) : PeerAnswer()
 }
 
 /**
@@ -114,13 +96,10 @@ class SyncSession internal constructor(private val publish: (SyncState) -> Unit)
         }
     }
 
-    /**
-     * @param computers List<FoundComputer> the computers found so far
-     * @param editable Boolean true if the user can enter a connection string
-     */
-    fun selectComputer(computers: List<FoundComputer>, editable: Boolean) {
+    /** The user has to scan or enter the computer's address. */
+    fun selectComputer() {
         mCancelable = true
-        publish(SyncState.SelectComputer(computers, editable))
+        publish(SyncState.SelectComputer)
     }
 
     fun confirmPeer(endpointName: String, token: String) {
@@ -231,7 +210,7 @@ class SyncRunner(private val scope: CoroutineScope,
             state is SyncState.Running || state is SyncState.SelectComputer || state is SyncState.ConfirmPeer
 
     /**
-     * Cancels an interactive synchronization while searching for, confirming or receiving from the peer, no-op otherwise.
+     * Cancels an interactive synchronization while selecting, confirming or receiving from the peer, no-op otherwise.
      */
     fun cancel() {
         mSession?.answer(PeerAnswer.Cancel)
@@ -240,12 +219,11 @@ class SyncRunner(private val scope: CoroutineScope,
     /**
      * Connects to a computer while in the SelectComputer state, no-op otherwise.
      *
-     * @param address String? the entered connection string (debug builds)
-     * @param computer String? the peer ID of the selected computer
+     * @param address String the scanned or entered multiaddress, e.g. /ip4/192.168.1.10/tcp/47112/p2p/12D3KooW...
      */
-    fun connectTo(address: String? = null, computer: String? = null) {
+    fun connectTo(address: String) {
         if (mState.value is SyncState.SelectComputer) {
-            mSession?.answer(PeerAnswer.Connect(address, computer))
+            mSession?.answer(PeerAnswer.Connect(address))
         }
     }
 

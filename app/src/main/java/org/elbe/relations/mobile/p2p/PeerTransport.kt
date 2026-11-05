@@ -5,14 +5,6 @@ package org.elbe.relations.mobile.p2p
  */
 sealed class PeerEvent {
     /**
-     * A Relations desktop application has been found on the local network (mDNS).
-     *
-     * @param peerId String the computer's peer ID (base58)
-     * @param addresses List<String> the computer's addresses, e.g. /ip4/192.168.1.10/tcp/47112 (without /p2p/)
-     */
-    data class Found(val peerId: String, val addresses: List<String>) : PeerEvent()
-
-    /**
      * The stream for PeerProtocol.PROTOCOL_ID to the computer is open.
      *
      * @param remotePeerId ByteArray the raw bytes of the computer's (Noise-authenticated) peer ID
@@ -43,16 +35,6 @@ interface PeerTransport {
      * @param listener ((PeerEvent) -> Unit)? the receiver of the events, null to stop receiving
      */
     fun setListener(listener: ((PeerEvent) -> Unit)?)
-
-    /**
-     * Searches the local network for Relations desktop applications (mDNS), reports each as PeerEvent.Found. Blocking (shortly).
-     *
-     * @throws Exception if searching is not possible
-     */
-    fun startDiscovery()
-
-    /** Stops searching. */
-    fun stopDiscovery()
 
     /**
      * Dials the computer and opens the stream for PeerProtocol.PROTOCOL_ID. Blocking, gives up after 10 seconds.

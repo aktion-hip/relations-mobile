@@ -9,12 +9,11 @@ class FakePeerTransport(override val localPeerId: ByteArray = byteArrayOf(0, 1, 
     @Volatile
     private var listener: ((PeerEvent) -> Unit)? = null
 
-    /** The operations in the order they were called, e.g. "discover", "connect:/ip4/...", "close:pc". */
+    /** The operations in the order they were called, e.g. "connect:/ip4/...", "close:pc". */
     val calls = CopyOnWriteArrayList<String>()
     /** The frames sent (without the length header), as text. */
     val sent = CopyOnWriteArrayList<String>()
 
-    var discoveryFailure: Exception? = null
     /** The addresses whose connect() fails. */
     val connectFailures = mutableSetOf<String>()
     /** The connection ID and the remote peer ID a successful connect() reports. */
@@ -23,15 +22,6 @@ class FakePeerTransport(override val localPeerId: ByteArray = byteArrayOf(0, 1, 
 
     override fun setListener(listener: ((PeerEvent) -> Unit)?) {
         this.listener = listener
-    }
-
-    override fun startDiscovery() {
-        calls.add("discover")
-        discoveryFailure?.let { throw it }
-    }
-
-    override fun stopDiscovery() {
-        calls.add("stopDiscovery")
     }
 
     override fun connect(address: String): String {
@@ -59,9 +49,6 @@ class FakePeerTransport(override val localPeerId: ByteArray = byteArrayOf(0, 1, 
     fun emit(event: PeerEvent) {
         listener?.invoke(event)
     }
-
-    /** A computer announces itself. */
-    fun found(peerId: String, vararg addresses: String) = emit(PeerEvent.Found(peerId, addresses.toList()))
 
     /** Sends a control frame from the desktop. */
     fun frame(connectionId: String, json: String) =
